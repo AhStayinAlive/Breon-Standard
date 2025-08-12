@@ -1,0 +1,252 @@
+<!-- The Broen Standard Carousel -->
+<section class="broen-showcase-section broen-standard">
+  <div class="section-container">
+    
+    <div class="carousel-block">
+      <h2 class="carousel-title">The Broen Standard</h2>
+      <div class="carousel-scroll-container">
+        <div class="carousel-wrapper">
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '46.png' | file_url }}" alt="Smart Lock Product" class="product-image">
+            </div>
+            <button class="product-button">Get All Products</button>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '47.png' | file_url }}" alt="Consultation Service" class="product-image">
+            </div>
+            <button class="product-button">Talk To Us</button>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '48.png' | file_url }}" alt="24/7 Support" class="product-image">
+            </div>
+            <button class="product-button">Contact Us 24/7</button>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '45.png' | file_url }}" alt="Community" class="product-image">
+            </div>
+            <button class="product-button">Join Our Family</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.broen-showcase-section.broen-standard {
+  padding: 60px 0 40px 0;
+  background: #000000;
+}
+
+.broen-standard .section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.broen-standard .carousel-block {
+  margin-bottom: 0;
+}
+
+.broen-standard .carousel-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  letter-spacing: -0.02em;
+}
+
+.broen-standard .carousel-title::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.broen-standard .carousel-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.broen-standard .carousel-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.broen-standard .carousel-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.broen-standard .carousel-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.broen-standard .carousel-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.broen-standard .carousel-wrapper {
+  display: flex;
+  gap: 20px;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.broen-standard .product-card {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  backdrop-filter: blur(20px);
+}
+
+.broen-standard .product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(30, 30, 30, 0.9);
+}
+
+.broen-standard .product-media {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  background: #1a1a1a;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.broen-standard .product-media.large {
+  height: 240px;
+  background: #000000;
+}
+
+.broen-standard .product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(1.1) contrast(1.1);
+}
+
+.broen-standard .product-button {
+  padding: 20px 24px;
+  border: none;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  border-radius: 0 0 15px 15px;
+  width: 100%;
+  margin-top: auto;
+  position: relative;
+  z-index: 5;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.broen-standard .product-button:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .broen-showcase-section.broen-standard {
+    padding: 40px 0 20px 0;
+  }
+  
+  .broen-standard .section-container {
+    padding: 0 15px;
+  }
+  
+  .broen-standard .carousel-title {
+    font-size: 1.6rem;
+  }
+  
+  .broen-standard .product-card {
+    width: 240px;
+    min-height: 320px;
+  }
+  
+}
+
+@media (max-width: 480px) {
+  .broen-standard .carousel-title {
+    font-size: 1.4rem;
+  }
+  
+  .broen-standard .product-card {
+    width: 200px;
+  }
+  
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Smooth scroll on wheel for horizontal containers
+  document.querySelectorAll('.broen-standard .carousel-scroll-container').forEach(container => {
+    container.addEventListener('wheel', function(e) {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        this.scrollLeft += e.deltaY;
+      }
+    });
+  });
+  
+  // Standard product card interactions
+  document.querySelectorAll('.broen-standard .product-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const buttonText = this.querySelector('.product-button')?.textContent;
+      
+      if (buttonText?.includes('Contact Us 24/7')) {
+        if (typeof openSpecialistModal === 'function') {
+          openSpecialistModal();
+        }
+      } else if (buttonText?.includes('Get All Products')) {
+        window.location.href = '/collections/smart-locks';
+      } else if (buttonText?.includes('Talk To Us')) {
+        window.location.href = '/pages/contact';
+      } else if (buttonText?.includes('Join Our Family')) {
+        window.location.href = '/pages/contact';
+      }
+    });
+  });
+});
+</script>

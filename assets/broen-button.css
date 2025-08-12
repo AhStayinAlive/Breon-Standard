@@ -1,0 +1,125 @@
+/* Updated Broen Button System - Black buttons with white hover */
+.broen-btn {
+  font-family: var(--broen-font-family);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--broen-transition-fast);
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  border: none;
+  border-radius: var(--broen-radius-sm);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 5;
+}
+
+/* Button Types - All black with white hover */
+.broen-btn--primary {
+  background: var(--broen-black);
+  color: var(--broen-white);
+  border: 1px solid var(--broen-glass-border);
+  box-shadow: var(--broen-shadow-sm);
+}
+
+.broen-btn--primary:hover {
+  background: var(--broen-white);
+  color: var(--broen-black);
+  transform: translateY(-2px);
+  box-shadow: var(--broen-shadow-md);
+}
+
+.broen-btn--secondary {
+  background: var(--broen-black);
+  color: var(--broen-white);
+  border: 1px solid var(--broen-glass-border);
+}
+
+.broen-btn--secondary:hover {
+  background: var(--broen-white);
+  color: var(--broen-black);
+  transform: translateY(-2px);
+}
+
+.broen-btn--ghost {
+  background: var(--broen-black);
+  color: var(--broen-white);
+  border: 1px solid var(--broen-glass-border);
+}
+
+.broen-btn--ghost:hover {
+  background: var(--broen-white);
+  color: var(--broen-black);
+  transform: translateY(-1px);
+}
+
+/* Carousel buttons - matching the dark carousel style */
+.broen-btn--carousel {
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--broen-white);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 15px 15px;
+  width: 100%;
+  margin-top: auto;
+  position: relative;
+  z-index: 5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.broen-btn--carousel:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--broen-black);
+  transform: none;
+}
+
+/* Button Sizes */
+.broen-btn--small {
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.broen-btn--medium {
+  padding: 14px 24px;
+  font-size: 14px;
+}
+
+.broen-btn--large {
+  padding: 16px 32px;
+  font-size: 16px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .broen-btn--small {
+    padding: 14px 18px;
+    font-size: 11px;
+  }
+
+  .broen-btn--medium {
+    padding: 18px 22px;
+    font-size: 13px;
+  }
+
+  .broen-btn--large {
+    padding: 20px 28px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .broen-btn--small {
+    padding: 12px 16px;
+    font-size: 10px;
+  }
+
+  .broen-btn--medium {
+    padding: 16px 20px;
+    font-size: 12px;
+  }
+
+  .broen-btn--large {
+    padding: 18px 24px;
+    font-size: 14px;
+  }
+}

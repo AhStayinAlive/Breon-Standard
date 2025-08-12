@@ -1,0 +1,441 @@
+<!-- Which Lock Belongs on Your Door Carousel - Improved -->
+<section class="broen-showcase-section which-lock">
+  <div class="section-container">
+    
+    <div class="carousel-block">
+      <h2 class="carousel-title">Which Lock Belongs on Your Door?</h2>
+      <div class="carousel-scroll-container">
+        <div class="carousel-wrapper five-items">
+
+          <!-- Card 1 -->
+          <div class="product-card lock-card">
+            <div class="product-media">
+              <img src="{{ '46.png' | file_url }}" alt="Broen SecureLock Pro" class="product-image">
+            </div>
+            <div class="product-info-overlay">
+              <h3 class="product-name">Broen SecureLock Pro</h3>
+              <div class="product-tags">
+                <span class="category-tag">Residential</span>
+              </div>
+              <div class="price-display">₱34,990</div>
+              <button class="add-to-cart-btn" data-product="securelock-pro">Add to cart</button>
+              <a href="/collections/smart-locks" class="see-all-link">SEE ALL PRODUCTS</a>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="product-card lock-card">
+            <div class="product-media">
+              <img src="{{ '47.png' | file_url }}" alt="Broen HomeSafe Elite" class="product-image">
+            </div>
+            <div class="product-info-overlay">
+              <h3 class="product-name">Broen HomeSafe Elite</h3>
+              <div class="product-tags">
+                <span class="category-tag">Commercial</span>
+              </div>
+              <div class="price-display">₱54,990</div>
+              <button class="add-to-cart-btn" data-product="homesafe-elite">Add to cart</button>
+              <a href="/collections/smart-locks" class="see-all-link">SEE ALL PRODUCTS</a>
+            </div>
+          </div>
+
+          <!-- Featured Card -->
+          <div class="product-card lock-card">
+            <div class="product-media">
+              <img src="{{ '48.png' | file_url }}" alt="Broen Obsidian" class="product-image">
+            </div>
+            <div class="product-info-overlay">
+              <h3 class="product-name">Broen Obsidian</h3>
+              <div class="product-tags">
+                <span class="category-tag">Universal</span>
+              </div>
+              <div class="price-display">₱74,990</div>
+              <button class="add-to-cart-btn" data-product="broen-obsidian">Add to cart</button>
+              <a href="/collections/smart-locks" class="see-all-link">SEE ALL PRODUCTS</a>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="product-card lock-card">
+            <div class="product-media">
+              <img src="{{ '45.png' | file_url }}" alt="Broen QuickAccess" class="product-image">
+            </div>
+            <div class="product-info-overlay">
+              <h3 class="product-name">Broen QuickAccess</h3>
+              <div class="product-tags">
+                <span class="category-tag">Apartment</span>
+              </div>
+              <div class="price-display">₱24,990</div>
+              <button class="add-to-cart-btn" data-product="quickaccess">Add to cart</button>
+              <a href="/collections/smart-locks" class="see-all-link">SEE ALL PRODUCTS</a>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="product-card lock-card">
+            <div class="product-media">
+              <img src="{{ 'Obsidian.png' | file_url }}" alt="Broen Guard Pro" class="product-image">
+            </div>
+            <div class="product-info-overlay">
+              <h3 class="product-name">Broen Guard Pro</h3>
+              <div class="product-tags">
+                <span class="category-tag">Heavy Duty</span>
+              </div>
+              <div class="price-display">₱49,990</div>
+              <button class="add-to-cart-btn" data-product="guard-pro">Add to cart</button>
+              <a href="/collections/smart-locks" class="see-all-link">SEE ALL PRODUCTS</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.broen-showcase-section.which-lock {
+  padding: 60px 0 40px 0;
+  background: #000000;
+}
+
+.which-lock .section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.which-lock .carousel-block {
+  margin-bottom: 0;
+}
+
+.which-lock .carousel-title {
+  font-family: Arial, sans-serif; /* Changed to sans-serif */
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  letter-spacing: -0.02em;
+}
+
+.which-lock .carousel-title::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.which-lock .carousel-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.which-lock .carousel-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.which-lock .carousel-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.which-lock .carousel-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.which-lock .carousel-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.which-lock .carousel-wrapper.five-items {
+  display: flex;
+  gap: 20px;
+  width: fit-content;
+  min-width: 120%;
+}
+
+/* Optimized Lock Cards - Gray backgrounds and black cards */
+.which-lock .lock-card {
+  position: relative;
+  min-height: 500px;
+  background: #3d3d3d; /* Gray background as requested */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(20px);
+}
+
+.which-lock .lock-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: #484848; /* Lighter gray on hover */
+}
+
+/* Product Media - Gray backgrounds for better visibility */
+.which-lock .lock-card .product-media {
+  height: 320px; /* Increased height significantly */
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); /* Gray gradient background */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px; /* More padding */
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Product Image - Maximum Visibility */
+.which-lock .product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none; /* Remove filters for natural appearance */
+  transition: transform 0.4s ease;
+  z-index: 2;
+  position: relative;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.which-lock .lock-card:hover .product-image {
+  transform: scale(1.02); /* Subtle scale effect */
+}
+
+/* Product Info Overlay - Black backgrounds */
+.product-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0.95) 100%); /* Black gradient overlay */
+  padding: 30px 24px 24px;
+  color: #ffffff;
+  backdrop-filter: blur(15px);
+  border-radius: 0 0 15px 15px;
+  z-index: 3;
+}
+
+
+/* Product Name - Sans-serif */
+.product-name {
+  font-family: Arial, sans-serif; /* Sans-serif font */
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  text-align: left;
+  letter-spacing: -0.02em;
+}
+
+/* Product Tags - Uniform Design */
+.product-tags {
+  margin-bottom: 16px;
+}
+
+.category-tag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: Arial, sans-serif; /* Sans-serif */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Price Display - Sans-serif */
+.price-display {
+  font-family: Arial, sans-serif; /* Sans-serif font */
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 20px;
+  text-align: left;
+  letter-spacing: -0.02em;
+}
+
+/* Add to Cart Button - Uniform Design */
+.add-to-cart-btn {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif; /* Sans-serif font */
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.add-to-cart-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* See All Link - Sans-serif and Uniform */
+.see-all-link {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: Arial, sans-serif; /* Sans-serif font */
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  padding: 8px;
+}
+
+.see-all-link:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .broen-showcase-section.which-lock {
+    padding: 40px 0 20px 0;
+  }
+  
+  .which-lock .section-container {
+    padding: 0 15px;
+  }
+  
+  .which-lock .carousel-title {
+    font-size: 1.6rem;
+  }
+  
+  .which-lock .lock-card {
+    width: 240px;
+    min-height: 440px;
+  }
+  
+  .which-lock .lock-card .product-media {
+    height: 260px;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .which-lock .carousel-title {
+    font-size: 1.4rem;
+  }
+  
+  .which-lock .lock-card {
+    width: 200px;
+    min-height: 400px;
+  }
+  
+  .which-lock .main-card {
+    width: 240px;
+    min-height: 440px;
+  }
+  
+  .which-lock .lock-card .product-media {
+    height: 220px;
+    padding: 20px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Smooth scroll on wheel for horizontal containers
+  document.querySelectorAll('.which-lock .carousel-scroll-container').forEach(container => {
+    container.addEventListener('wheel', function(e) {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        this.scrollLeft += e.deltaY;
+      }
+    });
+  });
+  
+  // Enhanced Add to Cart functionality for lock cards
+  document.querySelectorAll('.which-lock .add-to-cart-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const productId = this.getAttribute('data-product');
+      
+      // Add to cart functionality
+      if (typeof addToCart === 'function') {
+        addToCart(productId);
+      } else {
+        console.log(`Adding to cart: ${productId}`);
+        
+        // Visual feedback
+        const originalText = this.textContent;
+        this.textContent = 'Added to cart ✓';
+        this.style.background = 'rgba(76, 175, 80, 0.9)';
+        this.style.borderColor = '#4caf50';
+        this.style.color = '#ffffff';
+        
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.style.background = '';
+          this.style.borderColor = '';
+          this.style.color = '';
+        }, 2000);
+      }
+    });
+  });
+  
+  // View all products links
+  document.querySelectorAll('.which-lock .see-all-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Analytics tracking
+      if (typeof gtag === 'function') {
+        gtag('event', 'click', {
+          event_category: 'navigation',
+          event_label: 'view_all_products_from_lock_carousel'
+        });
+      }
+    });
+  });
+  
+  // Lock card click handling (for product details)
+  document.querySelectorAll('.which-lock .lock-card').forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Don't trigger if clicking on buttons/links
+      if (e.target.closest('.add-to-cart-btn, .see-all-link')) {
+        return;
+      }
+      
+      const productName = this.querySelector('.product-name')?.textContent;
+      
+      // Handle product detail view
+      console.log(`Viewing product details: ${productName}`);
+      
+      // You can add product detail modal or navigation here
+      if (typeof showProductDetails === 'function') {
+        showProductDetails(productName);
+      }
+    });
+  });
+});
+</script>

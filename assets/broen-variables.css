@@ -1,0 +1,41 @@
+/* Broen Design System Variables */
+:root {
+  /* Brand Colors */
+  --broen-black: #000000;
+  --broen-white: #ffffff;
+  --broen-gray: #3d3d3d;
+  --broen-wood: #614524;
+  --broen-accent: #27d3df;
+  
+  /* Overlay Colors */
+  --broen-overlay-light: rgba(0, 0, 0, 0.5);
+  --broen-overlay-medium: rgba(0, 0, 0, 0.8);
+  --broen-overlay-dark: rgba(0, 0, 0, 0.95);
+  --broen-glass: rgba(255, 255, 255, 0.1);
+  --broen-glass-border: rgba(255, 255, 255, 0.2);
+  
+  /* Typography */
+  --broen-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --broen-font-logo: 'Ridley Grotesk', var(--broen-font-family);
+  
+  /* Spacing */
+  --broen-spacing-xs: 8px;
+  --broen-spacing-sm: 16px;
+  --broen-spacing-md: 24px;
+  --broen-spacing-lg: 40px;
+  --broen-spacing-xl: 60px;
+  
+  /* Border Radius */
+  --broen-radius-sm: 6px;
+  --broen-radius-md: 16px;
+  --broen-radius-lg: 50px;
+  
+  /* Transitions */
+  --broen-transition-fast: 0.3s ease;
+  --broen-transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Shadows */
+  --broen-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --broen-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --broen-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+}

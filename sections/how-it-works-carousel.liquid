@@ -1,0 +1,279 @@
+<!-- How It Works Carousel -->
+<section class="broen-showcase-section how-it-works">
+  <div class="section-container">
+    
+    <div class="carousel-block">
+      <h2 class="carousel-title">How It Works</h2>
+      <div class="carousel-scroll-container">
+        <div class="carousel-wrapper five-items">
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ 'Obsidian.png' | file_url }}" alt="Specialist" class="product-image">
+            </div>
+            <button class="product-button">Pick a Specialist</button>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '46.png' | file_url }}" alt="Products Catalog" class="product-image">
+            </div>
+            <button class="product-button">See All Products</button>
+          </div>
+          
+          <div class="product-card main-card">
+            <div class="product-media large">
+              <img src="{{ '47.png' | file_url }}" alt="Installation Process" class="product-image">
+            </div>
+            <button class="product-button">Schedule Installation</button>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '48.png' | file_url }}" alt="Free Installation" class="product-image">
+            </div>
+            <button class="product-button">Free Installation</button>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-media">
+              <img src="{{ '45.png' | file_url }}" alt="Support" class="product-image">
+            </div>
+            <button class="product-button">Request for Help</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.broen-showcase-section.how-it-works {
+  padding: 60px 0 40px 0;
+  background: #000000;
+}
+
+.how-it-works .section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.how-it-works .carousel-block {
+  margin-bottom: 0;
+}
+
+.how-it-works .carousel-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  letter-spacing: -0.02em;
+}
+
+.how-it-works .carousel-title::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.how-it-works .carousel-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.how-it-works .carousel-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.how-it-works .carousel-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.how-it-works .carousel-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.how-it-works .carousel-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.how-it-works .carousel-wrapper.five-items {
+  display: flex;
+  gap: 20px;
+  width: fit-content;
+  min-width: 120%;
+}
+
+.how-it-works .product-card {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  backdrop-filter: blur(20px);
+}
+
+.how-it-works .product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(30, 30, 30, 0.9);
+}
+
+.how-it-works .main-card {
+  background: rgba(25, 25, 25, 0.9);
+  border-color: rgba(255, 255, 255, 0.12);
+  width: 340px;
+  min-height: 420px;
+}
+
+.how-it-works .product-media {
+  width: 100%;
+  height: 200px;
+  position: relative;
+  background: #1a1a1a;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.how-it-works .product-media.large {
+  height: 240px;
+  background: #000000;
+}
+
+.how-it-works .product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(1.1) contrast(1.1);
+}
+
+.how-it-works .product-button {
+  padding: 20px 24px;
+  border: none;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  border-radius: 0 0 15px 15px;
+  width: 100%;
+  margin-top: auto;
+  position: relative;
+  z-index: 5;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.how-it-works .product-button:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .broen-showcase-section.how-it-works {
+    padding: 40px 0 20px 0;
+  }
+  
+  .how-it-works .section-container {
+    padding: 0 15px;
+  }
+  
+  .how-it-works .carousel-title {
+    font-size: 1.6rem;
+  }
+  
+  .how-it-works .product-card {
+    width: 240px;
+    min-height: 320px;
+  }
+  
+  .how-it-works .main-card {
+    width: 280px;
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-it-works .carousel-title {
+    font-size: 1.4rem;
+  }
+  
+  .how-it-works .product-card {
+    width: 200px;
+  }
+  
+  .how-it-works .main-card {
+    width: 240px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Smooth scroll on wheel for horizontal containers
+  document.querySelectorAll('.how-it-works .carousel-scroll-container').forEach(container => {
+    container.addEventListener('wheel', function(e) {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        this.scrollLeft += e.deltaY;
+      }
+    });
+  });
+  
+  // Product card interactions
+  document.querySelectorAll('.how-it-works .product-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const buttonText = this.querySelector('.product-button')?.textContent;
+      
+      if (buttonText?.includes('Pick a Specialist')) {
+        if (typeof openSpecialistModal === 'function') {
+          openSpecialistModal();
+        }
+      } else if (buttonText?.includes('See All Products')) {
+        window.location.href = '/collections/smart-locks';
+      } else if (buttonText?.includes('Schedule Installation')) {
+        // Call cell number or contact
+        console.log('Schedule Installation clicked');
+      } else if (buttonText?.includes('Free Installation')) {
+        if (typeof openSpecialistModal === 'function') {
+          openSpecialistModal();
+        }
+      } else if (buttonText?.includes('Request for Help')) {
+        // Call cell number
+        console.log('Request for Help clicked');
+      }
+    });
+  });
+});
+</script>

@@ -1,0 +1,606 @@
+<!-- Premium Hero Section - Allbirds Style Layout -->
+<section class="hero-section">
+  <!-- Video Background -->
+  <div class="video-background">
+    <video autoplay muted loop playsinline class="hero-video">
+      <source src="https://cdn.shopify.com/videos/c/o/v/6db4f0dbb9c840569be69f51de355151.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- Hero Content -->
+  <div class="hero-content">
+    <div class="hero-container">
+      <!-- Main Hero Text - Allbirds Style -->
+      <div class="hero-text">
+        <h1 class="hero-headline">Peak Security<br>Peak Style</h1>
+        <p class="hero-subtitle">Stylish Smart Locks</p>
+      </div>
+
+      <!-- CTA Buttons - Allbirds Layout -->
+      <div class="hero-cta">
+        <button class="primary-btn" onclick="scrollToProducts()">
+          Browse Products Myself
+        </button>
+        <button class="primary-btn" onclick="openLockChooser()">
+          Help Me Choose a Smart Lock
+        </button>
+      </div>
+
+      <!-- Secondary Actions -->
+      <div class="secondary-actions">
+        <button class="secondary-btn" onclick="openDoorCheck()">
+          Help Me Check My Door
+        </button>
+        <a href="{{ routes.pages_url }}/catalog" class="secondary-btn">
+          Download Catalog (PDF)
+        </a>
+        <button class="secondary-btn" onclick="openContactModal()">
+          Contact Us Directly
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="hero-bottom">
+    <div class="hero-bottom-content">
+      <h3 class="bottom-title">SECURED WITH</h3>
+      <h4 class="bottom-subtitle">ON LOCK</h4>
+    </div>
+  </div>
+
+  <!-- Sticky Specialist Button -->
+  <div class="hero-specialist-btn">
+    <button type="button" class="specialist-btn" onclick="openSpecialistModal()">
+      <span class="btn-text">Talk to a Specialist</span>
+      <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #000000;
+    margin-top: 0;
+    padding-top: 24px;
+  }
+
+    body::before {
+    content: "";
+    display: block;
+    height: var(--hdr, 72px);
+    }
+
+  /* Video Background */
+  .video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+    z-index: 2;
+  }
+
+  /* Hero Content Container */
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #ffffff;
+    padding: 80px 24px 60px;
+  }
+
+  .hero-container {
+    max-width: 800px;
+    width: 100%;
+  }
+
+  /* Main Hero Text - Allbirds Style */
+  .hero-text {
+    margin-bottom: 48px;
+  }
+    .hero-headline {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 600; /* similar to Allbirds headline weight */
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px 0;
+    color: #ffffff;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+    }
+
+
+
+  .hero-subtitle {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: clamp(18px, 3vw, 24px);
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Primary CTA Buttons - Allbirds Style */
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  .primary-btn {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 18px 36px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    min-width: 200px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+    .primary-btn:hover {
+    background: #f5f5f5;      /* light background */
+    color: #000000;           /* black text on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+
+
+  .primary-btn:active {
+    transform: translateY(-1px);
+  }
+
+  /* Secondary Actions */
+  .secondary-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .secondary-btn {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 240px;
+  }
+
+  .secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* Bottom Section */
+  .hero-bottom {
+    position: relative;
+    z-index: 3;
+    padding: 20px;
+    margin-bottom: 80px;
+  }
+
+  .hero-bottom-content {
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .bottom-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.1em;
+  }
+
+  .bottom-subtitle {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.05em;
+  }
+
+  /* Specialist Button */
+  .hero-specialist-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+  }
+
+  .specialist-btn {
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 50px;
+    padding: 16px 32px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(10px);
+    min-width: 220px;
+    justify-content: center;
+  }
+
+  .specialist-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: translateX(-50%) translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn-text {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .btn-icon {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .specialist-btn:hover .btn-icon {
+    transform: scale(1.1);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .hero-content {
+      padding: 60px 20px 40px;
+    }
+
+    .hero-cta {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .primary-btn {
+      min-width: 280px;
+      padding: 16px 32px;
+      font-size: 15px;
+    }
+
+    .secondary-btn {
+      min-width: 280px;
+      padding: 12px 24px;
+      font-size: 13px;
+    }
+
+    .hero-text {
+      margin-bottom: 40px;
+    }
+
+    .secondary-actions {
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-content {
+      padding: 50px 16px 30px;
+    }
+
+    .primary-btn {
+      min-width: 100%;
+      max-width: 320px;
+    }
+
+    .secondary-btn {
+      min-width: 100%;
+      max-width: 320px;
+    }
+
+    .specialist-btn {
+      min-width: 200px;
+      padding: 14px 28px;
+      font-size: 14px;
+    }
+
+    .hero-bottom {
+      margin-bottom: 70px;
+    }
+  }
+
+  /* Landscape Mobile */
+  @media (max-height: 600px) and (orientation: landscape) {
+    .hero-content {
+      padding: 40px 20px 20px;
+    }
+
+    .hero-text {
+      margin-bottom: 32px;
+    }
+
+    .hero-cta {
+      margin-bottom: 24px;
+    }
+
+    .hero-bottom {
+      margin-bottom: 60px;
+      padding: 15px;
+    }
+  }
+
+  /* Touch Improvements */
+  @media (hover: none) and (pointer: coarse) {
+    .primary-btn,
+    .secondary-btn {
+      min-height: 48px;
+    }
+
+    .specialist-btn {
+      min-height: 48px;
+      padding: 16px 32px;
+    }
+  }
+
+  /* Accessibility */
+  .primary-btn:focus,
+  .secondary-btn:focus,
+  .specialist-btn:focus {
+    outline: 3px solid rgba(0, 0, 0, 0.8);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .primary-btn,
+    .secondary-btn,
+    .specialist-btn {
+      transition: none;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .specialist-btn:hover {
+      transform: none;
+    }
+  }
+
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .video-overlay {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .secondary-btn {
+      border-width: 3px;
+    }
+  }
+</style>
+
+<script>
+// Mobile-optimized JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // Button functions with mobile considerations
+  window.scrollToProducts = function() {
+    const nextSection = document.querySelector('.hero-section').nextElementSibling;
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+    }
+  };
+
+  window.openDoorCheck = function() {
+    // Mobile-friendly contact options
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile && '{{ settings.viber_number }}') {
+      window.open('viber://chat?number={{ settings.viber_number }}', '_blank');
+    } else if (typeof openSpecialistModal === 'function') {
+      openSpecialistModal('door-check');
+    } else {
+      alert('Door Check: We will help you identify your door type.');
+    }
+  };
+
+  window.openLockChooser = function() {
+    if (typeof openSpecialistModal === 'function') {
+      openSpecialistModal('lock-chooser');
+    } else {
+      alert('Smart Lock Chooser: Let us guide you to the perfect lock.');
+    }
+  };
+
+  window.openContactModal = function() {
+    if (typeof openSpecialistModal === 'function') {
+      openSpecialistModal('general');
+    } else {
+      window.location.href = '{{ routes.pages_url }}/contact';
+    }
+  };
+
+  window.openSpecialistModal = function(type) {
+    // Check if specialist modal function exists
+    if (typeof showSpecialistModal === 'function') {
+      showSpecialistModal(type);
+    } else {
+      // Fallback to contact page or direct contact
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isMobile && '{{ settings.viber_number }}') {
+        window.open('viber://chat?number={{ settings.viber_number }}', '_blank');
+      } else if (isMobile && '{{ settings.whatsapp_number }}') {
+        window.open('https://wa.me/{{ settings.whatsapp_number }}', '_blank');
+      } else {
+        window.location.href = '{{ routes.pages_url }}/contact';
+      }
+    }
+  };
+
+  // Video optimization for mobile
+  const video = document.querySelector('.hero-video');
+  if (video) {
+    // Mobile video handling
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // More conservative video settings for mobile
+      video.preload = 'none';
+      
+      // Play video on user interaction for mobile
+      const playVideo = () => {
+        video.play().catch(e => console.log('Mobile video autoplay failed:', e));
+        document.removeEventListener('touchstart', playVideo);
+      };
+      
+      document.addEventListener('touchstart', playVideo, { once: true });
+    } else {
+      // Desktop video handling
+      video.play().catch(e => console.log('Video autoplay failed:', e));
+    }
+
+    // Intersection observer for performance
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(e => console.log('Video play failed:', e));
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+
+    observer.observe(video);
+
+    // Pause video when page is hidden (battery optimization)
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        video.pause();
+      } else if (video.getBoundingClientRect().top < window.innerHeight) {
+        video.play().catch(e => console.log('Video resume failed:', e));
+      }
+    });
+  }
+
+  // Touch feedback for buttons
+  document.querySelectorAll('.primary-btn, .secondary-btn, .specialist-btn').forEach(button => {
+    button.addEventListener('touchstart', function() {
+      this.style.transform = 'scale(0.98)';
+    });
+    
+    button.addEventListener('touchend', function() {
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 100);
+    });
+  });
+
+  // Prevent double-tap zoom on buttons
+  let lastTouchEnd = 0;
+  document.querySelectorAll('.primary-btn, .secondary-btn, .specialist-btn').forEach(button => {
+    button.addEventListener('touchend', function(event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+  });
+
+  // Adjust specialist button position on keyboard open (mobile)
+  if ('visualViewport' in window) {
+    const specialistBtn = document.querySelector('.hero-specialist-btn');
+    
+    window.visualViewport.addEventListener('resize', () => {
+      const viewportHeight = window.visualViewport.height;
+      const windowHeight = window.innerHeight;
+      
+      if (viewportHeight < windowHeight * 0.75) {
+        // Keyboard is likely open
+        specialistBtn.style.bottom = '10px';
+        specialistBtn.style.transform = 'translateX(-50%) scale(0.9)';
+      } else {
+        // Keyboard is closed
+        specialistBtn.style.bottom = '24px';
+        specialistBtn.style.transform = 'translateX(-50%)';
+      }
+    });
+  }
+
+  // Analytics tracking
+  document.querySelectorAll('.primary-btn, .secondary-btn, .specialist-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const action = this.textContent.trim();
+      
+      if (typeof gtag === 'function') {
+        gtag('event', 'click', {
+          event_category: 'hero_premium',
+          event_label: action,
+          value: 1
+        });
+      }
+    });
+  });
+});
+</script>
