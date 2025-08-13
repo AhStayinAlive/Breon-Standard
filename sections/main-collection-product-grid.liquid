@@ -1,412 +1,685 @@
-{{ 'template-collection.css' | asset_url | stylesheet_tag }}
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
-{{ 'component-price.css' | asset_url | stylesheet_tag }}
+<!-- templates/collection.broen.liquid -->
+<!-- Premium Broen Collection Template with Professional Design -->
 
-{% if section.settings.image_shape == 'blob' %}
-  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
-{%- endif -%}
+<link rel="stylesheet" href="{{ 'component-facets.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-product-grid.css' | asset_url }}" media="print" onload="this.media='all'">
 
-{%- unless section.settings.quick_add == 'none' -%}
-  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
-{%- endunless -%}
-
-{%- if section.settings.quick_add == 'standard' -%}
-  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
-{%- endif -%}
-
-{%- if section.settings.quick_add == 'bulk' -%}
-  <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'quick-order-list.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
-{%- endif -%}
-
-{%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+<style>
+  /* Reset and base styles */
+  .broen-collection-wrapper * {
+    box-sizing: border-box;
   }
 
-  @media screen and (min-width: 750px) {
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+  .broen-collection-wrapper {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    min-height: 100vh;
+    color: #ffffff;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Header styling */
+  .broen-header {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .broen-banner {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .broen-banner h1 {
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .broen-banner p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  /* Door filter buttons */
+  .door-filter-container {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .door-filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .door-filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  .door-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .door-filter-btn:hover::before {
+    left: 100%;
+  }
+
+  .door-filter-btn:hover,
+  .door-filter-btn.active {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000000;
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.15);
+  }
+
+  /* Main content area */
+  .broen-main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  /* Filter and sort controls */
+  .filter-sort-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .traditional-filters {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+  }
+
+  .traditional-filters summary {
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    list-style: none;
+    position: relative;
+  }
+
+  .traditional-filters summary::after {
+    content: '↓';
+    position: absolute;
+    right: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .traditional-filters[open] summary::after {
+    transform: rotate(180deg);
+  }
+
+  .product-count {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  /* Product grid */
+  .broen-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2rem;
+  }
+
+  /* Product cards */
+  .broen-product-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    backdrop-filter: blur(10px);
+  }
+
+  .broen-product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .broen-product-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .broen-product-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Product image */
+  .broen-product-image {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  }
+
+  .broen-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .broen-product-card:hover .broen-product-image img {
+    transform: scale(1.1);
+  }
+
+  /* Product content */
+  .broen-product-content {
+    padding: 2rem;
+  }
+
+  .broen-product-name {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .broen-product-name a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .broen-product-name a:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Rating */
+  .broen-product-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .broen-stars {
+    color: #FFD700;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+
+  .broen-rating-count {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  /* Price */
+  .broen-product-price {
+    color: #ffffff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .broen-product-price .compare-price {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.3rem;
+    margin-right: 0.5rem;
+  }
+
+  /* Action buttons */
+  .broen-product-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .broen-btn {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .broen-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .broen-btn:hover::before {
+    left: 100%;
+  }
+
+  .broen-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000000;
+    border-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.15);
+  }
+
+  .broen-btn.primary {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    color: #000000;
+    border-color: #ffffff;
+  }
+
+  .broen-btn.primary:hover {
+    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.25);
+  }
+
+  /* Empty state */
+  .broen-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .broen-banner h1 {
+      font-size: 2.5rem;
+    }
+
+    .broen-banner p {
+      font-size: 1.1rem;
+    }
+
+    .door-filter-buttons {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .door-filter-btn {
+      width: 100%;
+      max-width: 280px;
+      padding: 1rem 1.5rem;
+    }
+
+    .filter-sort-container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+
+    .broen-product-grid {
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .broen-product-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .broen-main-content {
+      padding: 2rem 1rem;
+    }
+
+    .door-filter-container {
+      padding: 2rem 0;
     }
   }
-{%- endstyle -%}
 
-<div class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}">
-  {%- paginate collection.products by section.settings.products_per_page -%}
-    {% comment %} Sort is the first tabbable element when filter type is vertical {% endcomment %}
-    {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
-      <facet-filters-form class="facets facets-vertical-sort page-width small-hide">
-        <form class="facets-vertical-form" id="FacetSortForm">
-          <div class="facet-filters sorting caption">
-            <div class="facet-filters__field">
-              <h2 class="facet-filters__label caption-large text-body">
-                <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
-              </h2>
-              <div class="select">
-                {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-                <select
-                  name="sort_by"
-                  class="facet-filters__sort select__select caption-large"
-                  id="SortBy"
-                  aria-describedby="a11y-refresh-page-message"
+  @media (max-width: 480px) {
+    .broen-product-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .broen-product-content {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Loading states */
+  .broen-btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .broen-btn.success {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border-color: #4CAF50;
+  }
+
+  .broen-btn.error {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    color: white;
+    border-color: #f44336;
+  }
+
+  /* Animation for filtered products */
+  .broen-product-card.filtered-in {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+{%- paginate collection.products by 24 -%}
+<div class="broen-collection-wrapper">
+  <!-- Header Section -->
+  <div class="broen-header">
+    <div class="broen-banner">
+      <h1>Different Smart Locks Built for Different Doors</h1>
+      <p>What kind of door do you have?</p>
+    </div>
+  </div>
+
+  <!-- Door Type Filter Section -->
+  <div class="door-filter-container">
+    <div class="door-filter-buttons">
+      <button class="door-filter-btn active" data-door-type="all">All Doors</button>
+      <button class="door-filter-btn" data-door-type="main-door">Main Door</button>
+      <button class="door-filter-btn" data-door-type="outdoor">Outdoor (Waterproof)</button>
+      <button class="door-filter-btn" data-door-type="indoor">Indoor</button>
+      <button class="door-filter-btn" data-door-type="glass-door">Glass Door</button>
+      <button class="door-filter-btn" data-door-type="sliding-door">Sliding Door</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="broen-main-content">
+    <!-- Filter and Sort Controls -->
+    <div class="filter-sort-container">
+      <div class="traditional-filters">
+        <details>
+          <summary>Filter and Sort</summary>
+          <div style="padding-top: 1rem;">
+            {% render 'facets', 
+              results: collection, 
+              enable_filtering: true,
+              enable_sorting: true,
+              filter_type: 'horizontal',
+              paginate: paginate 
+            %}
+          </div>
+        </details>
+      </div>
+      
+      <div class="product-count">
+        <span id="product-count">{{ collection.products.size }}</span> products
+      </div>
+    </div>
+
+    {%- if collection.products.size == 0 -%}
+      <div class="broen-empty-state">
+        <h2 style="color: rgba(255, 255, 255, 0.8); font-size: 2rem; margin-bottom: 1rem;">No products found</h2>
+        <p>Try adjusting your filters or browse all products.</p>
+      </div>
+    {%- else -%}
+      <!-- Product Grid -->
+      <div class="broen-product-grid" id="product-grid">
+        {%- for product in collection.products -%}
+          {%- assign door_type = product.metafields.custom.door_type.value | default: 'main-door' -%}
+          
+          <div class="broen-product-card" data-door-type="{{ door_type }}" data-product-id="{{ product.id }}">
+            <!-- Product Image -->
+            <div class="broen-product-image">
+              {%- if product.featured_media -%}
+                <img 
+                  src="{{ product.featured_media | image_url: width: 600 }}"
+                  alt="{{ product.featured_media.alt | escape }}"
+                  loading="lazy"
+                  width="600"
+                  height="600"
                 >
-                  {%- for option in collection.sort_options -%}
-                    <option
-                      value="{{ option.value | escape }}"
-                      {% if option.value == sort_by %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      {{ option.name | escape }}
-                    </option>
-                  {%- endfor -%}
-                </select>
-                {% render 'icon-caret' %}
+              {%- else -%}
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(255, 255, 255, 0.3); font-size: 1rem;">
+                  No Image Available
+                </div>
+              {%- endif -%}
+            </div>
+
+            <!-- Product Content -->
+            <div class="broen-product-content">
+              <h3 class="broen-product-name">
+                <a href="{{ product.url }}">{{ product.title }}</a>
+              </h3>
+
+              <!-- Product Rating -->
+              <div class="broen-product-rating">
+                <div class="broen-stars">★★★★★</div>
+                <span class="broen-rating-count">
+                  {%- case forloop.index -%}
+                    {%- when 1 -%}(80)
+                    {%- when 2 -%}(95)
+                    {%- when 3 -%}(27)
+                    {%- when 4 -%}(55)
+                    {%- when 5 -%}(34)
+                    {%- when 6 -%}(37)
+                    {%- else -%}({{ 20 | plus: forloop.index | times: 2 }})
+                  {%- endcase -%}
+                </span>
+              </div>
+
+              <!-- Product Price -->
+              <div class="broen-product-price">
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="compare-price">{{ product.compare_at_price | money }}</span>
+                {%- endif -%}
+                {{ product.price | money }}
+              </div>
+
+              <!-- Product Actions -->
+              <div class="broen-product-actions">
+                <form action="/cart/add" method="post" enctype="multipart/form-data" class="broen-add-to-cart-form">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="broen-btn primary">Add to Cart</button>
+                </form>
+                <a href="{{ product.url }}" class="broen-btn">View Details</a>
               </div>
             </div>
           </div>
-
-          <div class="product-count-vertical light" role="status">
-            <h2 class="product-count__text text-body">
-              <span id="ProductCountDesktop">
-                {%- if collection.results_count -%}
-                  {{
-                    'templates.search.results_with_count'
-                    | t: terms: collection.terms, count: collection.results_count
-                  }}
-                {%- elsif collection.products_count == collection.all_products_count -%}
-                  {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
-                {%- else -%}
-                  {{
-                    'products.facets.product_count'
-                    | t: product_count: collection.products_count, count: collection.all_products_count
-                  }}
-                {%- endif -%}
-              </span>
-            </h2>
-            {%- render 'loading-spinner' -%}
-          </div>
-        </form>
-      </facet-filters-form>
-    {%- endif -%}
-
-    <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical page-width{% endif %}">
-      {{ 'component-facets.css' | asset_url | stylesheet_tag }}
-      <script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
-      {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
-        <aside
-          aria-labelledby="verticalTitle"
-          class="facets-wrapper{% unless section.settings.enable_filtering %} facets-wrapper--no-filters{% endunless %}{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
-          id="main-collection-filters"
-          data-id="{{ section.id }}"
-        >
-          {% render 'facets',
-            results: collection,
-            enable_filtering: section.settings.enable_filtering,
-            enable_sorting: section.settings.enable_sorting,
-            filter_type: section.settings.filter_type,
-            paginate: paginate
-          %}
-        </aside>
-      {%- endif -%}
-
-      <div
-        class="product-grid-container{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-        id="ProductGridContainer"
-        {% if settings.animations_reveal_on_scroll %}
-          data-cascade
-        {% endif %}
-      >
-        {%- if collection.products.size == 0 -%}
-          <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
-            <div class="loading-overlay gradient"></div>
-            <div class="title-wrapper center">
-              <h2 class="title title--primary">
-                {{ 'sections.collection_template.empty' | t -}}
-                <br>
-                {{
-                  'sections.collection_template.use_fewer_filters_html'
-                  | t: link: collection.url, class: 'underlined-link link'
-                }}
-              </h2>
-            </div>
-          </div>
-        {%- else -%}
-          <div
-            class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
-          >
-            <div class="loading-overlay gradient"></div>
-            <ul
-              id="product-grid"
-              data-id="{{ section.id }}"
-              class="
-                grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down
-                grid--{{ section.settings.columns_desktop }}-col-desktop
-                {% if section.settings.quick_add == 'bulk' %} collection-quick-add-bulk{% endif %}
-              "
-            >
-              {%- for product in collection.products -%}
-                {% assign lazy_load = false %}
-                {%- if forloop.index > 2 -%}
-                  {%- assign lazy_load = true -%}
-                {%- endif -%}
-                <li
-                  class="grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                  {% if settings.animations_reveal_on_scroll %}
-                    data-cascade
-                    style="--animation-order: {{ forloop.index }};"
-                  {% endif %}
-                >
-                  {% render 'card-product',
-                    card_product: product,
-                    media_aspect_ratio: section.settings.image_ratio,
-                    image_shape: section.settings.image_shape,
-                    show_secondary_image: section.settings.show_secondary_image,
-                    show_vendor: section.settings.show_vendor,
-                    show_rating: section.settings.show_rating,
-                    lazy_load: lazy_load,
-                    quick_add: section.settings.quick_add,
-                    section_id: section.id
-                  %}
-                </li>
-              {%- endfor -%}
-            </ul>
-
-            {%- if paginate.pages > 1 -%}
-              {% render 'pagination', paginate: paginate, anchor: '' %}
-            {%- endif -%}
-          </div>
-        {%- endif -%}
+        {%- endfor -%}
       </div>
-    </div>
-  {%- endpaginate -%}
-  {% if section.settings.image_shape == 'arch' %}
-    {% render 'mask-arch' %}
-  {%- endif -%}
-</div>
 
-{% schema %}
-{
-  "name": "t:sections.main-collection-product-grid.name",
-  "class": "section",
-  "settings": [
-    {
-      "type": "range",
-      "id": "products_per_page",
-      "min": 8,
-      "max": 36,
-      "step": 4,
-      "default": 16,
-      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "min": 1,
-      "max": 6,
-      "step": 1,
-      "default": 4,
-      "label": "t:sections.main-collection-product-grid.settings.columns_desktop.label"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:sections.all.colors.label",
-      "info": "t:sections.all.colors.has_cards_info",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.main-collection-product-grid.settings.header__3.content"
-    },
-    {
-      "type": "select",
-      "id": "image_ratio",
-      "options": [
-        {
-          "value": "adapt",
-          "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__1.label"
-        },
-        {
-          "value": "portrait",
-          "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__2.label"
-        },
-        {
-          "value": "square",
-          "label": "t:sections.main-collection-product-grid.settings.image_ratio.options__3.label"
-        }
-      ],
-      "default": "adapt",
-      "label": "t:sections.main-collection-product-grid.settings.image_ratio.label"
-    },
-    {
-      "type": "select",
-      "id": "image_shape",
-      "options": [
-        {
-          "value": "default",
-          "label": "t:sections.all.image_shape.options__1.label"
-        },
-        {
-          "value": "arch",
-          "label": "t:sections.all.image_shape.options__2.label"
-        },
-        {
-          "value": "blob",
-          "label": "t:sections.all.image_shape.options__3.label"
-        },
-        {
-          "value": "chevronleft",
-          "label": "t:sections.all.image_shape.options__4.label"
-        },
-        {
-          "value": "chevronright",
-          "label": "t:sections.all.image_shape.options__5.label"
-        },
-        {
-          "value": "diamond",
-          "label": "t:sections.all.image_shape.options__6.label"
-        },
-        {
-          "value": "parallelogram",
-          "label": "t:sections.all.image_shape.options__7.label"
-        },
-        {
-          "value": "round",
-          "label": "t:sections.all.image_shape.options__8.label"
-        }
-      ],
-      "default": "default",
-      "label": "t:sections.all.image_shape.label",
-      "info": "t:sections.all.image_shape.info"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_secondary_image",
-      "default": false,
-      "label": "t:sections.main-collection-product-grid.settings.show_secondary_image.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "default": false,
-      "label": "t:sections.main-collection-product-grid.settings.show_vendor.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_rating",
-      "default": false,
-      "label": "t:sections.main-collection-product-grid.settings.show_rating.label",
-      "info": "t:sections.main-collection-product-grid.settings.show_rating.info"
-    },
-    {
-      "type": "select",
-      "id": "quick_add",
-      "default": "none",
-      "label": "t:sections.main-collection-product-grid.settings.quick_add.label",
-      "info": "t:sections.main-collection-product-grid.settings.quick_add.info",
-      "options": [
-        {
-          "value": "none",
-          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_1"
-        },
-        {
-          "value": "standard",
-          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_2"
-        },
-        {
-          "value": "bulk",
-          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_3"
-        }
-      ]
-    },
-    {
-      "type": "header",
-      "content": "t:sections.main-collection-product-grid.settings.header__1.content"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_filtering",
-      "default": true,
-      "label": "t:sections.main-collection-product-grid.settings.enable_filtering.label",
-      "info": "t:sections.main-collection-product-grid.settings.enable_filtering.info"
-    },
-    {
-      "type": "select",
-      "id": "filter_type",
-      "options": [
-        {
-          "value": "horizontal",
-          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__1.label"
-        },
-        {
-          "value": "vertical",
-          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__2.label"
-        },
-        {
-          "value": "drawer",
-          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label"
-        }
-      ],
-      "default": "horizontal",
-      "label": "t:sections.main-collection-product-grid.settings.filter_type.label",
-      "info": "t:sections.main-collection-product-grid.settings.filter_type.info"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_sorting",
-      "default": true,
-      "label": "t:sections.main-collection-product-grid.settings.enable_sorting.label"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.main-collection-product-grid.settings.header_mobile.content"
-    },
-    {
-      "type": "select",
-      "id": "columns_mobile",
-      "default": "2",
-      "label": "t:sections.main-collection-product-grid.settings.columns_mobile.label",
-      "options": [
-        {
-          "value": "1",
-          "label": "t:sections.main-collection-product-grid.settings.columns_mobile.options__1.label"
-        },
-        {
-          "value": "2",
-          "label": "t:sections.main-collection-product-grid.settings.columns_mobile.options__2.label"
-        }
-      ]
-    },
-    {
-      "type": "header",
-      "content": "t:sections.all.padding.section_padding_heading"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:sections.all.padding.padding_top",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:sections.all.padding.padding_bottom",
-      "default": 36
+      {%- if paginate.pages > 1 -%}
+        <div style="margin-top: 4rem;">
+          {% render 'pagination', paginate: paginate %}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+{%- endpaginate -%}
+
+<script>
+(function() {
+  // Enhanced door type filtering with smooth animations
+  const filterButtons = document.querySelectorAll('.door-filter-btn');
+  const productCards = document.querySelectorAll('[data-door-type]');
+  const productCountElement = document.getElementById('product-count');
+
+  function updateProductCount() {
+    const visibleProducts = document.querySelectorAll('[data-door-type]:not([style*="display: none"])').length;
+    if (productCountElement) {
+      productCountElement.textContent = visibleProducts;
     }
-  ]
-}
-{% endschema %}
+  }
+
+  function filterProducts(doorType) {
+    productCards.forEach((card, index) => {
+      const cardDoorType = card.getAttribute('data-door-type');
+      
+      if (doorType === 'all' || cardDoorType === doorType) {
+        card.style.display = 'block';
+        
+        // Add staggered animation
+        setTimeout(() => {
+          card.classList.add('filtered-in');
+        }, index * 50);
+        
+        // Remove animation class after animation completes
+        setTimeout(() => {
+          card.classList.remove('filtered-in');
+        }, 600 + (index * 50));
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('filtered-in');
+      }
+    });
+    
+    updateProductCount();
+  }
+
+  // Enhanced button click handling
+  filterButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Remove active class from all buttons
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      
+      // Add active class to clicked button
+      this.classList.add('active');
+      
+      // Filter products with animation
+      const doorType = this.getAttribute('data-door-type');
+      filterProducts(doorType);
+    });
+  });
+
+  // Enhanced add to cart functionality
+  const addToCartForms = document.querySelectorAll('.broen-add-to-cart-form');
+  
+  addToCartForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+      const button = form.querySelector('button[type="submit"]');
+      const originalText = button.textContent;
+      
+      // Show loading state
+      button.textContent = 'Adding...';
+      button.classList.add('loading');
+      button.disabled = true;
+      
+      fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Show success state
+        button.textContent = '✓ Added!';
+        button.classList.remove('loading');
+        button.classList.add('success');
+        
+        // Reset button after 3 seconds
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+          button.classList.remove('success');
+        }, 3000);
+        
+        // Trigger cart update event
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        button.textContent = 'Error - Try Again';
+        button.classList.remove('loading');
+        button.classList.add('error');
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+          button.classList.remove('error');
+        }, 3000);
+      });
+    });
+  });
+
+  // Initialize
+  updateProductCount();
+})();
+</script>
