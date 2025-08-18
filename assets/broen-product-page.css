@@ -1,0 +1,679 @@
+/* assets/broen-product-page.css */
+
+/* Broen Brand Kit Variables */
+:root {
+  --broen-black: #000000;
+  --broen-white: #ffffff;
+  --broen-dark-gray: #3d3d3d;
+  --broen-brown: #614524;
+  --broen-accent: #4ECDC4;
+  --broen-orange: #FF6B35;
+  --broen-specialist: #665A4A;
+  --broen-font-family: 'Ridley Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --broen-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  --broen-shadow-hover: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Remove any existing orange/unwanted elements */
+.price__badge-sale,
+.price__sale,
+.badge--sale,
+[style*="orange"]:not(.broen-video-badge):not(.broen-carousel-label):not(.broen-demo-label),
+[class*="orange"]:not(.broen-video-badge):not(.broen-carousel-label):not(.broen-demo-label),
+.product__text--variant-sold-out-message,
+.shopify-payment-button {
+  display: none !important;
+}
+
+/* Global Product Page Styling */
+.product {
+  font-family: var(--broen-font-family);
+  padding: 2rem 0;
+  min-height: 100vh;
+}
+
+.product__info-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Video Badge */
+.broen-video-badge {
+  background: var(--broen-orange);
+  color: var(--broen-white);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-family: var(--broen-font-family);
+  box-shadow: var(--broen-shadow);
+}
+
+/* Product Number - Main Focus */
+.broen-product-number {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--broen-black);
+  text-align: center;
+  margin: 2rem 0;
+  font-family: var(--broen-font-family);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Product Header Section */
+.broen-product-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.broen-product-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--broen-white);
+  margin-bottom: 0.5rem;
+  background: var(--broen-accent);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  display: inline-block;
+  font-family: var(--broen-font-family);
+  box-shadow: var(--broen-shadow);
+  transition: all 0.3s ease;
+}
+
+.broen-product-name:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+.broen-door-classification {
+  background: var(--broen-accent);
+  color: var(--broen-white);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-family: var(--broen-font-family);
+  box-shadow: var(--broen-shadow);
+}
+
+/* Price Section */
+.broen-price-container {
+  text-align: center;
+  margin: 2rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  box-shadow: var(--broen-shadow);
+}
+
+.broen-price {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--broen-black);
+  font-family: var(--broen-font-family);
+}
+
+/* Section Styling */
+.broen-color-section,
+.broen-mortise-section {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background: var(--broen-white);
+  border-radius: 12px;
+  box-shadow: var(--broen-shadow);
+}
+
+.broen-section-label {
+  font-weight: 700;
+  color: var(--broen-black);
+  margin-bottom: 1rem;
+  font-family: var(--broen-font-family);
+  font-size: 1.1rem;
+}
+
+/* Color Options */
+.broen-color-options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.broen-color-type {
+  background: var(--broen-accent);
+  color: var(--broen-white);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--broen-font-family);
+  box-shadow: var(--broen-shadow);
+  border: none;
+}
+
+.broen-color-type.active,
+.broen-color-type:hover {
+  background: var(--broen-brown);
+  transform: translateY(-2px);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+/* Mortise Section */
+.broen-mortise-options {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.broen-mortise-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f8f9fa;
+}
+
+.broen-mortise-option:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.broen-mortise-option.active {
+  background: rgba(97, 69, 36, 0.1);
+}
+
+.broen-mortise-type {
+  background: var(--broen-accent);
+  color: var(--broen-white);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  font-family: var(--broen-font-family);
+  box-shadow: var(--broen-shadow);
+  transition: all 0.3s ease;
+}
+
+.broen-mortise-option.active .broen-mortise-type,
+.broen-mortise-option:hover .broen-mortise-type {
+  background: var(--broen-brown);
+}
+
+.broen-mortise-image {
+  width: 70px;
+  height: 90px;
+  background: var(--broen-white);
+  border: 3px solid #e9ecef;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: var(--broen-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--broen-dark-gray);
+}
+
+.broen-mortise-option.active .broen-mortise-image,
+.broen-mortise-option:hover .broen-mortise-image {
+  border-color: var(--broen-brown);
+  background: rgba(97, 69, 36, 0.05);
+}
+
+/* About Product Section */
+.broen-about-section,
+.broen-how-it-works,
+.broen-after-sales {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: var(--broen-white);
+  border-radius: 16px;
+  box-shadow: var(--broen-shadow);
+}
+
+.broen-section-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--broen-black);
+  margin-bottom: 2rem;
+  font-family: var(--broen-font-family);
+  text-align: center;
+  position: relative;
+}
+
+.broen-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--broen-accent);
+  border-radius: 2px;
+}
+
+/* Horizontal Carousel */
+.broen-horizontal-carousel,
+.broen-service-carousel {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.broen-carousel-item,
+.broen-service-item {
+  width: 70px;
+  height: 70px;
+  background: #f8f9fa;
+  border: 3px solid #e9ecef;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--broen-dark-gray);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--broen-font-family);
+  box-shadow: var(--broen-shadow);
+}
+
+.broen-carousel-item.large,
+.broen-service-item.large {
+  width: 140px;
+  height: 140px;
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.broen-carousel-item.active,
+.broen-service-item.active {
+  background: var(--broen-brown);
+  color: var(--broen-white);
+  border-color: var(--broen-brown);
+  transform: translateY(-4px);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+.broen-carousel-item:hover,
+.broen-service-item:hover {
+  background: var(--broen-accent);
+  color: var(--broen-white);
+  border-color: var(--broen-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+/* Demo Video Section */
+.broen-demo-video {
+  width: 100%;
+  height: 250px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 3px solid #e9ecef;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--broen-shadow);
+  transition: all 0.3s ease;
+}
+
+.broen-demo-video:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+.broen-demo-number {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--broen-dark-gray);
+  font-family: var(--broen-font-family);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Labels */
+.broen-carousel-label,
+.broen-demo-label {
+  text-align: center;
+  color: var(--broen-orange);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: var(--broen-font-family);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Product Form Styling */
+.product-form {
+  margin-top: 3rem;
+}
+
+.product-form__buttons {
+  margin-top: 2rem;
+}
+
+/* Add to Cart Button */
+.broen-add-to-cart-btn {
+  background: linear-gradient(135deg, var(--broen-black) 0%, var(--broen-dark-gray) 100%);
+  color: var(--broen-white);
+  border: none;
+  padding: 1.25rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--broen-font-family);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: var(--broen-shadow);
+}
+
+.broen-add-to-cart-btn:hover {
+  background: linear-gradient(135deg, var(--broen-brown) 0%, var(--broen-dark-gray) 100%);
+  transform: translateY(-3px);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+.broen-add-to-cart-btn:active {
+  transform: translateY(-1px);
+}
+
+.broen-add-to-cart-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Sticky Specialist Button */
+.broen-sticky-specialist {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1000;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.broen-specialist-btn {
+  background: linear-gradient(135deg, var(--broen-specialist) 0%, var(--broen-brown) 100%);
+  color: var(--broen-white);
+  padding: 1rem 1.75rem;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(102, 90, 74, 0.4);
+  transition: all 0.3s ease;
+  font-family: var(--broen-font-family);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.95rem;
+}
+
+.broen-specialist-btn::before {
+  content: "📞";
+  font-size: 1.1rem;
+}
+
+.broen-specialist-btn:hover {
+  background: linear-gradient(135deg, var(--broen-brown) 0%, var(--broen-dark-gray) 100%);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(102, 90, 74, 0.5);
+  color: var(--broen-white);
+}
+
+.broen-specialist-btn:active {
+  transform: translateY(-2px);
+}
+
+/* Media Gallery Enhancement */
+.product__media-wrapper {
+  position: relative;
+}
+
+.product__media img {
+  border-radius: 16px;
+  box-shadow: var(--broen-shadow);
+  transition: all 0.3s ease;
+}
+
+.product__media:hover img {
+  transform: scale(1.02);
+  box-shadow: var(--broen-shadow-hover);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .broen-sticky-specialist {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product__info-container {
+    padding: 0.5rem;
+  }
+  
+  .broen-product-number {
+    font-size: 4rem;
+    margin: 1.5rem 0;
+  }
+  
+  .broen-product-name {
+    font-size: 1.3rem;
+    padding: 0.6rem 1.2rem;
+  }
+  
+  .broen-price {
+    font-size: 1.75rem;
+  }
+  
+  .broen-horizontal-carousel,
+  .broen-service-carousel {
+    gap: 0.75rem;
+  }
+  
+  .broen-carousel-item,
+  .broen-service-item {
+    width: 60px;
+    height: 60px;
+    font-size: 0.9rem;
+  }
+  
+  .broen-carousel-item.large,
+  .broen-service-item.large {
+    width: 120px;
+    height: 120px;
+    font-size: 1.75rem;
+  }
+  
+  .broen-mortise-options {
+    gap: 1rem;
+  }
+  
+  .broen-mortise-image {
+    width: 60px;
+    height: 80px;
+  }
+  
+  .broen-demo-video {
+    height: 200px;
+  }
+  
+  .broen-demo-number {
+    font-size: 3rem;
+  }
+  
+  .broen-sticky-specialist {
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .broen-specialist-btn {
+    padding: 0.8rem 1.4rem;
+    font-size: 0.85rem;
+  }
+  
+  .broen-about-section,
+  .broen-how-it-works,
+  .broen-after-sales {
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .broen-section-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .broen-product-number {
+    font-size: 3rem;
+  }
+  
+  .broen-color-options {
+    justify-content: center;
+  }
+  
+  .broen-mortise-options {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .broen-horizontal-carousel,
+  .broen-service-carousel {
+    gap: 0.5rem;
+  }
+  
+  .broen-carousel-item,
+  .broen-service-item {
+    width: 50px;
+    height: 50px;
+    font-size: 0.8rem;
+  }
+  
+  .broen-carousel-item.large,
+  .broen-service-item.large {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+  }
+  
+  .broen-specialist-btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.8rem;
+  }
+  
+  .broen-specialist-btn::before {
+    font-size: 1rem;
+  }
+}
+
+/* Hide default Shopify elements */
+.product-form__input:not(.broen-custom),
+.product-form__buttons .btn:not(.broen-add-to-cart-btn),
+.product__text:not(.broen-custom),
+.price:not(.broen-price),
+.product__title:not(.broen-product-name) {
+  display: none !important;
+}
+
+/* Ensure proper spacing and layout */
+.product__info-container > * {
+  margin-bottom: 1rem;
+}
+
+.product__info-container > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Remove any conflicting styles */
+.product__media-wrapper,
+.product__info-wrapper {
+  background: transparent !important;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--broen-brown);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--broen-dark-gray);
+}
+
+/* Loading animation for better UX */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.broen-about-section,
+.broen-how-it-works,
+.broen-after-sales,
+.broen-color-section,
+.broen-mortise-section {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+/* Focus states for accessibility */
+.broen-color-type:focus,
+.broen-mortise-option:focus,
+.broen-carousel-item:focus,
+.broen-service-item:focus,
+.broen-add-to-cart-btn:focus,
+.broen-specialist-btn:focus {
+  outline: 3px solid var(--broen-accent);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .broen-carousel-item,
+  .broen-service-item,
+  .broen-mortise-image {
+    border-width: 4px;
+  }
+  
+  .broen-section-title::after {
+    height: 4px;
+  }
+}

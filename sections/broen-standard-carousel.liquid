@@ -1,40 +1,92 @@
-<!-- The Broen Standard Carousel -->
+<!-- The Broen Standard - Fixed Carousel -->
 <section class="broen-showcase-section broen-standard">
   <div class="section-container">
     
     <div class="carousel-block">
       <h2 class="carousel-title">The Broen Standard</h2>
-      <div class="carousel-scroll-container">
-        <div class="carousel-wrapper">
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '46.png' | file_url }}" alt="Smart Lock Product" class="product-image">
+      
+      <!-- Process Showcase with Navigation -->
+      <div class="standard-showcase">
+        
+        <!-- Navigation Arrows -->
+        <button class="nav-arrow nav-arrow-left" id="prevStandard">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        
+        <button class="nav-arrow nav-arrow-right" id="nextStandard">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="carousel-scroll-container">
+          <div class="carousel-wrapper">
+            
+            <!-- Card 1 -->
+            <div class="product-card" data-card="products">
+              <div class="product-media">
+                <img src="{{ '46.png' | file_url }}" alt="Smart Lock Product" class="product-image">
+              </div>
+              <button class="product-button">Get All Products</button>
             </div>
-            <button class="product-button">Get All Products</button>
-          </div>
-          
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '47.png' | file_url }}" alt="Consultation Service" class="product-image">
+            
+            <!-- Card 2 -->
+            <div class="product-card" data-card="talk">
+              <div class="product-media">
+                <img src="{{ '47.png' | file_url }}" alt="Consultation Service" class="product-image">
+              </div>
+              <button class="product-button">Talk To Us</button>
             </div>
-            <button class="product-button">Talk To Us</button>
-          </div>
-          
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '48.png' | file_url }}" alt="24/7 Support" class="product-image">
+            
+            <!-- Card 3 -->
+            <div class="product-card" data-card="support">
+              <div class="product-media">
+                <img src="{{ '48.png' | file_url }}" alt="24/7 Support" class="product-image">
+              </div>
+              <button class="product-button">Contact Us 24/7</button>
             </div>
-            <button class="product-button">Contact Us 24/7</button>
-          </div>
-          
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '45.png' | file_url }}" alt="Community" class="product-image">
+            
+            <!-- Card 4 -->
+            <div class="product-card" data-card="family">
+              <div class="product-media">
+                <img src="{{ '45.png' | file_url }}" alt="Community" class="product-image">
+              </div>
+              <button class="product-button">Join Our Family</button>
             </div>
-            <button class="product-button">Join Our Family</button>
+
+            <!-- Cloned cards for infinite loop -->
+            <!-- Clone of Card 1 -->
+            <div class="product-card clone" data-card="products">
+              <div class="product-media">
+                <img src="{{ '46.png' | file_url }}" alt="Smart Lock Product" class="product-image">
+              </div>
+              <button class="product-button">Get All Products</button>
+            </div>
+            
+            <!-- Clone of Card 2 -->
+            <div class="product-card clone" data-card="talk">
+              <div class="product-media">
+                <img src="{{ '47.png' | file_url }}" alt="Consultation Service" class="product-image">
+              </div>
+              <button class="product-button">Talk To Us</button>
+            </div>
+
           </div>
         </div>
       </div>
+
+      <!-- Navigation Dots -->
+      <div class="standard-navigation">
+        <div class="standard-dots">
+          <button class="standard-dot active" data-slide="0"></button>
+          <button class="standard-dot" data-slide="1"></button>
+          <button class="standard-dot" data-slide="2"></button>
+          <button class="standard-dot" data-slide="3"></button>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -44,12 +96,15 @@
 .broen-showcase-section.broen-standard {
   padding: 60px 0 40px 0;
   background: #000000;
+  position: relative;
+  overflow: hidden;
 }
 
 .broen-standard .section-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
+  position: relative;
 }
 
 .broen-standard .carousel-block {
@@ -57,66 +112,100 @@
 }
 
 .broen-standard .carousel-title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 1.8rem;
-  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
   color: #ffffff;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   position: relative;
   letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .broen-standard .carousel-title::after {
   content: '';
   position: absolute;
-  bottom: -12px;
+  bottom: -16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 40px;
+  width: 60px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  opacity: 0.6;
 }
 
+/* Standard Showcase */
+.standard-showcase {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Navigation Arrows - Fixed Z-index and Positioning */
+.broen-standard .nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.broen-standard .nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.broen-standard .nav-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.broen-standard .nav-arrow-left {
+  left: 20px;
+}
+
+.broen-standard .nav-arrow-right {
+  right: 20px;
+}
+
+/* Carousel Container - Infinite Loop Setup */
 .broen-standard .carousel-scroll-container {
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 20px 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-
-.broen-standard .carousel-scroll-container::-webkit-scrollbar {
-  height: 6px;
-}
-
-.broen-standard .carousel-scroll-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.broen-standard .carousel-scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.broen-standard .carousel-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  padding: 20px 0 40px 0;
+  margin: 0 80px;
+  position: relative;
 }
 
 .broen-standard .carousel-wrapper {
   display: flex;
   gap: 20px;
-  width: fit-content;
-  min-width: 100%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  width: calc(6 * (280px + 20px)); /* 6 cards total (4 original + 2 clones) */
 }
 
+/* Product Cards - All Same Size */
 .broen-standard .product-card {
-  background: rgba(20, 20, 20, 0.8);
+  background: rgba(15, 15, 15, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   flex-shrink: 0;
   width: 280px;
@@ -124,47 +213,50 @@
   flex-direction: column;
   min-height: 360px;
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .broen-standard .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(30, 30, 30, 0.9);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(25, 25, 25, 0.95);
 }
 
 .broen-standard .product-media {
   width: 100%;
-  height: 200px;
+  height: 240px;
   position: relative;
-  background: #1a1a1a;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-}
-
-.broen-standard .product-media.large {
-  height: 240px;
-  background: #000000;
+  overflow: hidden;
 }
 
 .broen-standard .product-image {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
   object-fit: contain;
-  filter: brightness(1.1) contrast(1.1);
+  filter: brightness(1.1) contrast(1.05) saturate(1.1);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.broen-standard .product-card:hover .product-image {
+  transform: scale(1.1);
+  filter: brightness(1.2) contrast(1.1) saturate(1.2);
 }
 
 .broen-standard .product-button {
   padding: 20px 24px;
   border: none;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
@@ -177,6 +269,7 @@
   z-index: 5;
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.02em;
 }
 
 .broen-standard .product-button:hover {
@@ -185,18 +278,76 @@
   transform: none;
 }
 
+/* Navigation Dots */
+.standard-navigation {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.standard-dots {
+  display: flex;
+  gap: 12px;
+}
+
+.standard-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.standard-dot.active {
+  background: #ffffff;
+  transform: scale(1.2);
+}
+
+.standard-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+}
+
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .broen-standard .section-container {
+    padding: 0 20px;
+  }
+  
+  .broen-standard .carousel-scroll-container {
+    margin: 0 80px;
+  }
+  
+  .broen-standard .nav-arrow-left {
+    left: 10px;
+  }
+  
+  .broen-standard .nav-arrow-right {
+    right: 10px;
+  }
+}
+
 @media (max-width: 768px) {
   .broen-showcase-section.broen-standard {
     padding: 40px 0 20px 0;
   }
   
   .broen-standard .section-container {
-    padding: 0 15px;
+    padding: 0 16px;
+  }
+  
+  .broen-standard .carousel-scroll-container {
+    margin: 0;
+  }
+  
+  .broen-standard .nav-arrow {
+    display: none;
   }
   
   .broen-standard .carousel-title {
-    font-size: 1.6rem;
+    margin-bottom: 40px;
   }
   
   .broen-standard .product-card {
@@ -204,49 +355,340 @@
     min-height: 320px;
   }
   
-}
-
-@media (max-width: 480px) {
-  .broen-standard .carousel-title {
-    font-size: 1.4rem;
+  .broen-standard .carousel-wrapper {
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    width: auto;
+  }
+  
+  .broen-standard .carousel-wrapper::-webkit-scrollbar {
+    display: none;
   }
   
   .broen-standard .product-card {
+    scroll-snap-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .broen-standard .product-card {
     width: 200px;
+    min-height: 300px;
   }
   
+  .broen-standard .product-media {
+    height: 200px;
+  }
+  
+  .broen-standard .product-button {
+    padding: 16px 20px;
+    font-size: 14px;
+  }
+  
+  .standard-dots {
+    gap: 10px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .broen-standard .product-card,
+  .broen-standard .product-image,
+  .broen-standard .nav-arrow,
+  .broen-standard .carousel-wrapper {
+    transition: none;
+  }
+  
+  .broen-standard .product-card:hover {
+    transform: none;
+  }
+  
+  .broen-standard .product-card:hover .product-image {
+    transform: none;
+  }
+}
+
+/* High Performance */
+.broen-standard .product-card,
+.broen-standard .product-image,
+.broen-standard .carousel-wrapper {
+  will-change: transform;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Smooth scroll on wheel for horizontal containers
-  document.querySelectorAll('.broen-standard .carousel-scroll-container').forEach(container => {
-    container.addEventListener('wheel', function(e) {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        this.scrollLeft += e.deltaY;
+  
+  const standardWrapper = document.querySelector('.broen-standard .carousel-wrapper');
+  const prevButton = document.getElementById('prevStandard');
+  const nextButton = document.getElementById('nextStandard');
+  const standardDots = document.querySelectorAll('.standard-dot');
+  
+  let currentCard = 0;
+  const totalCards = 4;
+  const cardWidth = 300; // Card width + gap
+  let isTransitioning = false;
+  
+  // Initialize position to show first real card
+  if (standardWrapper) {
+    standardWrapper.style.transform = `translateX(0px)`;
+  }
+  
+  // Update card display with infinite loop logic
+  function updateCardDisplay() {
+    if (!standardWrapper || isTransitioning) return;
+    
+    const translateX = -(currentCard * cardWidth);
+    
+    isTransitioning = true;
+    standardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    standardWrapper.style.transform = `translateX(${translateX}px)`;
+    
+    // Handle infinite loop transitions
+    setTimeout(() => {
+      if (currentCard >= totalCards) {
+        // Reset to first card without animation
+        currentCard = 0;
+        standardWrapper.style.transition = 'none';
+        standardWrapper.style.transform = `translateX(0px)`;
+      } else if (currentCard < 0) {
+        // Reset to last card without animation
+        currentCard = totalCards - 1;
+        standardWrapper.style.transition = 'none';
+        standardWrapper.style.transform = `translateX(${-(currentCard * cardWidth)}px)`;
       }
+      
+      // Update dots
+      standardDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentCard);
+      });
+      
+      isTransitioning = false;
+      
+      // Re-enable transitions after reset
+      setTimeout(() => {
+        standardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      }, 50);
+      
+    }, 600);
+    
+    // Update dots immediately for smooth UX
+    const dotIndex = currentCard >= totalCards ? 0 : (currentCard < 0 ? totalCards - 1 : currentCard);
+    standardDots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === dotIndex);
+    });
+    
+    // Analytics
+    if (typeof gtag === 'function') {
+      gtag('event', 'card_view', {
+        event_category: 'broen_standard',
+        event_label: `card_${(currentCard % totalCards) + 1}`,
+        value: (currentCard % totalCards) + 1
+      });
+    }
+  }
+  
+  // Navigation functions with infinite loop
+  function goToCard(cardIndex) {
+    if (isTransitioning) return;
+    
+    if (cardIndex >= 0 && cardIndex < totalCards) {
+      currentCard = cardIndex;
+      updateCardDisplay();
+    }
+  }
+  
+  function nextCard() {
+    if (isTransitioning) return;
+    
+    currentCard++;
+    updateCardDisplay();
+  }
+  
+  function prevCard() {
+    if (isTransitioning) return;
+    
+    if (currentCard === 0) {
+      // Jump to last clone then reset
+      currentCard = totalCards - 1;
+      standardWrapper.style.transition = 'none';
+      standardWrapper.style.transform = `translateX(${-((totalCards + 1) * cardWidth)}px)`;
+      
+      setTimeout(() => {
+        currentCard = totalCards - 1;
+        standardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        updateCardDisplay();
+      }, 50);
+    } else {
+      currentCard--;
+      updateCardDisplay();
+    }
+  }
+  
+  // Event listeners
+  if (nextButton) {
+    nextButton.addEventListener('click', nextCard);
+  }
+  
+  if (prevButton) {
+    prevButton.addEventListener('click', prevCard);
+  }
+  
+  // Dot clicks
+  standardDots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      goToCard(index);
     });
   });
+  
+  // Enhanced wheel scrolling for desktop
+  const scrollContainer = document.querySelector('.broen-standard .carousel-scroll-container');
+  if (scrollContainer && window.innerWidth > 768) {
+    scrollContainer.addEventListener('wheel', function(e) {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        if (e.deltaY > 0) {
+          nextCard();
+        } else {
+          prevCard();
+        }
+      }
+    }, { passive: false });
+  }
   
   // Standard product card interactions
   document.querySelectorAll('.broen-standard .product-card').forEach(card => {
     card.addEventListener('click', function() {
-      const buttonText = this.querySelector('.product-button')?.textContent;
+      const cardType = this.dataset.card;
       
-      if (buttonText?.includes('Contact Us 24/7')) {
-        if (typeof openSpecialistModal === 'function') {
-          openSpecialistModal();
-        }
-      } else if (buttonText?.includes('Get All Products')) {
-        window.location.href = '/collections/smart-locks';
-      } else if (buttonText?.includes('Talk To Us')) {
-        window.location.href = '/pages/contact';
-      } else if (buttonText?.includes('Join Our Family')) {
-        window.location.href = '/pages/contact';
+      // Enhanced analytics
+      if (typeof gtag === 'function') {
+        gtag('event', 'standard_card_click', {
+          event_category: 'broen_standard',
+          event_label: cardType,
+          value: 1
+        });
+      }
+
+      // Route to appropriate actions
+      switch(cardType) {
+        case 'products':
+          window.location.href = '/collections/smart-locks';
+          break;
+        case 'talk':
+          if (typeof openSpecialistModal === 'function') {
+            openSpecialistModal('consultation');
+          } else {
+            window.location.href = '/pages/contact';
+          }
+          break;
+        case 'support':
+          if (typeof openSpecialistModal === 'function') {
+            openSpecialistModal('support');
+          } else {
+            window.location.href = '/pages/contact';
+          }
+          break;
+        case 'family':
+          window.location.href = '/pages/family';
+          break;
+        default:
+          console.log(`Clicked on ${cardType} card`);
+      }
+    });
+
+    // Enhanced hover effects with haptic feedback
+    card.addEventListener('mouseenter', function() {
+      if ('vibrate' in navigator) {
+        navigator.vibrate(5);
       }
     });
   });
+
+  // Touch/swipe support for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  if (standardWrapper) {
+    standardWrapper.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    standardWrapper.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+  }
+  
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const swipeDistance = touchStartX - touchEndX;
+    
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+      if (swipeDistance > 0) {
+        // Swiped left - go to next card
+        nextCard();
+      } else {
+        // Swiped right - go to previous card
+        prevCard();
+      }
+    }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.target.closest('.broen-standard')) {
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          prevCard();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          nextCard();
+          break;
+        case 'Home':
+          e.preventDefault();
+          goToCard(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          goToCard(totalCards - 1);
+          break;
+      }
+    }
+  });
+
+  // Auto-play (optional)
+  let autoPlayInterval;
+  
+  function startAutoPlay() {
+    autoPlayInterval = setInterval(() => {
+      nextCard();
+    }, 5000);
+  }
+  
+  function stopAutoPlay() {
+    clearInterval(autoPlayInterval);
+  }
+  
+  // Pause auto-play on interaction
+  const standardSection = document.querySelector('.broen-standard');
+  if (standardSection) {
+    standardSection.addEventListener('mouseenter', stopAutoPlay);
+    standardSection.addEventListener('mouseleave', startAutoPlay);
+    standardSection.addEventListener('touchstart', stopAutoPlay);
+  }
+  
+  // Optional: Start auto-play (uncomment to enable)
+  // startAutoPlay();
+  
+  // Initialize with proper starting position
+  updateCardDisplay();
+  
+  console.log('🏆 The Broen Standard carousel initialized');
 });
 </script>

@@ -1,4 +1,4 @@
-<!-- Premium Hero Section - Allbirds Style Layout -->
+<!-- Minimalist Premium Hero Section - Apple/Awwwards Inspired -->
 <section class="hero-section">
   <!-- Video Background -->
   <div class="video-background">
@@ -11,46 +11,43 @@
   <!-- Hero Content -->
   <div class="hero-content">
     <div class="hero-container">
-      <!-- Main Hero Text - Allbirds Style -->
+      <!-- Main Hero Typography -->
       <div class="hero-text">
-        <h1 class="hero-headline">Peak Security<br>Peak Style</h1>
+        <h1 class="hero-headline">
+          <span class="headline-line">Peak Security</span>
+          <span class="headline-line">Peak Style</span>
+        </h1>
         <p class="hero-subtitle">Stylish Smart Locks</p>
       </div>
 
-      <!-- CTA Buttons - Allbirds Layout -->
-      <div class="hero-cta">
-        <button class="primary-btn" onclick="scrollToProducts()">
-          Browse Products Myself
+      <!-- Primary Actions -->
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToProducts()">
+          Browse Products
         </button>
-        <button class="primary-btn" onclick="openLockChooser()">
-          Help Me Choose a Smart Lock
+        <button class="btn-primary-outline" onclick="openLockChooser()">
+          Choose a Smart Lock
         </button>
       </div>
 
       <!-- Secondary Actions -->
-      <div class="secondary-actions">
-        <button class="secondary-btn" onclick="openDoorCheck()">
-          Help Me Check My Door
+      <div class="hero-secondary">
+        <button class="btn-secondary" onclick="openDoorCheck()">
+          Check My Door
         </button>
-        <a href="{{ routes.pages_url }}/catalog" class="secondary-btn">
-          Download Catalog (PDF)
+        <a href="{{ routes.pages_url }}/catalog" class="btn-secondary">
+          Download Catalog
         </a>
-        <button class="secondary-btn" onclick="openContactModal()">
-          Contact Us Directly
+        <button class="btn-secondary" onclick="openContactModal()">
+          Contact Us
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Section -->
-  <div class="hero-bottom">
-    <div class="hero-bottom-content">
-      <h3 class="bottom-title">SECURED WITH</h3>
-      <h4 class="bottom-subtitle">ON LOCK</h4>
-    </div>
-  </div>
 
-  <!-- Sticky Specialist Button -->
+
+  <!-- Sticky Specialist Button - Centered -->
   <div class="hero-specialist-btn">
     <button type="button" class="specialist-btn" onclick="openSpecialistModal()">
       <span class="btn-text">Talk to a Specialist</span>
@@ -62,397 +59,557 @@
 </section>
 
 <style>
+/* Reset and Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header Spacing */
+body {
+  padding-top: 80px !important;
+}
+
+.section-header,
+.shopify-section-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 999 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: -80px;
+  padding-top: 80px;
+}
+
+/* Video Background */
+.video-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+  z-index: 2;
+}
+
+/* Background */
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.background-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f8f9fa 25%,
+    #f1f3f4 50%,
+    #e8eaed 75%,
+    #dadce0 100%
+  );
+  opacity: 0.6;
+}
+
+/* Content Container */
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.hero-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Typography - Apple Style */
+.hero-text {
+  margin-bottom: 60px;
+}
+
+.hero-headline {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(48px, 8vw, 120px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.headline-line {
+  display: block;
+  position: relative;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.headline-line:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-subtitle {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.02em;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Primary Actions */
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+}
+
+.btn-primary {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 980px;
+  padding: 16px 32px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-primary:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: #ffffff;
+}
+
+.btn-primary-outline {
+  background: #000000;
+  color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 980px;
+  padding: 14px 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-primary-outline:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Secondary Actions */
+.hero-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+}
+
+.btn-secondary {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 980px;
+  padding: 12px 24px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Product Visual */
+
+/* Sticky Specialist Button - Centered */
+.hero-specialist-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.specialist-btn {
+  background: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  padding: 16px 32px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  min-width: 220px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.specialist-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.specialist-btn:hover::before {
+  left: 100%;
+}
+
+.specialist-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateX(-50%) translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  border-color: #ffffff;
+}
+
+.btn-text {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.btn-icon {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.specialist-btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 100px !important;
+  }
+  
   .hero-section {
+    margin-top: -100px;
+    padding-top: 100px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hero-visual {
     position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background-color: #000000;
-    margin-top: 0;
-    padding-top: 24px;
-  }
-
-    body::before {
-    content: "";
-    display: block;
-    height: var(--hdr, 72px);
-    }
-
-  /* Video Background */
-  .video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
+    bottom: auto;
+    right: auto;
     width: 100%;
-    height: 100%;
-    z-index: 1;
+    height: 300px;
+    margin-top: 40px;
+    margin-bottom: -50px;
   }
 
-  .hero-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
-    z-index: 2;
-  }
-
-  /* Hero Content Container */
-  .hero-content {
-    position: relative;
-    z-index: 3;
-    flex: 1;
-    display: flex;
+  .hero-actions {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #ffffff;
-    padding: 80px 24px 60px;
+    gap: 12px;
   }
 
-  .hero-container {
-    max-width: 800px;
+  .btn-primary,
+  .btn-primary-outline {
+    min-width: 280px;
+    max-width: 320px;
     width: 100%;
   }
 
-  /* Main Hero Text - Allbirds Style */
-  .hero-text {
-    margin-bottom: 48px;
+  .hero-secondary {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
-    .hero-headline {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: clamp(36px, 6vw, 60px);
-    font-weight: 600; /* similar to Allbirds headline weight */
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin: 0 0 16px 0;
-    color: #ffffff;
-    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
-    }
 
+  .btn-secondary {
+    min-width: 280px;
+    max-width: 320px;
+    width: 100%;
+  }
 
+  .floating-contact {
+    bottom: 24px;
+    right: 24px;
+  }
+
+  .contact-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content {
+    padding: 0 16px;
+  }
+
+  .hero-headline {
+    font-size: clamp(36px, 12vw, 64px);
+  }
 
   .hero-subtitle {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: clamp(18px, 3vw, 24px);
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    letter-spacing: 0.02em;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    font-size: clamp(16px, 4vw, 20px);
   }
 
-  /* Primary CTA Buttons - Allbirds Style */
-  .hero-cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 32px;
+  .floating-contact {
+    bottom: 16px;
+    right: 16px;
   }
+}
 
-  .primary-btn {
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .hero-section {
     background: #000000;
-    color: #ffffff;
-    border: none;
-    border-radius: 6px;
-    padding: 18px 36px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    min-width: 200px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
   }
 
-    .primary-btn:hover {
-    background: #f5f5f5;      /* light background */
-    color: #000000;           /* black text on hover */
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-    }
-
-
-  .primary-btn:active {
-    transform: translateY(-1px);
+  .background-gradient {
+    background: linear-gradient(
+      135deg,
+      #000000 0%,
+      #1d1d1f 25%,
+      #2d2d30 50%,
+      #3d3d40 75%,
+      #4d4d50 100%
+    );
   }
 
-  /* Secondary Actions */
-  .secondary-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
+  .hero-headline {
+    color: #f5f5f7;
   }
 
-  .secondary-btn {
-    background: transparent;
-    color: #ffffff;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 6px;
-    padding: 14px 28px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 240px;
+  .hero-subtitle {
+    color: #a1a1a6;
   }
 
-  .secondary-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: translateY(-2px);
+  .btn-primary {
+    background: #f5f5f7;
+    color: #1d1d1f;
   }
 
-  /* Bottom Section */
-  .hero-bottom {
-    position: relative;
-    z-index: 3;
-    padding: 20px;
-    margin-bottom: 80px;
+  .btn-primary:hover {
+    background: #e5e5e7;
   }
 
-  .hero-bottom-content {
-    text-align: center;
-    color: #ffffff;
+  .btn-primary-outline {
+    color: #f5f5f7;
+    border-color: #f5f5f7;
   }
 
-  .bottom-title {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: clamp(24px, 4vw, 32px);
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    color: #ffffff;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
-    letter-spacing: 0.1em;
+  .btn-primary-outline:hover {
+    background: #f5f5f7;
+    color: #1d1d1f;
   }
 
-  .bottom-subtitle {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: clamp(20px, 3vw, 26px);
-    font-weight: 600;
-    margin: 0;
-    color: #ffffff;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
-    letter-spacing: 0.05em;
+  .btn-secondary {
+    color: #a1a1a6;
+    border-color: rgba(161, 161, 166, 0.3);
   }
 
-  /* Specialist Button */
-  .hero-specialist-btn {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
+  .btn-secondary:hover {
+    color: #f5f5f7;
+    border-color: #f5f5f7;
+    background: rgba(245, 245, 247, 0.04);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .btn-secondary {
+    border-width: 2px;
+  }
+  
+  .background-gradient {
+    opacity: 0.3;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .headline-line,
+  .hero-subtitle,
+  .hero-actions,
+  .hero-secondary,
+  .hero-visual {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
-  .specialist-btn {
-    background: #000000;
-    color: #ffffff;
-    border: 2px solid #ffffff;
-    border-radius: 50px;
-    padding: 16px 32px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    backdrop-filter: blur(10px);
-    min-width: 220px;
-    justify-content: center;
+  .btn-primary,
+  .btn-primary-outline,
+  .btn-secondary,
+  .contact-btn {
+    transition: none;
   }
 
-  .specialist-btn:hover {
-    background: #ffffff;
-    color: #000000;
-    transform: translateX(-50%) translateY(-4px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  .btn-primary:hover,
+  .btn-primary-outline:hover,
+  .btn-secondary:hover,
+  .contact-btn:hover {
+    transform: none;
   }
+}
 
-  .btn-text {
-    white-space: nowrap;
-    font-weight: 600;
+/* Performance Optimizations */
+.hero-section,
+.hero-visual,
+.contact-btn {
+  will-change: transform;
+}
+
+/* Focus States */
+.btn-primary:focus,
+.btn-primary-outline:focus,
+.btn-secondary:focus,
+.contact-btn:focus {
+  outline: 3px solid #007aff;
+  outline-offset: 2px;
+}
+
+/* Touch Improvements */
+@media (hover: none) and (pointer: coarse) {
+  .btn-primary,
+  .btn-primary-outline,
+  .btn-secondary,
+  .contact-btn {
+    min-height: 44px;
   }
-
-  .btn-icon {
-    transition: transform 0.3s ease;
-    flex-shrink: 0;
-  }
-
-  .specialist-btn:hover .btn-icon {
-    transform: scale(1.1);
-  }
-
-  /* Mobile Responsive */
-  @media (max-width: 768px) {
-    .hero-content {
-      padding: 60px 20px 40px;
-    }
-
-    .hero-cta {
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .primary-btn {
-      min-width: 280px;
-      padding: 16px 32px;
-      font-size: 15px;
-    }
-
-    .secondary-btn {
-      min-width: 280px;
-      padding: 12px 24px;
-      font-size: 13px;
-    }
-
-    .hero-text {
-      margin-bottom: 40px;
-    }
-
-    .secondary-actions {
-      gap: 10px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero-content {
-      padding: 50px 16px 30px;
-    }
-
-    .primary-btn {
-      min-width: 100%;
-      max-width: 320px;
-    }
-
-    .secondary-btn {
-      min-width: 100%;
-      max-width: 320px;
-    }
-
-    .specialist-btn {
-      min-width: 200px;
-      padding: 14px 28px;
-      font-size: 14px;
-    }
-
-    .hero-bottom {
-      margin-bottom: 70px;
-    }
-  }
-
-  /* Landscape Mobile */
-  @media (max-height: 600px) and (orientation: landscape) {
-    .hero-content {
-      padding: 40px 20px 20px;
-    }
-
-    .hero-text {
-      margin-bottom: 32px;
-    }
-
-    .hero-cta {
-      margin-bottom: 24px;
-    }
-
-    .hero-bottom {
-      margin-bottom: 60px;
-      padding: 15px;
-    }
-  }
-
-  /* Touch Improvements */
-  @media (hover: none) and (pointer: coarse) {
-    .primary-btn,
-    .secondary-btn {
-      min-height: 48px;
-    }
-
-    .specialist-btn {
-      min-height: 48px;
-      padding: 16px 32px;
-    }
-  }
-
-  /* Accessibility */
-  .primary-btn:focus,
-  .secondary-btn:focus,
-  .specialist-btn:focus {
-    outline: 3px solid rgba(0, 0, 0, 0.8);
-    outline-offset: 2px;
-  }
-
-  /* Reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .primary-btn,
-    .secondary-btn,
-    .specialist-btn {
-      transition: none;
-    }
-
-    .primary-btn:hover,
-    .secondary-btn:hover,
-    .specialist-btn:hover {
-      transform: none;
-    }
-  }
-
-  /* High contrast mode */
-  @media (prefers-contrast: high) {
-    .video-overlay {
-      background: rgba(0, 0, 0, 0.8);
-    }
-
-    .secondary-btn {
-      border-width: 3px;
-    }
-  }
+}
 </style>
 
 <script>
-// Mobile-optimized JavaScript
+// Minimalist JavaScript - Apple Style Performance
 document.addEventListener('DOMContentLoaded', function() {
   
-  // Button functions with mobile considerations
+  // Button Functions
   window.scrollToProducts = function() {
-    const nextSection = document.querySelector('.hero-section').nextElementSibling;
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-    }
+    window.location.href = '{{ routes.all_products_collection_url }}';
   };
 
   window.openDoorCheck = function() {
-    // Mobile-friendly contact options
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
     if (isMobile && '{{ settings.viber_number }}') {
@@ -460,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (typeof openSpecialistModal === 'function') {
       openSpecialistModal('door-check');
     } else {
-      alert('Door Check: We will help you identify your door type.');
+      alert('We\'ll help you identify your door type.');
     }
   };
 
@@ -468,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof openSpecialistModal === 'function') {
       openSpecialistModal('lock-chooser');
     } else {
-      alert('Smart Lock Chooser: Let us guide you to the perfect lock.');
+      alert('Let us guide you to the perfect lock.');
     }
   };
 
@@ -481,11 +638,9 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 
   window.openSpecialistModal = function(type) {
-    // Check if specialist modal function exists
     if (typeof showSpecialistModal === 'function') {
       showSpecialistModal(type);
     } else {
-      // Fallback to contact page or direct contact
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
       if (isMobile && '{{ settings.viber_number }}') {
@@ -498,109 +653,182 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  // Video optimization for mobile
-  const video = document.querySelector('.hero-video');
-  if (video) {
-    // Mobile video handling
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      // More conservative video settings for mobile
-      video.preload = 'none';
+    // Enhanced video optimization for mobile and performance
+    const video = document.querySelector('.hero-video');
+    if (video) {
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isLowPowerMode = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       
-      // Play video on user interaction for mobile
-      const playVideo = () => {
-        video.play().catch(e => console.log('Mobile video autoplay failed:', e));
-        document.removeEventListener('touchstart', playVideo);
-      };
-      
-      document.addEventListener('touchstart', playVideo, { once: true });
-    } else {
-      // Desktop video handling
-      video.play().catch(e => console.log('Video autoplay failed:', e));
-    }
+      if (isMobile || isLowPowerMode) {
+        // More conservative video settings for mobile and accessibility
+        video.preload = 'none';
+        
+        // Play video on user interaction for mobile
+        const playVideo = () => {
+          video.play().catch(e => console.log('Mobile video autoplay failed:', e));
+          document.removeEventListener('touchstart', playVideo);
+          document.removeEventListener('click', playVideo);
+        };
+        
+        document.addEventListener('touchstart', playVideo, { once: true });
+        document.addEventListener('click', playVideo, { once: true });
+      } else {
+        // Desktop video handling
+        video.play().catch(e => console.log('Video autoplay failed:', e));
+      }
 
-    // Intersection observer for performance
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          video.play().catch(e => console.log('Video play failed:', e));
-        } else {
+      // Enhanced intersection observer for performance
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (!isLowPowerMode) {
+              video.play().catch(e => console.log('Video play failed:', e));
+            }
+          } else {
+            video.pause();
+          }
+        });
+      }, { 
+        threshold: 0.25,
+        rootMargin: '50px'
+      });
+
+      observer.observe(video);
+
+      // Enhanced page visibility handling for battery optimization
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
           video.pause();
+        } else if (video.getBoundingClientRect().top < window.innerHeight && !isLowPowerMode) {
+          video.play().catch(e => console.log('Video resume failed:', e));
         }
       });
-    }, { threshold: 0.25 });
-
-    observer.observe(video);
-
-    // Pause video when page is hidden (battery optimization)
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        video.pause();
-      } else if (video.getBoundingClientRect().top < window.innerHeight) {
-        video.play().catch(e => console.log('Video resume failed:', e));
+    }
+  // Enhanced Touch Feedback
+  const buttons = document.querySelectorAll('.btn-primary, .btn-primary-outline, .btn-secondary, .specialist-btn');
+    let touchTimer;
+    
+    button.addEventListener('touchstart', function(e) {
+      this.style.transform = 'scale(0.95)';
+      
+      if ('vibrate' in navigator) {
+        navigator.vibrate(5);
       }
-    });
-  }
-
-  // Touch feedback for buttons
-  document.querySelectorAll('.primary-btn, .secondary-btn, .specialist-btn').forEach(button => {
-    button.addEventListener('touchstart', function() {
-      this.style.transform = 'scale(0.98)';
-    });
+      
+      touchTimer = setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+    }, { passive: true });
     
     button.addEventListener('touchend', function() {
+      clearTimeout(touchTimer);
       setTimeout(() => {
         this.style.transform = '';
       }, 100);
-    });
-  });
+    }, { passive: true });
 
-  // Prevent double-tap zoom on buttons
-  let lastTouchEnd = 0;
-  document.querySelectorAll('.primary-btn, .secondary-btn, .specialist-btn').forEach(button => {
-    button.addEventListener('touchend', function(event) {
-      const now = (new Date()).getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
-  });
-
-  // Adjust specialist button position on keyboard open (mobile)
-  if ('visualViewport' in window) {
-    const specialistBtn = document.querySelector('.hero-specialist-btn');
-    
-    window.visualViewport.addEventListener('resize', () => {
-      const viewportHeight = window.visualViewport.height;
-      const windowHeight = window.innerHeight;
-      
-      if (viewportHeight < windowHeight * 0.75) {
-        // Keyboard is likely open
-        specialistBtn.style.bottom = '10px';
-        specialistBtn.style.transform = 'translateX(-50%) scale(0.9)';
-      } else {
-        // Keyboard is closed
-        specialistBtn.style.bottom = '24px';
-        specialistBtn.style.transform = 'translateX(-50%)';
-      }
-    });
-  }
-
-  // Analytics tracking
-  document.querySelectorAll('.primary-btn, .secondary-btn, .specialist-btn').forEach(button => {
+    // Analytics
     button.addEventListener('click', function() {
       const action = this.textContent.trim();
       
       if (typeof gtag === 'function') {
         gtag('event', 'click', {
-          event_category: 'hero_premium',
+          event_category: 'hero_minimalist',
           event_label: action,
           value: 1
         });
       }
     });
   });
+
+  // Prevent Double-tap Zoom
+  let lastTouchEnd = 0;
+  buttons.forEach(button => {
+    button.addEventListener('touchend', function(event) {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
+  });
+
+  // Intersection Observer for Performance
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '50px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, observerOptions);
+
+  // Observe hero elements
+  const heroElements = document.querySelectorAll('.hero-text, .hero-actions, .hero-secondary, .hero-visual');
+  heroElements.forEach(el => observer.observe(el));
+
+  // Smooth Scroll Performance
+  let ticking = false;
+  const handleScroll = () => {
+    if (!ticking && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      requestAnimationFrame(() => {
+        const scrolled = window.pageYOffset;
+        const heroSection = document.querySelector('.hero-section');
+        
+        if (heroSection && scrolled > 50) {
+          heroSection.style.transform = `translateY(${scrolled * 0.1}px)`;
+        }
+        
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+
+  // Enhanced Keyboard Navigation
+  buttons.forEach((button, index) => {
+    button.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.click();
+      }
+      
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const nextButton = buttons[index + 1] || buttons[0];
+        nextButton.focus();
+      }
+      
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prevButton = buttons[index - 1] || buttons[buttons.length - 1];
+        prevButton.focus();
+      }
+    });
+  });
+
+  // Performance Monitoring
+  performance.mark('hero-init-complete');
+  
+  console.log('🍎 Minimalist Hero Section initialized - Apple style');
 });
+
+// Resize Handler with Debouncing
+let resizeTimer;
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    // Minimal layout adjustments if needed
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection && window.innerWidth <= 768) {
+      heroSection.style.minHeight = window.innerHeight + 'px';
+    }
+  }, 150);
+}, { passive: true });
 </script>

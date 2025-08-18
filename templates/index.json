@@ -278,6 +278,11 @@
     }
   },
   "order": [
+    "hero-broen",
+    "broen-standard-carousel",
+    "how-it-works-carousel",
+    "our-clients-carousel",
+    "which-lock-carousel",
     "image_banner_bCtLzr",
     "featured-collection-0",
     "featured_product_bmEKG3",
@@ -285,11 +290,6 @@
     "rich_text_RLzbaa",
     "custom_liquid_7WLHBq",
     "rich_text_mqGmAF",
-    "multicolumn_3Bw4di",
-    "hero-broen",
-    "broen-standard-carousel",
-    "how-it-works-carousel",
-    "our-clients-carousel",
-    "which-lock-carousel"
+    "multicolumn_3Bw4di"
   ]
 }

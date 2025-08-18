@@ -1,46 +1,164 @@
-<!-- How It Works Carousel -->
-<section class="broen-showcase-section how-it-works">
-  <div class="section-container">
+<!-- How It Works - Premium Process Showcase -->
+<section class="how-it-works-section">
+  <div class="works-container">
     
-    <div class="carousel-block">
-      <h2 class="carousel-title">How It Works</h2>
-      <div class="carousel-scroll-container">
-        <div class="carousel-wrapper five-items">
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ 'Obsidian.png' | file_url }}" alt="Specialist" class="product-image">
-            </div>
-            <button class="product-button">Pick a Specialist</button>
-          </div>
+    <!-- Section Header -->
+    <div class="section-header">
+      <h2 class="section-title">How It Works</h2>
+      <div class="title-underline"></div>
+    </div>
+
+    <!-- Process Steps Showcase -->
+    <div class="process-showcase">
+      
+      <!-- Navigation Arrows -->
+      <button class="works-nav-arrow works-nav-arrow-left" id="prevWorksStep">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      
+      <button class="works-nav-arrow works-nav-arrow-right" id="nextWorksStep">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="works-track-container">
+        <div class="works-track">
           
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '46.png' | file_url }}" alt="Products Catalog" class="product-image">
+          <!-- Step 1 -->
+          <div class="works-step-card" data-step="1">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ 'Obsidian.png' | file_url }}" alt="Talk to Specialist" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
             </div>
-            <button class="product-button">See All Products</button>
-          </div>
-          
-          <div class="product-card main-card">
-            <div class="product-media large">
-              <img src="{{ '47.png' | file_url }}" alt="Installation Process" class="product-image">
+            <div class="works-step-content">
+              <h3 class="works-step-title">Talk to a Specialist</h3>
+              <p class="works-step-description">Get expert consultation to find the perfect smart lock for your needs</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">Start Consultation →</span>
+              </div>
             </div>
-            <button class="product-button">Schedule Installation</button>
           </div>
-          
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '48.png' | file_url }}" alt="Free Installation" class="product-image">
+
+          <!-- Step 2 -->
+          <div class="works-step-card" data-step="2">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ '46.png' | file_url }}" alt="See All Products" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
             </div>
-            <button class="product-button">Free Installation</button>
-          </div>
-          
-          <div class="product-card">
-            <div class="product-media">
-              <img src="{{ '45.png' | file_url }}" alt="Support" class="product-image">
+            <div class="works-step-content">
+              <h3 class="works-step-title">See All Products</h3>
+              <p class="works-step-description">Browse our complete collection of premium smart locks and security solutions</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">View Catalog →</span>
+              </div>
             </div>
-            <button class="product-button">Request for Help</button>
           </div>
+
+          <!-- Step 3 -->
+          <div class="works-step-card" data-step="3">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ '47.png' | file_url }}" alt="Schedule Installation" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
+            </div>
+            <div class="works-step-content">
+              <h3 class="works-step-title">Schedule Installation</h3>
+              <p class="works-step-description">Professional installation by certified technicians at your convenience</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">Book Now →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="works-step-card" data-step="4">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ '48.png' | file_url }}" alt="Free Installation" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
+            </div>
+            <div class="works-step-content">
+              <h3 class="works-step-title">Free Installation</h3>
+              <p class="works-step-description">Complimentary professional installation with warranty and setup included</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">Learn More →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="works-step-card" data-step="5">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ '45.png' | file_url }}" alt="Request Help" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
+            </div>
+            <div class="works-step-content">
+              <h3 class="works-step-title">Request for Help</h3>
+              <p class="works-step-description">24/7 support and maintenance for complete peace of mind</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">Get Support →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cloned cards for infinite loop -->
+          <!-- Clone of Step 1 -->
+          <div class="works-step-card clone" data-step="1">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ 'Obsidian.png' | file_url }}" alt="Talk to Specialist" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
+            </div>
+            <div class="works-step-content">
+              <h3 class="works-step-title">Talk to a Specialist</h3>
+              <p class="works-step-description">Get expert consultation to find the perfect smart lock for your needs</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">Start Consultation →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clone of Step 2 -->
+          <div class="works-step-card clone" data-step="2">
+            <div class="works-step-visual">
+              <div class="works-step-image-container">
+                <img src="{{ '46.png' | file_url }}" alt="See All Products" class="works-step-image">
+              </div>
+              <div class="works-step-overlay"></div>
+            </div>
+            <div class="works-step-content">
+              <h3 class="works-step-title">See All Products</h3>
+              <p class="works-step-description">Browse our complete collection of premium smart locks and security solutions</p>
+              <div class="works-step-action">
+                <span class="works-step-cta">View Catalog →</span>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </div>
+    </div>
+
+    <!-- Step Navigation Dots -->
+    <div class="works-navigation">
+      <div class="works-dots">
+        <button class="works-dot active" data-step="0"></button>
+        <button class="works-dot" data-step="1"></button>
+        <button class="works-dot" data-step="2"></button>
+        <button class="works-dot" data-step="3"></button>
+        <button class="works-dot" data-step="4"></button>
       </div>
     </div>
 
@@ -48,232 +166,608 @@
 </section>
 
 <style>
-.broen-showcase-section.how-it-works {
-  padding: 60px 0 40px 0;
+/* How It Works Section */
+.how-it-works-section {
   background: #000000;
-}
-
-.how-it-works .section-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.how-it-works .carousel-block {
-  margin-bottom: 0;
-}
-
-.how-it-works .carousel-title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 40px;
+  padding: 100px 0 80px 0;
   position: relative;
-  letter-spacing: -0.02em;
+  overflow: hidden;
 }
 
-.how-it-works .carousel-title::after {
+.how-it-works-section::before {
   content: '';
   position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(8, 8, 8, 1) 50%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  z-index: 1;
+}
+
+.works-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Section Header */
+.section-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.section-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.title-underline {
+  width: 60px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(90deg, transparent, #ffffff, transparent);
+  margin: 0 auto;
+  opacity: 0.6;
 }
 
-.how-it-works .carousel-scroll-container {
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 20px 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-
-.how-it-works .carousel-scroll-container::-webkit-scrollbar {
-  height: 6px;
-}
-
-.how-it-works .carousel-scroll-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.how-it-works .carousel-scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.how-it-works .carousel-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-.how-it-works .carousel-wrapper.five-items {
-  display: flex;
-  gap: 20px;
-  width: fit-content;
-  min-width: 120%;
-}
-
-.how-it-works .product-card {
-  background: rgba(20, 20, 20, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
+/* Process Showcase */
+.process-showcase {
+  position: relative;
   overflow: hidden;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Navigation Arrows - Fixed Z-index and Positioning */
+.works-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #ffffff;
   cursor: pointer;
-  flex-shrink: 0;
-  width: 280px;
-  display: flex;
-  flex-direction: column;
-  min-height: 360px;
-  backdrop-filter: blur(20px);
-}
-
-.how-it-works .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(30, 30, 30, 0.9);
-}
-
-.how-it-works .main-card {
-  background: rgba(25, 25, 25, 0.9);
-  border-color: rgba(255, 255, 255, 0.12);
-  width: 340px;
-  min-height: 420px;
-}
-
-.how-it-works .product-media {
-  width: 100%;
-  height: 200px;
-  position: relative;
-  background: #1a1a1a;
-  flex: 1;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.how-it-works .product-media.large {
-  height: 240px;
-  background: #000000;
+.works-nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
-.how-it-works .product-image {
+.works-nav-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.works-nav-arrow-left {
+  left: 20px;
+}
+
+.works-nav-arrow-right {
+  right: 20px;
+}
+
+/* Steps Track - Infinite Loop Setup */
+.works-track-container {
+  overflow: hidden;
+  margin: 0 80px;
+  position: relative;
+}
+
+.works-track {
+  display: flex;
+  gap: 24px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 20px 0 40px 0;
+  width: calc(7 * (320px + 24px)); /* 7 cards total (5 original + 2 clones) */
+}
+
+/* Process Step Cards - All Same Size */
+.works-step-card {
+  flex-shrink: 0;
+  width: 320px;
+  height: 520px;
+  background: rgba(15, 15, 15, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.works-step-card:hover {
+  transform: translateY(-12px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
+}
+
+/* Step Visual */
+.works-step-visual {
+  position: relative;
+  height: 60%;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.works-step-image-container {
+  width: 75%;
+  height: 75%;
+  position: relative;
+  z-index: 3;
+}
+
+.works-step-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: brightness(1.1) contrast(1.1);
+  filter: brightness(1.1) contrast(1.05) saturate(1.1);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.how-it-works .product-button {
-  padding: 20px 24px;
-  border: none;
-  background: rgba(0, 0, 0, 0.8);
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  display: block;
-  text-align: center;
-  border-radius: 0 0 15px 15px;
-  width: 100%;
-  margin-top: auto;
+.works-step-card:hover .works-step-image {
+  transform: scale(1.1);
+  filter: brightness(1.2) contrast(1.1) saturate(1.2);
+}
+
+.works-step-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.1) 80%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: 2;
+}
+
+/* Step Content */
+.works-step-content {
+  height: 40%;
+  padding: 32px 28px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
-  z-index: 5;
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 3;
 }
 
-.how-it-works .product-button:hover {
-  background: rgba(255, 255, 255, 0.95);
-  color: #000000;
-  transform: none;
+.works-step-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.works-step-description {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  flex-grow: 1;
+}
+
+.works-step-action {
+  margin-top: auto;
+}
+
+.works-step-cta {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  letter-spacing: 0.02em;
+}
+
+.works-step-card:hover .works-step-cta {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+/* Step Navigation Dots */
+.works-navigation {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.works-dots {
+  display: flex;
+  gap: 12px;
+}
+
+.works-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.works-dot.active {
+  background: #ffffff;
+  transform: scale(1.2);
+}
+
+.works-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .works-container {
+    padding: 0 20px;
+  }
+  
+  .works-track-container {
+    margin: 0 80px;
+  }
+  
+  .works-nav-arrow-left {
+    left: 10px;
+  }
+  
+  .works-nav-arrow-right {
+    right: 10px;
+  }
+}
+
 @media (max-width: 768px) {
-  .broen-showcase-section.how-it-works {
-    padding: 40px 0 20px 0;
+  .how-it-works-section {
+    padding: 80px 0 60px 0;
   }
   
-  .how-it-works .section-container {
-    padding: 0 15px;
+  .works-container {
+    padding: 0 16px;
   }
   
-  .how-it-works .carousel-title {
-    font-size: 1.6rem;
+  .works-track-container {
+    margin: 0;
   }
   
-  .how-it-works .product-card {
-    width: 240px;
-    min-height: 320px;
+  .works-nav-arrow {
+    display: none;
   }
   
-  .how-it-works .main-card {
+  .section-header {
+    margin-bottom: 60px;
+  }
+  
+  .works-step-card {
     width: 280px;
-    min-height: 380px;
+    height: 460px;
+  }
+  
+  .works-track {
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .works-track::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .works-step-card {
+    scroll-snap-align: center;
   }
 }
 
 @media (max-width: 480px) {
-  .how-it-works .carousel-title {
-    font-size: 1.4rem;
+  .works-step-card {
+    width: 260px;
+    height: 420px;
   }
   
-  .how-it-works .product-card {
-    width: 200px;
+  .works-step-content {
+    padding: 24px 20px 20px 20px;
   }
   
-  .how-it-works .main-card {
-    width: 240px;
+  .works-step-title {
+    font-size: 20px;
   }
+  
+  .works-step-description {
+    font-size: 14px;
+  }
+  
+  .works-dots {
+    gap: 10px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .works-step-card,
+  .works-step-image,
+  .works-step-cta,
+  .works-nav-arrow,
+  .works-track {
+    transition: none;
+  }
+  
+  .works-step-card:hover {
+    transform: none;
+  }
+  
+  .works-step-card:hover .works-step-image {
+    transform: none;
+  }
+  
+  .works-step-card:hover .works-step-cta {
+    transform: none;
+  }
+}
+
+/* High Performance */
+.works-step-card,
+.works-step-image,
+.works-track {
+  will-change: transform;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Smooth scroll on wheel for horizontal containers
-  document.querySelectorAll('.how-it-works .carousel-scroll-container').forEach(container => {
-    container.addEventListener('wheel', function(e) {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        this.scrollLeft += e.deltaY;
+  
+  const worksTrack = document.querySelector('.works-track');
+  const worksPrevButton = document.getElementById('prevWorksStep');
+  const worksNextButton = document.getElementById('nextWorksStep');
+  const worksDots = document.querySelectorAll('.works-dot');
+  
+  let worksCurrentStep = 0;
+  const worksTotalSteps = 5;
+  const worksCardWidth = 344; // Card width + gap
+  let worksIsTransitioning = false;
+  
+  // Initialize position to show first real card
+  if (worksTrack) {
+    worksTrack.style.transform = `translateX(0px)`;
+  }
+  
+  // Update step display with infinite loop logic
+  function updateWorksStepDisplay() {
+    if (!worksTrack || worksIsTransitioning) return;
+    
+    const translateX = -(worksCurrentStep * worksCardWidth);
+    
+    worksIsTransitioning = true;
+    worksTrack.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    worksTrack.style.transform = `translateX(${translateX}px)`;
+    
+    // Handle infinite loop transitions
+    setTimeout(() => {
+      if (worksCurrentStep >= worksTotalSteps) {
+        // Reset to first card without animation
+        worksCurrentStep = 0;
+        worksTrack.style.transition = 'none';
+        worksTrack.style.transform = `translateX(0px)`;
+      } else if (worksCurrentStep < 0) {
+        // Reset to last card without animation
+        worksCurrentStep = worksTotalSteps - 1;
+        worksTrack.style.transition = 'none';
+        worksTrack.style.transform = `translateX(${-(worksCurrentStep * worksCardWidth)}px)`;
+      }
+      
+      // Update dots
+      worksDots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === worksCurrentStep);
+      });
+      
+      worksIsTransitioning = false;
+      
+      // Re-enable transitions after reset
+      setTimeout(() => {
+        worksTrack.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+      }, 50);
+      
+    }, 600);
+    
+    // Update dots immediately for smooth UX
+    const dotIndex = worksCurrentStep >= worksTotalSteps ? 0 : (worksCurrentStep < 0 ? worksTotalSteps - 1 : worksCurrentStep);
+    worksDots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === dotIndex);
+    });
+    
+    // Analytics
+    if (typeof gtag === 'function') {
+      gtag('event', 'works_step_view', {
+        event_category: 'how_it_works',
+        event_label: `step_${(worksCurrentStep % worksTotalSteps) + 1}`,
+        value: (worksCurrentStep % worksTotalSteps) + 1
+      });
+    }
+  }
+  
+  // Navigation functions with infinite loop
+  function goToWorksStep(stepIndex) {
+    if (worksIsTransitioning) return;
+    
+    if (stepIndex >= 0 && stepIndex < worksTotalSteps) {
+      worksCurrentStep = stepIndex;
+      updateWorksStepDisplay();
+    }
+  }
+  
+  function nextWorksStep() {
+    if (worksIsTransitioning) return;
+    
+    worksCurrentStep++;
+    updateWorksStepDisplay();
+  }
+  
+  function prevWorksStep() {
+    if (worksIsTransitioning) return;
+    
+    if (worksCurrentStep === 0) {
+      // Jump to last clone then reset
+      worksCurrentStep = worksTotalSteps - 1;
+      worksTrack.style.transition = 'none';
+      worksTrack.style.transform = `translateX(${-((worksTotalSteps + 1) * worksCardWidth)}px)`;
+      
+      setTimeout(() => {
+        worksCurrentStep = worksTotalSteps - 1;
+        worksTrack.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        updateWorksStepDisplay();
+      }, 50);
+    } else {
+      worksCurrentStep--;
+      updateWorksStepDisplay();
+    }
+  }
+  
+  // Event listeners
+  if (worksNextButton) {
+    worksNextButton.addEventListener('click', nextWorksStep);
+  }
+  
+  if (worksPrevButton) {
+    worksPrevButton.addEventListener('click', prevWorksStep);
+  }
+  
+  // Step dot clicks
+  worksDots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      goToWorksStep(index);
+    });
+  });
+  
+  // Step card interactions
+  document.querySelectorAll('.works-step-card').forEach((card, index) => {
+    card.addEventListener('click', function() {
+      const stepNumber = this.dataset.step;
+      
+      // Route to appropriate actions based on step
+      switch(stepNumber) {
+        case '1':
+          if (typeof openSpecialistModal === 'function') {
+            openSpecialistModal('consultation');
+          }
+          break;
+        case '2':
+          window.location.href = '/collections/all';
+          break;
+        case '3':
+          if (typeof openSpecialistModal === 'function') {
+            openSpecialistModal('installation');
+          }
+          break;
+        case '4':
+          window.location.href = '/pages/free-installation';
+          break;
+        case '5':
+          if (typeof openSpecialistModal === 'function') {
+            openSpecialistModal('support');
+          }
+          break;
+        default:
+          console.log(`Works Step ${stepNumber} clicked`);
       }
     });
   });
   
-  // Product card interactions
-  document.querySelectorAll('.how-it-works .product-card').forEach(card => {
-    card.addEventListener('click', function() {
-      const buttonText = this.querySelector('.product-button')?.textContent;
-      
-      if (buttonText?.includes('Pick a Specialist')) {
-        if (typeof openSpecialistModal === 'function') {
-          openSpecialistModal();
-        }
-      } else if (buttonText?.includes('See All Products')) {
-        window.location.href = '/collections/smart-locks';
-      } else if (buttonText?.includes('Schedule Installation')) {
-        // Call cell number or contact
-        console.log('Schedule Installation clicked');
-      } else if (buttonText?.includes('Free Installation')) {
-        if (typeof openSpecialistModal === 'function') {
-          openSpecialistModal();
-        }
-      } else if (buttonText?.includes('Request for Help')) {
-        // Call cell number
-        console.log('Request for Help clicked');
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.target.closest('.how-it-works-section')) {
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          prevWorksStep();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          nextWorksStep();
+          break;
+        case 'Home':
+          e.preventDefault();
+          goToWorksStep(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          goToWorksStep(worksTotalSteps - 1);
+          break;
       }
-    });
+    }
   });
+  
+  // Touch/swipe support for mobile
+  let worksTouchStartX = 0;
+  let worksTouchEndX = 0;
+  
+  if (worksTrack) {
+    worksTrack.addEventListener('touchstart', function(e) {
+      worksTouchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    worksTrack.addEventListener('touchend', function(e) {
+      worksTouchEndX = e.changedTouches[0].screenX;
+      handleWorksSwipe();
+    }, { passive: true });
+  }
+  
+  function handleWorksSwipe() {
+    const swipeThreshold = 50;
+    const swipeDistance = worksTouchStartX - worksTouchEndX;
+    
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+      if (swipeDistance > 0) {
+        // Swiped left - go to next step
+        nextWorksStep();
+      } else {
+        // Swiped right - go to previous step
+        prevWorksStep();
+      }
+    }
+  }
+  
+  // Initialize
+  updateWorksStepDisplay();
+  
+  console.log('⚙️ How It Works premium showcase initialized');
 });
 </script>

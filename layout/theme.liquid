@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
-
+    {{ 'broen-product-page.css' | asset_url | stylesheet_tag }}
     <style>
       @font-face {
           font-family: 'SanFrancisco';
@@ -441,9 +441,26 @@
       document.addEventListener('contextmenu', function (e) {
           e.preventDefault();
       }, false);
-
+      document.addEventListener('DOMContentLoaded', function() {
+        function fixHeroHeaderOverlap() {
+          const header = document.querySelector('.shopify-section-header, .header, [class*="header"]');
+          const heroSection = document.querySelector('.hero-section');
+          
+          if (header && heroSection) {
+            const headerHeight = header.offsetHeight;
+            document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+            heroSection.style.paddingTop = `${headerHeight}px`;
+            console.log('Header height applied:', headerHeight + 'px');
+          }
+        }
+        
+        fixHeroHeaderOverlap();
+        window.addEventListener('load', fixHeroHeaderOverlap);
+        window.addEventListener('resize', fixHeroHeaderOverlap);
+      });
+      
     </script>
 
-    
+      {{ 'broen-product-page.js' | asset_url | script_tag }}
   </body>
 </html>
