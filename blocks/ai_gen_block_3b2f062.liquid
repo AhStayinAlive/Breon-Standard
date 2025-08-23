@@ -216,6 +216,7 @@
     gap: 12px; 
     margin-top: auto;
     flex-wrap: nowrap;
+    width: 100%;
   }
 
   /* NEW shared CTA */
@@ -239,6 +240,8 @@
     backdrop-filter: saturate(180%) blur(18px);
     -webkit-backdrop-filter: saturate(180%) blur(18px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    width: 0; /* Force equal width distribution */
+    min-width: 0; /* Allow flex shrinking */
   }
   
   .ai-pc-cta--primary-{{ ai_gen_id }} {
@@ -298,6 +301,7 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px {{ section.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.3 }};
+    pointer-events: auto;
   }
   .ai-product-carousel__navigation-{{ ai_gen_id }}:hover {
     background: {{ section.settings.heading_color | default: '#ffffff' }};
@@ -641,6 +645,7 @@
           class="ai-product-carousel__navigation-{{ ai_gen_id }} ai-product-carousel__navigation--prev-{{ ai_gen_id }}"
           aria-label="Previous slide"
           type="button"
+          onclick="console.log('HTML onclick fired for prev')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 18L9 12L15 6"/>
@@ -651,6 +656,7 @@
           class="ai-product-carousel__navigation-{{ ai_gen_id }} ai-product-carousel__navigation--next-{{ ai_gen_id }}"
           aria-label="Next slide"
           type="button"
+          onclick="console.log('HTML onclick fired for next')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 18L15 12L9 6"/>
@@ -701,11 +707,14 @@
       this.pagination = this.querySelector('.ai-product-carousel__pagination-{{ ai_gen_id }}');
 
       console.log('ProductCarousel connected - Total cards found:', this.cards.length);
+      console.log('Navigation buttons found - Prev:', !!this.prevBtn, 'Next:', !!this.nextBtn);
 
       this.totalCards = this.cards.length;
       if (this.totalCards === 0) return;
 
       this.maxIndex = Math.max(0, this.totalCards - this.cardsPerView);
+      console.log('Initial setup - Total cards:', this.totalCards, 'Cards per view:', this.cardsPerView, 'Max index:', this.maxIndex, 'Is desktop:', this.isDesktop);
+      
       this.setupPagination();
       this.setupEventListeners();
       this.setupTouchSupport();
@@ -714,7 +723,14 @@
       this.updateNavigation();
       this.setupAutoPlay();
 
-      setTimeout(() => this.goToIndex(0), 100);
+      setTimeout(() => {
+        this.goToIndex(0);
+        console.log('Initial navigation state - Prev disabled:', this.prevBtn?.disabled, 'Next disabled:', this.nextBtn?.disabled);
+        
+        // Make instance available globally for debugging
+        window.carouselDebug = this;
+        console.log('Carousel instance available as window.carouselDebug');
+      }, 100);
     }
 
     setupPagination() {
@@ -761,8 +777,27 @@
     }
 
     setupEventListeners() {
-      this.prevBtn?.addEventListener('click', (e) => { e.preventDefault(); this.prevSlide(); });
-      this.nextBtn?.addEventListener('click', (e) => { e.preventDefault(); this.nextSlide(); });
+      if (this.prevBtn) {
+        this.prevBtn.addEventListener('click', (e) => { 
+          e.preventDefault(); 
+          console.log('Prev button clicked, current index:', this.index);
+          this.prevSlide(); 
+        });
+        console.log('Prev button event listener added');
+      } else {
+        console.log('Prev button not found!');
+      }
+      
+      if (this.nextBtn) {
+        this.nextBtn.addEventListener('click', (e) => { 
+          e.preventDefault(); 
+          console.log('Next button clicked, current index:', this.index);
+          this.nextSlide(); 
+        });
+        console.log('Next button event listener added');
+      } else {
+        console.log('Next button not found!');
+      }
 
       this.querySelectorAll('.product-form').forEach(form => {
         form.addEventListener('submit', (e) => { e.stopPropagation(); });
@@ -781,7 +816,7 @@
           const newCardsPerView = this.isDesktop ? (parseInt(this.dataset.cardsPerView) || 3) : 1;
 
           if (wasDesktop !== this.isDesktop || newCardsPerView !== this.cardsPerView) {
-            this.isDesktop = wasDesktop;
+            this.isDesktop = window.innerWidth >= 768;
             this.cardsPerView = newCardsPerView;
             this.maxIndex = Math.max(0, this.totalCards - this.cardsPerView);
             this.goToIndex(Math.min(this.index, this.maxIndex));
@@ -855,11 +890,13 @@
       this.index = Math.max(0, Math.min(i, this.maxIndex));
       this.isTransitioning = true;
 
-      console.log('Going to index:', this.index, 'of', this.maxIndex);
+      console.log('Going to index:', this.index, 'of', this.maxIndex, 'isDesktop:', this.isDesktop);
 
       const cardW = this.cards[0].offsetWidth;
       const gap = this.isDesktop ? this.gap : this.gapMobile;
       const offset = this.index * (cardW + gap);
+
+      console.log('Card width:', cardW, 'Gap:', gap, 'Offset:', offset);
 
       if (this.isDesktop) {
         this.track.style.transform = `translateX(-${offset}px)`;
@@ -877,8 +914,15 @@
     nextSlide() { this.goToIndex(this.index + 1); }
 
     updateNavigation() {
-      if (this.prevBtn) this.prevBtn.disabled = this.index <= 0;
-      if (this.nextBtn) this.nextBtn.disabled = this.index >= this.maxIndex;
+      console.log('Updating navigation - Index:', this.index, 'Max index:', this.maxIndex);
+      if (this.prevBtn) {
+        this.prevBtn.disabled = this.index <= 0;
+        console.log('Prev button disabled:', this.prevBtn.disabled);
+      }
+      if (this.nextBtn) {
+        this.nextBtn.disabled = this.index >= this.maxIndex;
+        console.log('Next button disabled:', this.nextBtn.disabled);
+      }
 
       this.querySelectorAll('.ai-product-carousel__dot-{{ ai_gen_id }}').forEach((dot, index) => {
         const isActive = Math.floor(this.index / this.cardsPerView) === index;
@@ -888,6 +932,21 @@
     }
 
     disconnectedCallback() { this.pauseAutoPlay(); }
+    
+    // Test method for debugging
+    testNavigation() {
+      console.log('=== NAVIGATION TEST ===');
+      console.log('Current index:', this.index);
+      console.log('Max index:', this.maxIndex);
+      console.log('Is desktop:', this.isDesktop);
+      console.log('Cards per view:', this.cardsPerView);
+      console.log('Total cards:', this.totalCards);
+      console.log('Prev button:', this.prevBtn);
+      console.log('Next button:', this.nextBtn);
+      console.log('Prev button disabled:', this.prevBtn?.disabled);
+      console.log('Next button disabled:', this.nextBtn?.disabled);
+      console.log('======================');
+    }
   }
 
   if (!customElements.get('product-carousel-{{ ai_gen_id }}')) {
