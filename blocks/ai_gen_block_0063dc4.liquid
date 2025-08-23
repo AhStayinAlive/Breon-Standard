@@ -113,7 +113,7 @@
 
   .carousel-track-container-{{ carousel_id }} {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     margin: 0 80px;
     border-radius: var(--radius);
   }
@@ -129,9 +129,9 @@
   /* LOCKED CARD DESIGN */
   .carousel-card-{{ carousel_id }} {
     flex: 0 0 auto;
-    width: 320px;
-    min-width: 320px;
-    height: 480px;
+    width: {{ block.settings.card_width | default: 320 }}px;
+    min-width: {{ block.settings.card_width | default: 320 }}px;
+    height: {{ block.settings.card_height | default: 480 }}px;
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -158,14 +158,14 @@
 
   /* Center card (Card 3) - larger size */
   .carousel-card-{{ carousel_id }}.center-card {
-    width: 384px;
-    height: 528px;
-    transform: scale(1.05);
+    width: calc({{ block.settings.card_width | default: 320 }}px * 1.2);
+    height: calc({{ block.settings.card_height | default: 480 }}px * 1.1);
+    transform: scale({{ block.settings.center_card_scale | default: 1.05 }});
     z-index: 10;
   }
 
   .carousel-card-{{ carousel_id }}.center-card:hover {
-    transform: translateY(-8px) scale(1.07);
+    transform: translateY(-8px) scale(calc({{ block.settings.center_card_scale | default: 1.05 }} + 0.02));
   }
 
   .card-media-{{ carousel_id }} {
@@ -688,19 +688,18 @@
             <div class="carousel-track-{{ carousel_id }}" data-section="about">
               {% for feature_card in about_items %}
                 {% liquid
-                  assign item_title = feature_card.feature | default: 'Feature'
+                  assign item_title = feature_card.feature | default: block.settings.default_feature_text | default: 'Feature'
                   assign item_description = feature_card.description | default: ''
                   assign item_link = feature_card.url | default: '#'
-                  assign item_button_text = feature_card.button_text | default: 'Learn More'
+                  assign item_button_text = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
                   
                   comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
                   endcomment
                   assign media_item = nil
                   
-                  comment 'Debug: Log available fields'
+                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
                   endcomment
-                  comment 'Available fields: {{ feature_card | json }}'
-                  endcomment
+                  assign media_item = nil
                   
                   comment 'Try media_files.value first (metaobject list)'
                   endcomment
@@ -723,10 +722,11 @@
                     assign media_item = feature_card.media_file
                   endif
                   
-                  comment 'Debug: Log final media_item'
+                  comment 'Additional fallback for direct file references'
                   endcomment
-                  comment 'Media item: {{ media_item | json }}'
-                  endcomment
+                  if media_item == nil and feature_card.file
+                    assign media_item = feature_card.file
+                  endif
                   
                   comment 'Video detection logic'
                   endcomment
@@ -1904,6 +1904,51 @@ debugLog.log('Carousel element check:', {
       "unit": "px",
       "label": "Border radius",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Card Content Controls"
+    },
+    {
+      "type": "text",
+      "id": "default_button_text",
+      "label": "Default button text",
+      "default": "Learn More"
+    },
+    {
+      "type": "text",
+      "id": "default_feature_text",
+      "label": "Default feature text",
+      "default": "Feature"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "min": 280,
+      "max": 400,
+      "step": 8,
+      "unit": "px",
+      "label": "Card width",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "min": 400,
+      "max": 600,
+      "step": 16,
+      "unit": "px",
+      "label": "Card height",
+      "default": 480
+    },
+    {
+      "type": "range",
+      "id": "center_card_scale",
+      "min": 1.0,
+      "max": 1.2,
+      "step": 0.05,
+      "label": "Center card scale factor",
+      "default": 1.05
     },
     {
       "type": "header",
