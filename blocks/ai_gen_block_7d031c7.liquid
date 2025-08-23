@@ -76,7 +76,7 @@
 
   .ai-clients-carousel__track-container-{{ ai_gen_id }} {
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     margin: 0 80px;
     border-radius: 20px;
     z-index: 2;
@@ -88,12 +88,15 @@
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
     padding: 0 20px;
+    width: fit-content;
   }
 
   .ai-clients-carousel__card-{{ ai_gen_id }} {
     flex: 0 0 auto;
-    width: calc((100% - ({{ block.settings.cards_per_view_desktop | default: 3 | minus: 1 }} * 32px)) / {{ block.settings.cards_per_view_desktop | default: 3 }});
+    /* Fixed width for consistent card sizing that prevents overflow */
+    width: 320px;
     min-width: 280px;
+    max-width: 400px;
     height: 480px;
     background: {{ block.settings.card_background | default: '#1a1a1a' | color_modify: 'alpha', 0.95 }};
     border: 1px solid {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 20 | color_modify: 'alpha', 0.08 }};
@@ -566,6 +569,7 @@
       this.totalCards = this.cards.length;
       if (this.totalCards === 0) return;
 
+      this.calculateVisibleCards();
       this.calculateSlides();
       this.setupPagination();
       this.setupEventListeners();
@@ -578,8 +582,30 @@
       setTimeout(() => this.goToSlide(0), 100);
     }
 
+    calculateVisibleCards() {
+      if (!this.isDesktop) {
+        this.cardsPerView = 1;
+        return;
+      }
+      
+      // Calculate how many cards can fit in the visible area
+      const containerWidth = this.trackContainer.offsetWidth;
+      const cardWidth = 320; // Fixed card width from CSS
+      const gap = 32; // Gap between cards
+      const trackPadding = 40; // Total padding (20px each side)
+      
+      const availableWidth = containerWidth - trackPadding;
+      this.cardsPerView = Math.floor(availableWidth / (cardWidth + gap));
+      
+      // Ensure we have at least 1 card visible and don't exceed the setting
+      const maxCards = parseInt(this.dataset.cardsPerView) || 3;
+      this.cardsPerView = Math.max(1, Math.min(this.cardsPerView, maxCards));
+    }
+
     calculateSlides() {
-      this.totalSlides = Math.ceil(this.totalCards / this.cardsPerView);
+      // Calculate total slides: we can move one card at a time
+      // Total slides = total cards - cards visible + 1 (to ensure last card is fully visible)
+      this.totalSlides = Math.max(1, this.totalCards - this.cardsPerView + 1);
     }
 
     setupPagination() {
@@ -603,11 +629,12 @@
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
           const wasDesktop = this.isDesktop;
+          const oldCardsPerView = this.cardsPerView;
           this.isDesktop = window.innerWidth >= 768;
-          const newCardsPerView = this.isDesktop ? parseInt(this.dataset.cardsPerView) || 3 : 1;
+          
+          this.calculateVisibleCards();
 
-          if (wasDesktop !== this.isDesktop || newCardsPerView !== this.cardsPerView) {
-            this.cardsPerView = newCardsPerView;
+          if (wasDesktop !== this.isDesktop || oldCardsPerView !== this.cardsPerView) {
             this.currentSlide = 0;
             this.calculateSlides();
             this.setupPagination();
@@ -706,8 +733,8 @@
         if (firstCard) {
           const cardWidth = firstCard.offsetWidth;
           const gap = 32;
-          const cardIndex = this.currentSlide * this.cardsPerView;
-          const offset = cardIndex * (cardWidth + gap);
+          // Move one card at a time: offset = currentSlide * (cardWidth + gap)
+          const offset = this.currentSlide * (cardWidth + gap);
           this.track.style.transform = `translateX(-${offset}px)`;
         }
       } else {
