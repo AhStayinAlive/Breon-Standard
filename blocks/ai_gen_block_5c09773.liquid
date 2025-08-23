@@ -1,0 +1,440 @@
+{% comment %}
+  Global Sticky CTA Section - Fixed Z-Index Version
+  Place this in layout/theme.liquid before </body> tag
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-cta-{{ ai_gen_id }} {
+    position: fixed;
+    z-index: {{ block.settings.z_index }};
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ai-sticky-cta-{{ ai_gen_id }}.desktop {
+    top: calc(var(--header-height, 60px) + {{ block.settings.desktop_top_offset }}px);
+    right: {{ block.settings.desktop_right_offset }}px;
+    display: block;
+  }
+
+  .ai-sticky-cta-{{ ai_gen_id }}.mobile {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + {{ block.settings.mobile_bottom_offset }}px);
+    right: {{ block.settings.mobile_right_offset }}px;
+    display: none;
+  }
+
+  .ai-sticky-cta-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 980px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    pointer-events: auto;
+    border: 2px solid #000000;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  }
+
+  .ai-sticky-cta-button-{{ ai_gen_id }}:hover {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .ai-sticky-cta-button-{{ ai_gen_id }}:active {
+    transform: scale(0.98);
+  }
+
+  .ai-sticky-cta-button-{{ ai_gen_id }}:focus-visible {
+    outline: 2px solid #666666;
+    outline-offset: 2px;
+  }
+
+  .ai-sticky-cta-icon-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  .ai-sticky-cta-button-{{ ai_gen_id }}:hover .ai-sticky-cta-icon-{{ ai_gen_id }} {
+    transform: rotate(5deg);
+  }
+
+  .ai-sticky-cta-ripple-{{ ai_gen_id }} {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    transform: scale(0);
+    animation: ai-sticky-cta-ripple-{{ ai_gen_id }} 0.6s linear;
+    pointer-events: none;
+  }
+
+  @keyframes ai-sticky-cta-ripple-{{ ai_gen_id }} {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes ai-sticky-cta-pulse-{{ ai_gen_id }} {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  {% unless block.settings.disable_pulse %}
+    .ai-sticky-cta-button-{{ ai_gen_id }} {
+      animation: ai-sticky-cta-pulse-{{ ai_gen_id }} 3s ease-in-out infinite;
+    }
+  {% endunless %}
+
+  /* Debug mode - uncomment to test visibility */
+  {% comment %}
+  .ai-sticky-cta-button-{{ ai_gen_id }} {
+    background-color: red !important;
+    z-index: 9999 !important;
+    top: 100px !important;
+    right: 20px !important;
+  }
+  {% endcomment %}
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-sticky-cta-button-{{ ai_gen_id }} {
+      animation: none !important;
+      transition: none !important;
+    }
+    .ai-sticky-cta-icon-{{ ai_gen_id }} {
+      transition: none !important;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-sticky-cta-{{ ai_gen_id }}.desktop {
+      {% unless block.settings.show_on_mobile %}
+        display: none;
+      {% endunless %}
+    }
+    
+    .ai-sticky-cta-{{ ai_gen_id }}.mobile {
+      {% if block.settings.show_on_mobile %}
+        display: block;
+      {% endif %}
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-sticky-cta-{{ ai_gen_id }}.mobile {
+      display: none;
+    }
+    
+    .ai-sticky-cta-{{ ai_gen_id }}.desktop {
+      {% if block.settings.show_on_desktop %}
+        display: block;
+      {% else %}
+        display: none;
+      {% endif %}
+    }
+  }
+{% endstyle %}
+
+<sticky-cta-{{ ai_gen_id }}
+  class="ai-sticky-cta-{{ ai_gen_id }} desktop"
+  data-analytics-event="{{ block.settings.analytics_event }}"
+  {{ block.shopify_attributes }}
+>
+  {% if block.settings.button_link != blank %}
+    <a
+      href="{{ block.settings.button_link }}"
+      class="ai-sticky-cta-button-{{ ai_gen_id }}"
+      aria-label="{{ block.settings.button_text | escape }}"
+    >
+      {% if block.settings.show_icon %}
+        <svg class="ai-sticky-cta-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      {% endif %}
+      {{ block.settings.button_text }}
+    </a>
+  {% else %}
+    <button
+      class="ai-sticky-cta-button-{{ ai_gen_id }}"
+      aria-label="{{ block.settings.button_text | escape }}"
+    >
+      {% if block.settings.show_icon %}
+        <svg class="ai-sticky-cta-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      {% endif %}
+      {{ block.settings.button_text }}
+    </button>
+  {% endif %}
+</sticky-cta-{{ ai_gen_id }}>
+
+<sticky-cta-{{ ai_gen_id }}
+  class="ai-sticky-cta-{{ ai_gen_id }} mobile"
+  data-analytics-event="{{ block.settings.analytics_event }}"
+>
+  {% if block.settings.button_link != blank %}
+    <a
+      href="{{ block.settings.button_link }}"
+      class="ai-sticky-cta-button-{{ ai_gen_id }}"
+      aria-label="{{ block.settings.button_text | escape }}"
+    >
+      {% if block.settings.show_icon %}
+        <svg class="ai-sticky-cta-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      {% endif %}
+      {{ block.settings.button_text }}
+    </a>
+  {% else %}
+    <button
+      class="ai-sticky-cta-button-{{ ai_gen_id }}"
+      aria-label="{{ block.settings.button_text | escape }}"
+    >
+      {% if block.settings.show_icon %}
+        <svg class="ai-sticky-cta-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      {% endif %}
+      {{ block.settings.button_text }}
+    </button>
+  {% endif %}
+</sticky-cta-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyCTA{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.button = null;
+        this.analyticsEvent = this.dataset.analyticsEvent || 'sticky_cta_click';
+      }
+
+      connectedCallback() {
+        this.button = this.querySelector('.ai-sticky-cta-button-{{ ai_gen_id }}');
+        if (this.button) {
+          this.setupEventListeners();
+          this.detectHeaderHeight();
+          this.debugInfo();
+        }
+      }
+
+      setupEventListeners() {
+        this.button.addEventListener('click', this.handleClick.bind(this));
+        window.addEventListener('resize', this.detectHeaderHeight.bind(this));
+        window.addEventListener('scroll', this.detectHeaderHeight.bind(this));
+      }
+
+      handleClick(event) {
+        this.createRipple(event);
+        this.trackAnalytics();
+      }
+
+      createRipple(event) {
+        const rect = this.button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+
+        const ripple = document.createElement('span');
+        ripple.className = 'ai-sticky-cta-ripple-{{ ai_gen_id }}';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+
+        this.button.appendChild(ripple);
+
+        setTimeout(() => {
+          if (ripple.parentNode) {
+            ripple.parentNode.removeChild(ripple);
+          }
+        }, 600);
+      }
+
+      detectHeaderHeight() {
+        const header = document.querySelector('header, .header, [data-section-type="header"], .shopify-section--header');
+        if (header) {
+          const height = header.offsetHeight;
+          document.documentElement.style.setProperty('--header-height', height + 'px');
+        }
+      }
+
+      debugInfo() {
+        // Debug information - remove in production
+        console.log('Sticky CTA Debug:', {
+          element: this,
+          button: this.button,
+          zIndex: window.getComputedStyle(this).zIndex,
+          headerHeight: getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+          visible: this.button ? window.getComputedStyle(this.button).display !== 'none' : false
+        });
+      }
+
+      trackAnalytics() {
+        if (this.analyticsEvent && typeof window.gtag === 'function') {
+          window.gtag('event', this.analyticsEvent, {
+            event_category: 'engagement',
+            event_label: 'sticky_cta'
+          });
+        }
+
+        const customEvent = new CustomEvent('sticky_cta_click', {
+          detail: {
+            element: this.button,
+            event_name: this.analyticsEvent
+          }
+        });
+        document.dispatchEvent(customEvent);
+      }
+    }
+
+    customElements.define('sticky-cta-{{ ai_gen_id }}', StickyCTA{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Sticky CTA button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Button content"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Talk to a Specialist"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "checkbox",
+      "id": "disable_pulse",
+      "label": "Disable pulse animation",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Desktop positioning"
+    },
+    {
+      "type": "range",
+      "id": "desktop_top_offset",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top offset from header",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desktop_right_offset",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Right margin",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Mobile positioning"
+    },
+    {
+      "type": "range",
+      "id": "mobile_bottom_offset",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom margin",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_right_offset",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Right margin",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_mobile",
+      "label": "Show on mobile",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "z_index",
+      "min": 5,
+      "max": 200,
+      "step": 5,
+      "label": "Z-index",
+      "default": 150,
+      "info": "Higher values appear above other elements. Collection headers typically use 50."
+    },
+    {
+      "type": "header",
+      "content": "Analytics"
+    },
+    {
+      "type": "text",
+      "id": "analytics_event",
+      "label": "Analytics event name",
+      "default": "sticky_cta_click"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky CTA button"
+    }
+  ]
+}
+{% endschema %}

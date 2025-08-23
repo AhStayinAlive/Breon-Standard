@@ -1,0 +1,552 @@
+{% comment %}
+  Sophisticated FAQ Section
+  Apple-inspired design with glassmorphism and modern aesthetics
+  Enhanced with improved dark theme and premium styling
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* Apply background to entire page */
+  body,
+  .shopify-section-group-header-group,
+  .shopify-section-group-footer-group,
+  main,
+  #MainContent,
+  .main-content,
+  .page-container,
+  .container,
+  .content-wrapper {
+    background: {{ block.settings.section_background }} !important;
+  }
+
+  .ai-faq-{{ ai_gen_id }} {
+    background: transparent;
+    width: 100%;
+    position: relative;
+  }
+
+  .ai-faq__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.vertical_padding }}px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    color: {{ block.settings.text_color }};
+    width: 100%;
+  }
+
+  .ai-faq__heading-{{ ai_gen_id }} {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 40px 0;
+    color: {{ block.settings.heading_color }};
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative;
+  }
+
+  .ai-faq__heading-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, {{ block.settings.accent_color }}, transparent);
+    border-radius: 2px;
+  }
+
+  .ai-faq__subheading-{{ ai_gen_id }} {
+    font-size: clamp(16px, 3vw, 20px);
+    color: {{ block.settings.text_color | color_modify: 'alpha', 0.7 }};
+    text-align: center;
+    margin: 0 0 {{ block.settings.content_gap }}px 0;
+    line-height: 1.4;
+    font-weight: 400;
+  }
+
+  .ai-faq__list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .ai-faq__item-{{ ai_gen_id }} {
+    border: 1px solid {{ block.settings.card_border | color_modify: 'alpha', 0.2 }};
+    border-radius: 16px;
+    overflow: hidden;
+    background: {{ block.settings.card_bg | color_modify: 'alpha', 0.8 }};
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 24px {{ block.settings.card_border | color_modify: 'alpha', 0.08 }};
+    position: relative;
+  }
+
+  .ai-faq__item-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, {{ block.settings.card_border | color_modify: 'alpha', 0.3 }}, transparent);
+  }
+
+  .ai-faq__item-{{ ai_gen_id }}:hover {
+    border-color: {{ block.settings.card_border | color_modify: 'alpha', 0.3 }};
+    box-shadow: 0 8px 40px {{ block.settings.card_border | color_modify: 'alpha', 0.12 }};
+    transform: translateY(-2px);
+  }
+
+  .ai-faq__summary-{{ ai_gen_id }} {
+    padding: 28px 32px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: clamp(16px, 2.5vw, 18px);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    color: {{ block.settings.heading_color }};
+    position: relative;
+    letter-spacing: -0.01em;
+  }
+
+  .ai-faq__summary-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.card_border | color_modify: 'alpha', 0.04 }};
+  }
+
+  .ai-faq__summary-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.accent_color | color_modify: 'alpha', 0.6 }};
+    outline-offset: -2px;
+    background: {{ block.settings.card_border | color_modify: 'alpha', 0.06 }};
+  }
+
+  .ai-faq__summary-{{ ai_gen_id }}::marker {
+    display: none;
+  }
+
+  .ai-faq__summary-{{ ai_gen_id }}::webkit-details-marker {
+    display: none;
+  }
+
+  .ai-faq__icon-{{ ai_gen_id }} {
+    width: 32px;
+    height: 32px;
+    background: {{ block.settings.accent_color | color_modify: 'alpha', 0.1 }};
+    border: 1px solid {{ block.settings.accent_color | color_modify: 'alpha', 0.2 }};
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+    margin-left: 20px;
+  }
+
+  .ai-faq__icon-svg-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    color: {{ block.settings.accent_color }};
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ai-faq__item-{{ ai_gen_id }}[open] .ai-faq__icon-{{ ai_gen_id }} {
+    background: {{ block.settings.accent_color | color_modify: 'alpha', 0.15 }};
+    border-color: {{ block.settings.accent_color | color_modify: 'alpha', 0.3 }};
+    transform: rotate(180deg);
+  }
+
+  .ai-faq__item-{{ ai_gen_id }}[open] .ai-faq__icon-svg-{{ ai_gen_id }} {
+    color: {{ block.settings.accent_color }};
+  }
+
+  .ai-faq__content-{{ ai_gen_id }} {
+    padding: 0 32px 32px 32px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color | color_modify: 'alpha', 0.8 }};
+    font-size: 16px;
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ai-faq__content-{{ ai_gen_id }} p {
+    margin: 0 0 16px 0;
+  }
+
+  .ai-faq__content-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-faq__content-{{ ai_gen_id }} a {
+    color: {{ block.settings.accent_color }};
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-faq__content-{{ ai_gen_id }} a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ai-faq__question-text-{{ ai_gen_id }} {
+    flex-grow: 1;
+    margin-right: 20px;
+  }
+
+  /* Enhanced mobile responsive design */
+  @media (max-width: 768px) {
+    .ai-faq__container-{{ ai_gen_id }} {
+      padding: {{ block.settings.vertical_padding | times: 0.7 }}px 16px;
+    }
+
+    .ai-faq__summary-{{ ai_gen_id }},
+    .ai-faq__content-{{ ai_gen_id }} {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .ai-faq__summary-{{ ai_gen_id }} {
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+
+    .ai-faq__content-{{ ai_gen_id }} {
+      padding-bottom: 24px;
+      font-size: 15px;
+    }
+
+    .ai-faq__icon-{{ ai_gen_id }} {
+      width: 28px;
+      height: 28px;
+      margin-left: 16px;
+    }
+
+    .ai-faq__icon-svg-{{ ai_gen_id }} {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  /* Accessibility & Performance */
+  @media (prefers-reduced-motion: reduce) {
+    .ai-faq__item-{{ ai_gen_id }},
+    .ai-faq__summary-{{ ai_gen_id }},
+    .ai-faq__icon-{{ ai_gen_id }},
+    .ai-faq__icon-svg-{{ ai_gen_id }} {
+      transition: none;
+    }
+
+    .ai-faq__item-{{ ai_gen_id }}:hover {
+      transform: none;
+    }
+
+    .ai-faq__content-{{ ai_gen_id }} {
+      animation: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .ai-faq__item-{{ ai_gen_id }} {
+      border-width: 2px;
+    }
+
+    .ai-faq__icon-{{ ai_gen_id }} {
+      border-width: 2px;
+    }
+  }
+
+  /* Focus improvements for keyboard navigation */
+  .ai-faq__summary-{{ ai_gen_id }}:focus-visible {
+    outline: 3px solid {{ block.settings.accent_color }};
+    outline-offset: 2px;
+  }
+{% endstyle %}
+
+<div class="ai-faq-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-faq__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    {% if block.settings.subheading != blank %}
+      <p class="ai-faq__subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+    {% endif %}
+
+    {% assign has_faq = false %}
+    {% for i in (1..8) %}
+      {% assign question_key = 'faq_' | append: i | append: '_question' %}
+      {% if block.settings[question_key] != blank %}
+        {% assign has_faq = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_faq %}
+      <div class="ai-faq__list-{{ ai_gen_id }}">
+        {% for i in (1..8) %}
+          {% assign question_key = 'faq_' | append: i | append: '_question' %}
+          {% assign answer_key = 'faq_' | append: i | append: '_answer' %}
+          {% assign question = block.settings[question_key] %}
+          {% assign answer = block.settings[answer_key] %}
+          
+          {% if question != blank %}
+            <details class="ai-faq__item-{{ ai_gen_id }}">
+              <summary class="ai-faq__summary-{{ ai_gen_id }}">
+                <span class="ai-faq__question-text-{{ ai_gen_id }}">{{ question }}</span>
+                <div class="ai-faq__icon-{{ ai_gen_id }}">
+                  <svg class="ai-faq__icon-svg-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                  </svg>
+                </div>
+              </summary>
+              <div class="ai-faq__content-{{ ai_gen_id }}">
+                {{ answer }}
+              </div>
+            </details>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQ Section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Find answers to common questions about our products and services."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 1"
+    },
+    {
+      "type": "text",
+      "id": "faq_1_question",
+      "label": "Question",
+      "default": "What is your return policy?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_1_answer",
+      "label": "Answer",
+      "default": "<p>We offer a 30-day return policy for all unused items in their original packaging. Please contact our support team to initiate a return.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 2"
+    },
+    {
+      "type": "text",
+      "id": "faq_2_question",
+      "label": "Question",
+      "default": "How long does shipping take?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_2_answer",
+      "label": "Answer",
+      "default": "<p>Standard shipping typically takes 3-5 business days. Express shipping options are available for faster delivery.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 3"
+    },
+    {
+      "type": "text",
+      "id": "faq_3_question",
+      "label": "Question",
+      "default": "Do you offer international shipping?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_3_answer",
+      "label": "Answer",
+      "default": "<p>Yes, we ship to most countries worldwide. International shipping rates and delivery times vary by destination.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 4"
+    },
+    {
+      "type": "text",
+      "id": "faq_4_question",
+      "label": "Question",
+      "default": "How can I track my order?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_4_answer",
+      "label": "Answer",
+      "default": "<p>Once your order ships, you'll receive a tracking number via email. You can use this to track your package on our website or the carrier's site.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 5"
+    },
+    {
+      "type": "text",
+      "id": "faq_5_question",
+      "label": "Question"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_5_answer",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 6"
+    },
+    {
+      "type": "text",
+      "id": "faq_6_question",
+      "label": "Question"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_6_answer",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 7"
+    },
+    {
+      "type": "text",
+      "id": "faq_7_question",
+      "label": "Question"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_7_answer",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 8"
+    },
+    {
+      "type": "text",
+      "id": "faq_8_question",
+      "label": "Question"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_8_answer",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Content gap",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#007AFF"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card border",
+      "default": "#333333"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Section"
+    }
+  ]
+}
+{% endschema %}

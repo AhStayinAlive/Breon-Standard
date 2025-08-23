@@ -1,0 +1,505 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-drop-{{ ai_gen_id }} {
+    width: 100%;
+    background: linear-gradient(135deg, {{ block.settings.background_color_start }}, {{ block.settings.background_color_end }});
+    border-bottom: 1px solid rgba(0, 0, 0, {{ block.settings.border_opacity | divided_by: 100.0 }});
+    padding: {{ block.settings.mobile_padding }}px 16px;
+    
+    /* Liquid glass tokens */
+    --lg-blur: 18px;
+    --lg-saturate: 180%;
+    --lg-border: hsla(0,0%,100%,.22);
+    --lg-shadow: rgba(0,0,0,.25);
+  }
+
+  .ai-product-drop-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: {{ block.settings.mobile_gap }}px;
+  }
+
+  .ai-product-drop-content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: {{ block.settings.content_gap }}px;
+    width: 100%;
+  }
+
+  .ai-product-drop-eyebrow-{{ ai_gen_id }} {
+    color: {{ block.settings.eyebrow_color }};
+    font-size: {{ block.settings.eyebrow_size }}px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .ai-product-drop-headline-{{ ai_gen_id }} {
+    color: {{ block.settings.headline_color }};
+    font-size: clamp({{ block.settings.headline_size_mobile }}px, 4vw, {{ block.settings.headline_size_desktop }}px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .ai-product-drop-subtext-{{ ai_gen_id }} {
+    color: {{ block.settings.subtext_color }};
+    font-size: {{ block.settings.subtext_size }}px;
+    font-weight: 400;
+    line-height: 1.4;
+    margin: 0;
+    max-width: 600px;
+  }
+
+  .ai-product-drop-button-{{ ai_gen_id }} {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display",system-ui,sans-serif !important;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-size: {{ block.settings.button_text_size }}px !important;
+    line-height: 1;
+    color: {{ block.settings.button_text_color }} !important;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 44px;
+    padding: 14px 32px !important;
+    border-radius: 50px !important;
+    border: 1px solid var(--lg-border) !important;
+
+    /* Pure liquid glass - no customizable background */
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)) !important;
+    backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    -webkit-backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    box-shadow: 0 6px 18px var(--lg-shadow), inset 0 1px 0 rgba(255,255,255,.12) !important;
+
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+
+  /* Strip any shine layers */
+  .ai-product-drop-button-{{ ai_gen_id }}::before,
+  .ai-product-drop-button-{{ ai_gen_id }}::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  .ai-product-drop-button-{{ ai_gen_id }}:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.24)) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14) !important;
+  }
+
+  .ai-product-drop-button-{{ ai_gen_id }}:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.10) !important;
+  }
+
+  .ai-product-drop-button-{{ ai_gen_id }}:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  .ai-product-drop-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    position: relative;
+  }
+
+  .ai-product-drop-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    max-height: {{ block.settings.image_max_height_mobile }}px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 24px rgba(0, 0, 0, {{ block.settings.image_shadow_opacity | divided_by: 100.0 }}));
+  }
+
+  .ai-product-drop-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: {{ block.settings.image_max_height_mobile }}px;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+  }
+
+  @media (min-width: 768px) {
+    .ai-product-drop-{{ ai_gen_id }} {
+      padding: {{ block.settings.desktop_padding }}px 24px;
+    }
+
+    .ai-product-drop-container-{{ ai_gen_id }} {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: {{ block.settings.desktop_gap }}px;
+    }
+
+    .ai-product-drop-content-{{ ai_gen_id }} {
+      flex: 1;
+      align-items: flex-start;
+      text-align: left;
+      max-width: 60%;
+    }
+
+    .ai-product-drop-image-wrapper-{{ ai_gen_id }} {
+      flex-shrink: 0;
+      max-width: 400px;
+    }
+
+    .ai-product-drop-image-{{ ai_gen_id }} {
+      max-height: {{ block.settings.image_max_height_desktop }}px;
+    }
+
+    .ai-product-drop-placeholder-{{ ai_gen_id }} {
+      height: {{ block.settings.image_max_height_desktop }}px;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ai-product-drop-{{ ai_gen_id }} {
+      animation: ai-product-drop-fade-in-{{ ai_gen_id }} 0.6s ease-out;
+    }
+  }
+
+  @keyframes ai-product-drop-fade-in-{{ ai_gen_id }} {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+{% endstyle %}
+
+<div 
+  class="ai-product-drop-{{ ai_gen_id }}"
+  role="banner"
+  aria-label="Product announcement"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-product-drop-container-{{ ai_gen_id }}">
+    <div class="ai-product-drop-content-{{ ai_gen_id }}">
+      {% if block.settings.eyebrow_text != blank %}
+        <p class="ai-product-drop-eyebrow-{{ ai_gen_id }}">{{ block.settings.eyebrow_text }}</p>
+      {% endif %}
+      
+      {% if block.settings.headline != blank %}
+        <h2 class="ai-product-drop-headline-{{ ai_gen_id }}">{{ block.settings.headline }}</h2>
+      {% endif %}
+      
+      {% if block.settings.subtext != blank %}
+        <p class="ai-product-drop-subtext-{{ ai_gen_id }}">{{ block.settings.subtext }}</p>
+      {% endif %}
+      
+      {% if block.settings.button_text != blank %}
+        <a 
+          href="{{ block.settings.button_link | default: '#' }}"
+          class="ai-product-drop-button-{{ ai_gen_id }}"
+          {% if block.settings.button_link == blank %}aria-disabled="true"{% endif %}
+        >
+          {{ block.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+    
+    <div class="ai-product-drop-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.product_image %}
+        <img
+          src="{{ block.settings.product_image | image_url: width: 800 }}"
+          alt="{{ block.settings.product_image.alt | escape }}"
+          class="ai-product-drop-image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.product_image.width }}"
+          height="{{ block.settings.product_image.height }}"
+        >
+      {% else %}
+        <div class="ai-product-drop-placeholder-{{ ai_gen_id }}">
+          Add product image
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product drop announcement",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "New • Just dropped"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Broen Obsidian has dropped."
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1300
+    },
+    {
+      "type": "range",
+      "id": "desktop_padding",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop padding",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "desktop_gap",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop gap",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile gap",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Content gap",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color_start",
+      "label": "Background start",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "background_color_end",
+      "label": "Background end",
+      "default": "#e9ecef"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "%",
+      "label": "Border opacity",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#6c757d"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#212529"
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext color",
+      "default": "#495057"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#212529"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow size",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "headline_size_mobile",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline mobile size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "headline_size_desktop",
+      "min": 28,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline desktop size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtext size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Button text size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_mobile",
+      "min": 100,
+      "max": 250,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile max height",
+      "default": 170
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_desktop",
+      "min": 180,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop max height",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "image_shadow_opacity",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "%",
+      "label": "Shadow opacity",
+      "default": 15
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product drop announcement"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

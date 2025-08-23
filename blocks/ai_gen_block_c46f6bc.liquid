@@ -1,0 +1,1504 @@
+{% comment %}
+  Broen – Smart Locks Collection Template
+  Dark Apple-clean design with Theme Editor controls + Glassmorphism
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ================================
+     Broen – Smart Locks (Glass UI)
+     ================================ */
+
+  .broen-collection-{{ ai_gen_id }}{
+    --glass-bg: hsla(0,0%,100%,.06);
+    --glass-bg-strong: hsla(0,0%,100%,.10);
+    --glass-border: hsla(0,0%,100%,.24);
+    --glass-highlight: hsla(0,0%,100%,.45);
+    --glass-shadow: rgba(0,0,0,.28);
+    --glass-blur: 20px;
+    --glass-saturate: 180%;
+
+    background: linear-gradient(135deg, {{ block.settings.bg_gradient_start }} 0%, {{ block.settings.bg_gradient_end }} 100%);
+    min-height: 100vh;
+    color: {{ block.settings.text_primary }};
+    font-family: -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+  }
+
+  .broen-header-{{ ai_gen_id }}{
+    position: sticky; top: 0; z-index: {{ block.settings.header_z_index | default: 50 }};
+    backdrop-filter: blur({{ block.settings.header_blur }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.header_blur }}px);
+    background: rgba({{ block.settings.bg_gradient_start | color_extract: 'red' }}, {{ block.settings.bg_gradient_start | color_extract: 'green' }}, {{ block.settings.bg_gradient_start | color_extract: 'blue' }}, {{ block.settings.header_opacity | divided_by: 100.0 }});
+    border-bottom: 1px solid rgba({{ block.settings.border_muted | color_extract: 'red' }}, {{ block.settings.border_muted | color_extract: 'green' }}, {{ block.settings.border_muted | color_extract: 'blue' }}, {{ block.settings.border_opacity | divided_by: 100.0 }});
+    padding: {{ block.settings.header_padding_y }}px 0;
+    transition: all .3s ease;
+  }
+
+  .broen-container-{{ ai_gen_id }}{ max-width: {{ block.settings.container_max_width }}px; margin: 0 auto; padding: 0 {{ block.settings.container_padding }}px; }
+
+  .broen-title-{{ ai_gen_id }}{
+    font: 700 {{ block.settings.title_size }}px/1.1 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+    margin: 0 0 {{ block.settings.title_margin }}px; text-align: center; color: {{ block.settings.text_primary }}; letter-spacing: -0.03em;
+  }
+  .broen-subtitle-{{ ai_gen_id }}{
+    font: 500 {{ block.settings.subtitle_size }}px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+    color: {{ block.settings.text_secondary }}; text-align: center; margin: 0 0 {{ block.settings.subtitle_margin }}px; opacity: .85;
+  }
+
+  .broen-filters-{{ ai_gen_id }}{ display:flex; justify-content:center; gap:{{ block.settings.filter_gap }}px; flex-wrap:wrap; margin: {{ block.settings.filter_margin_top }}px 0; }
+
+  /* Glass filter pills (matte) */
+  .broen-filter-btn-{{ ai_gen_id }}{
+    position:relative; overflow:hidden; isolation:isolate; border-radius: {{ block.settings.filter_border_radius }}px;
+    padding: {{ block.settings.filter_padding_y }}px {{ block.settings.filter_padding_x }}px;
+    border:1px solid var(--glass-border); color: {{ block.settings.text_secondary }}; text-decoration:none;
+    backdrop-filter:saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    -webkit-backdrop-filter:saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    background: var(--glass-bg-strong);
+    box-shadow: inset 0 .5px 0 var(--glass-highlight), inset 0 -1px 0 rgba(0,0,0,.12), 0 8px 20px var(--glass-shadow);
+    transition: transform .2s, background .2s;
+    font-size: {{ block.settings.filter_font_size }}px; font-weight: {{ block.settings.filter_font_weight }};
+    white-space: nowrap;
+  }
+  .broen-filter-btn-{{ ai_gen_id }}:hover{ transform:translateY(-1px); background: hsla(0,0%,100%,.12); }
+  .broen-filter-btn-{{ ai_gen_id }}::before, .broen-filter-btn-{{ ai_gen_id }}::after{ content:none !important; }
+  .broen-filter-btn-{{ ai_gen_id }}.active{
+    background: {{ block.settings.accent_primary }}; color: {{ block.settings.active_filter_text }};
+    border-color: {{ block.settings.accent_primary }}; font-weight:600; transform: translateY(-1px);
+    box-shadow: inset 0 .5px 0 rgba(255,255,255,.5), 0 10px 24px rgba(0,0,0,.35);
+  }
+
+  .broen-grid-{{ ai_gen_id }}{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax({{ block.settings.card_min_width }}px, 1fr));
+    gap: {{ block.settings.grid_gap_desktop }}px; padding: {{ block.settings.grid_padding_top }}px 0 {{ block.settings.grid_padding_bottom }}px;
+  }
+
+  /* Product Card – matte glass */
+  .broen-card-{{ ai_gen_id }}{
+    position:relative; isolation:isolate; overflow:hidden; border-radius: {{ block.settings.card_radius }}px;
+    border:1px solid var(--glass-border);
+    backdrop-filter:saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    -webkit-backdrop-filter:saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    background: var(--glass-bg);
+    box-shadow: inset 0 .5px 0 var(--glass-highlight), inset 0 -1px 0 rgba(0,0,0,.12), 0 8px 20px var(--glass-shadow);
+    transition: transform .3s cubic-bezier(.25,.46,.45,.94), box-shadow .3s;
+  }
+  .broen-card-{{ ai_gen_id }}::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background: linear-gradient(to bottom, rgba(255,255,255,.24), rgba(255,255,255,0) 42%); mix-blend-mode: screen; opacity:.9;
+  }
+  .broen-card-{{ ai_gen_id }}::after{ content:none; }
+
+  .broen-card-{{ ai_gen_id }}:hover{
+    transform: translateY(-{{ block.settings.card_hover_lift }}px);
+    box-shadow: 0 {{ block.settings.card_shadow_y }}px {{ block.settings.card_shadow_blur }}px rgba(0,0,0,{{ block.settings.card_shadow_opacity | divided_by: 100.0 }}), 0 2px 0 rgba(255,255,255,.05) inset;
+    border-color: rgba({{ block.settings.border_muted | color_extract: 'red' }}, {{ block.settings.border_muted | color_extract: 'green' }}, {{ block.settings.border_muted | color_extract: 'blue' }}, .3);
+  }
+
+  .broen-card-image-{{ ai_gen_id }}{ aspect-ratio:1; overflow:hidden; position:relative; background: rgba({{ block.settings.surface_card | color_extract: 'red' }}, {{ block.settings.surface_card | color_extract: 'green' }}, {{ block.settings.surface_card | color_extract: 'blue' }}, .3); }
+  .broen-card-image-{{ ai_gen_id }} img,
+  .broen-card-image-{{ ai_gen_id }} video{ width:100%; height:100%; object-fit:cover; transition: transform .4s cubic-bezier(.25,.46,.45,.94); }
+  .broen-card-{{ ai_gen_id }}:hover .broen-card-image-{{ ai_gen_id }} img,
+  .broen-card-{{ ai_gen_id }}:hover .broen-card-image-{{ ai_gen_id }} video{ transform: scale({{ block.settings.image_hover_scale | divided_by: 100.0 }}); }
+
+  .broen-card-content-{{ ai_gen_id }}{ padding: {{ block.settings.card_padding }}px; }
+
+  .broen-card-title-container-{{ ai_gen_id }}{ position:relative; margin:0 0 {{ block.settings.card_title_margin }}px; padding-right:92px; min-height: {{ block.settings.card_title_size | times: 2.4 | round }}px; }
+  .broen-card-title-{{ ai_gen_id }}{
+    margin:0; color: {{ block.settings.text_primary }};
+    font: 600 {{ block.settings.card_title_size }}px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .broen-card-title-{{ ai_gen_id }} a{ color:inherit; text-decoration:none; transition:opacity .2s; }
+  .broen-card-title-{{ ai_gen_id }} a:hover{ opacity:.75; }
+
+  /* Door classification pill */
+  .broen-door-classification-{{ ai_gen_id }},
+  .broen-door-classification-placeholder-{{ ai_gen_id }}{
+    position:absolute; top:0; right:0; margin:0; white-space:nowrap;
+    padding: {{ block.settings.classification_padding_y }}px {{ block.settings.classification_padding_x }}px;
+    font: 500 {{ block.settings.classification_font_size }}px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+    letter-spacing:.3px; border-radius: {{ block.settings.classification_border_radius }}px;
+    border:1px solid var(--glass-border);
+    backdrop-filter:saturate(var(--glass-saturate)) blur(var(--glass-blur)); -webkit-backdrop-filter:saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    background: var(--glass-bg-strong);
+    color: {{ block.settings.classification_text_color }};
+    box-shadow: inset 0 .5px 0 var(--glass-highlight), inset 0 -1px 0 rgba(0,0,0,.12), 0 8px 20px var(--glass-shadow);
+  }
+  .broen-door-classification-placeholder-{{ ai_gen_id }}{
+    background: rgba({{ block.settings.text_secondary | color_extract: 'red' }}, {{ block.settings.text_secondary | color_extract: 'green' }}, {{ block.settings.text_secondary | color_extract: 'blue' }}, .15);
+    color: {{ block.settings.text_secondary }};
+    border-color: rgba({{ block.settings.text_secondary | color_extract: 'red' }}, {{ block.settings.text_secondary | color_extract: 'green' }}, {{ block.settings.text_secondary | color_extract: 'blue' }}, .2);
+    font-weight:400;
+  }
+
+  .broen-price-{{ ai_gen_id }}{ margin: {{ block.settings.price_margin }}px 0; display:flex; align-items:baseline; gap:8px; font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif; }
+  .broen-current-price-{{ ai_gen_id }}{ font-size: {{ block.settings.price_size }}px; font-weight:600; letter-spacing:-.01em; color: {{ block.settings.text_primary }}; }
+  .broen-compare-price-{{ ai_gen_id }}{ font-size: {{ block.settings.compare_price_size }}px; color: {{ block.settings.text_secondary }}; text-decoration: line-through; opacity:.7; }
+
+  .broen-actions-{{ ai_gen_id }}{ display:flex; gap: {{ block.settings.action_gap }}px; margin-top: {{ block.settings.action_margin_top }}px; }
+
+  /* CTAs – single matte glass base */
+  .broen-btn-{{ ai_gen_id }}{
+    flex:1; min-height:44px;
+    padding: {{ block.settings.btn_padding_y }}px {{ block.settings.btn_padding_x }}px;
+    border-radius: {{ block.settings.btn_border_radius }}px;
+    border:1px solid var(--glass-border);
+    text-decoration:none; text-align:center; cursor:pointer; user-select:none;
+    display:inline-flex; align-items:center; justify-content:center; gap:.5ch;
+    font: 600 {{ block.settings.btn_font_size }}px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
+    letter-spacing: -.01em;
+
+    color: {{ block.settings.text_primary }};
+    background: linear-gradient(0deg, rgba(255,255,255,.18), rgba(255,255,255,.18));
+    backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    -webkit-backdrop-filter: saturate(var(--glass-saturate)) blur(var(--glass-blur));
+    box-shadow: 0 8px 20px var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,.12);
+    transition: transform .2s, box-shadow .2s, background .2s, filter .2s;
+  }
+  .broen-btn-{{ ai_gen_id }}::before, .broen-btn-{{ ai_gen_id }}::after{ content:none !important; }
+  .broen-btn-{{ ai_gen_id }}:hover{ transform: translateY(-1px); background: linear-gradient(0deg, rgba(255,255,255,.24), rgba(255,255,255,.24)); box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14); }
+  .broen-btn-{{ ai_gen_id }}:active{ transform:none; box-shadow: 0 4px 12px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.10); }
+  .broen-btn-{{ ai_gen_id }}:focus-visible{ outline:3px solid rgba(255,255,255,.5); outline-offset:2px; }
+  .broen-btn-primary-{{ ai_gen_id }}:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+
+  /* Variant: Buy Now = Apple iMessage blue */
+  .broen-btn-secondary-{{ ai_gen_id }}{
+    color:#fff !important;
+    background: linear-gradient(180deg, rgba(10,132,255,.95), rgba(10,132,255,.82)) !important;
+    border-color: rgba(255,255,255,.35) !important;
+    text-shadow: 0 0 1px rgba(0,0,0,.12);
+    box-shadow: 0 10px 24px rgba(10,132,255,.35), inset 0 1px 0 rgba(255,255,255,.25) !important;
+  }
+  .broen-btn-secondary-{{ ai_gen_id }}:hover{
+    background: linear-gradient(180deg, rgba(10,132,255,1), rgba(10,132,255,.9)) !important;
+  }
+
+  /* Empty state */
+  .broen-empty-state-{{ ai_gen_id }}{ text-align:center; padding: {{ block.settings.empty_state_padding }}px 20px; color: {{ block.settings.text_secondary }}; grid-column:1/-1; }
+  .broen-empty-state-{{ ai_gen_id }} h3{ font:600 {{ block.settings.empty_title_size }}px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display",system-ui,sans-serif; margin:0 0 8px; color: {{ block.settings.text_primary }}; }
+  .broen-empty-state-{{ ai_gen_id }} p{ font-size: {{ block.settings.empty_text_size }}px; margin:0; opacity:.8; }
+
+  /* Fallback for browsers without backdrop-filter */
+  @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)){
+    .broen-card-{{ ai_gen_id }},
+    .broen-filter-btn-{{ ai_gen_id }},
+    .broen-btn-{{ ai_gen_id }},
+    .broen-door-classification-{{ ai_gen_id }},
+    .broen-door-classification-placeholder-{{ ai_gen_id }}{
+      background: rgba(255,255,255,.14) !important;
+      box-shadow: 0 8px 20px rgba(0,0,0,.25);
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+    }
+  }
+
+  /* Reduced transparency preference */
+  @media (prefers-reduced-transparency: reduce){
+    .broen-card-{{ ai_gen_id }},
+    .broen-filter-btn-{{ ai_gen_id }},
+    .broen-btn-{{ ai_gen_id }}{
+      backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(255,255,255,.12) !important;
+    }
+  }
+
+  /* Mobile */
+  @media (max-width: {{ block.settings.mobile_breakpoint }}px){
+    .broen-grid-{{ ai_gen_id }}{ grid-template-columns:1fr 1fr; gap: {{ block.settings.grid_gap_mobile }}px; }
+    .broen-title-{{ ai_gen_id }}{ font-size: {{ block.settings.title_size | times: 0.8 }}px; }
+    .broen-subtitle-{{ ai_gen_id }}{ font-size: {{ block.settings.subtitle_size | times: 0.9 }}px; }
+
+    .broen-filters-{{ ai_gen_id }}{ gap: {{ block.settings.filter_gap | times: 0.7 }}px; margin: {{ block.settings.filter_margin_top | times: 0.8 }}px 0; }
+    .broen-filter-btn-{{ ai_gen_id }}{ padding: {{ block.settings.filter_padding_y | times: 0.8 }}px {{ block.settings.filter_padding_x | times: 0.8 }}px; font-size: {{ block.settings.filter_font_size | times: 0.9 }}px; }
+
+    .broen-card-content-{{ ai_gen_id }}{ padding: {{ block.settings.card_padding | times: 0.8 }}px; }
+    .broen-card-title-{{ ai_gen_id }}{ font-size: {{ block.settings.card_title_size | times: 0.9 }}px; }
+    .broen-card-title-container-{{ ai_gen_id }}{ display:block; padding-right:0 !important; min-height: calc({{ block.settings.card_title_size | times: 0.9 }}px * 1.2 * 2 + 34px); }
+
+    .broen-door-classification-{{ ai_gen_id }},
+    .broen-door-classification-placeholder-{{ ai_gen_id }}{
+      position: static !important; margin-top:8px;
+      font-size: {{ block.settings.classification_font_size | times: 0.85 }}px;
+      padding: {{ block.settings.classification_padding_y | times: 0.7 }}px {{ block.settings.classification_padding_x | times: 0.7 }}px; text-transform:capitalize;
+    }
+
+    .broen-actions-{{ ai_gen_id }}{ flex-direction:column; gap: {{ block.settings.action_gap | times: 0.7 }}px; }
+    .broen-btn-{{ ai_gen_id }}{ padding: {{ block.settings.btn_padding_y | times: 0.8 }}px {{ block.settings.btn_padding_x | times: 0.8 }}px; font-size: {{ block.settings.btn_font_size | times: 0.9 }}px; }
+  }
+
+  /* Tablet tweak */
+  @media (max-width:1024px) and (min-width: {{ block.settings.mobile_breakpoint | plus: 1 }}px){
+    .broen-grid-{{ ai_gen_id }}{ grid-template-columns: repeat(auto-fill, minmax({{ block.settings.card_min_width | times: 0.9 }}px, 1fr)); }
+  }
+{% endstyle %}
+
+<section class="broen-collection-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <header class="broen-header-{{ ai_gen_id }}">
+    <div class="broen-container-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h1 class="broen-title-{{ ai_gen_id }}">{{ block.settings.title }}</h1>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <p class="broen-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+      {% endif %}
+
+      <nav class="broen-filters-{{ ai_gen_id }}" role="navigation" aria-label="Filter products by door type">
+        <a href="?door_type=" class="broen-filter-btn-{{ ai_gen_id }} {% unless request.query_parameters.door_type %}active{% endunless %}" data-filter="">{{ block.settings.filter_all_text }}</a>
+        <a href="?door_type=main-door" class="broen-filter-btn-{{ ai_gen_id }} {% if request.query_parameters.door_type == 'main-door' %}active{% endif %}" data-filter="main-door">{{ block.settings.filter_main_text }}</a>
+        <a href="?door_type=outdoor" class="broen-filter-btn-{{ ai_gen_id }} {% if request.query_parameters.door_type == 'outdoor' %}active{% endif %}" data-filter="outdoor">{{ block.settings.filter_outdoor_text }}</a>
+        <a href="?door_type=indoor" class="broen-filter-btn-{{ ai_gen_id }} {% if request.query_parameters.door_type == 'indoor' %}active{% endif %}" data-filter="indoor">{{ block.settings.filter_indoor_text }}</a>
+        <a href="?door_type=glass-door" class="broen-filter-btn-{{ ai_gen_id }} {% if request.query_parameters.door_type == 'glass-door' %}active{% endif %}" data-filter="glass-door">{{ block.settings.filter_glass_text }}</a>
+        <a href="?door_type=sliding-door" class="broen-filter-btn-{{ ai_gen_id }} {% if request.query_parameters.door_type == 'sliding-door' %}active{% endif %}" data-filter="sliding-door">{{ block.settings.filter_sliding_text }}</a>
+      </nav>
+    </div>
+  </header>
+
+<main class="broen-container-{{ ai_gen_id }}">
+  <div class="broen-grid-{{ ai_gen_id }}">
+    {%- assign current_filter = request.query_parameters.door_type | default: '' -%}
+    {%- assign shown = 0 -%}
+
+    {%- for product in collection.products -%}
+      {%- comment -%} Resolve door type metafield safely {%- endcomment -%}
+      {%- assign door_mf = product.metafields.custom.door_type -%}
+      {%- if door_mf == blank -%}{%- assign door_mf = product.metafields['custom']['door_type'] -%}{%- endif -%}
+      {%- if door_mf == blank -%}{%- assign door_type_raw = '' -%}{%- else -%}
+        {%- if door_mf.value != blank -%}{%- assign door_type_raw = door_mf.value -%}{%- else -%}{%- assign door_type_raw = door_mf -%}{%- endif -%}
+      {%- endif -%}
+
+      {%- if door_type_raw == blank -%}
+        {%- assign door_type_slug = 'unassigned' -%}
+      {%- else -%}
+        {%- assign door_type_slug = door_type_raw | handleize -%}
+      {%- endif -%}
+
+      {%- if current_filter != '' and current_filter != door_type_slug -%}{%- continue -%}{%- endif -%}
+      {%- assign shown = shown | plus: 1 -%}
+
+      <article class="broen-card-{{ ai_gen_id }}" data-door-type="{{ door_type_slug }}">
+        <div class="broen-card-image-{{ ai_gen_id }}">
+          {% assign product_media_type = product.metafields.custom.media_type | default: block.settings.default_media_type %}
+          {% assign product_video = product.metafields.custom.product_video %}
+          {% assign product_video_poster = product.metafields.custom.video_poster_image %}
+          {% assign product_video_hover = product.metafields.custom.video_hover_only | default: block.settings.default_video_hover %}
+
+          {% if product_media_type == 'video' and product_video %}
+            <video
+              class="broen-product-video-{{ ai_gen_id }}"
+              src="{{ product_video.url }}"
+              poster="{% if product_video_poster %}{{ product_video_poster | image_url: width: 600 }}{% elsif product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}"
+              muted loop playsinline loading="lazy" width="400" height="400"
+              data-hover-only="{{ product_video_hover }}"
+              data-product-id="{{ product.id }}"
+              {% unless product_video_hover %}autoplay{% endunless %}></video>
+          {% elsif product.featured_image %}
+            <img
+              src="{{ product.featured_image | image_url: width: 400 }}"
+              srcset="{{ product.featured_image | image_url: width: 200 }} 200w,
+                      {{ product.featured_image | image_url: width: 400 }} 400w,
+                      {{ product.featured_image | image_url: width: 600 }} 600w,
+                      {{ product.featured_image | image_url: width: 800 }} 800w"
+              sizes="(max-width: {{ block.settings.mobile_breakpoint }}px) 50vw,
+                     (max-width: 1024px) 33vw,
+                     {{ block.settings.card_min_width }}px"
+              alt="{{ product.featured_image.alt | default: product.title | escape }}"
+              loading="lazy" width="400" height="400">
+          {% else %}
+            <div class="broen-card-image-placeholder-{{ ai_gen_id }}">
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="broen-card-content-{{ ai_gen_id }}">
+          <div class="broen-card-title-container-{{ ai_gen_id }}">
+            <h3 class="broen-card-title-{{ ai_gen_id }}">
+              <a href="{{ product.url }}" aria-label="View {{ product.title | escape }}">
+                {{ product.title | truncate: block.settings.title_truncate }}
+              </a>
+            </h3>
+
+            {%- if door_type_slug == 'unassigned' -%}
+              <div class="broen-door-classification-placeholder-{{ ai_gen_id }}">{{ block.settings.classification_placeholder_text }}</div>
+            {%- else -%}
+              {%- assign door_label = door_type_slug | replace: '-', ' ' | capitalize -%}
+              <div class="broen-door-classification-{{ ai_gen_id }}">{{ door_label }}</div>
+            {%- endif -%}
+          </div>
+
+          <div class="broen-price-{{ ai_gen_id }}">
+            {% if product.compare_at_price > product.price %}
+              <span class="broen-compare-price-{{ ai_gen_id }}">{{ product.compare_at_price | money }}</span>
+            {% endif %}
+            <span class="broen-current-price-{{ ai_gen_id }}">{{ product.price | money }}</span>
+          </div>
+
+          <div class="broen-actions-{{ ai_gen_id }}">
+            <button 
+              class="broen-btn-{{ ai_gen_id }} broen-btn-primary-{{ ai_gen_id }}"
+              data-product-id="{{ product.id }}"
+              data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+              data-variant-available="{{ product.selected_or_first_available_variant.available }}"
+              aria-label="Add {{ product.title | escape }} to cart"
+              {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              {% if product.selected_or_first_available_variant.available %}
+                {{ block.settings.atc_text }}
+              {% else %}
+                {{ block.settings.sold_out_text }}
+              {% endif %}
+            </button>
+            <a href="{{ product.url }}" class="broen-btn-{{ ai_gen_id }} broen-btn-secondary-{{ ai_gen_id }}" aria-label="Buy {{ product.title | escape }} now">
+              {{ block.settings.buy_now_text }}
+            </a>
+          </div>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+
+  <div id="broen-empty-{{ ai_gen_id }}" class="broen-empty-state-{{ ai_gen_id }}" style="{% if shown > 0 %}display:none{% endif %}">
+    <h3>{{ block.settings.empty_title }}</h3>
+    <p>{{ block.settings.empty_message }}</p>
+  </div>
+</main>
+
+</section>
+
+<script>
+(function() {
+  'use strict';
+  const root = document.querySelector('.broen-collection-{{ ai_gen_id }}');
+  if (!root) return;
+
+  const grid = root.querySelector('.broen-grid-{{ ai_gen_id }}');
+  const cards = Array.from(grid.querySelectorAll('.broen-card-{{ ai_gen_id }}'));
+  const filterNav = root.querySelector('.broen-filters-{{ ai_gen_id }}');
+  const emptyEl = root.querySelector('#broen-empty-{{ ai_gen_id }}');
+
+  function setActive(btn) {
+    filterNav.querySelectorAll('.broen-filter-btn-{{ ai_gen_id }}').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function getParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name) || '';
+  }
+  function setParam(name, val) {
+    const url = new URL(window.location.href);
+    if (!val) {
+      url.searchParams.delete(name);
+    } else {
+      url.searchParams.set(name, val);
+    }
+    history.replaceState({}, '', url);
+  }
+
+  // Handle clicks (works in Theme Editor without reload)
+  if (filterNav) {
+    filterNav.addEventListener('click', (e) => {
+      const a = e.target.closest('.broen-filter-btn-{{ ai_gen_id }}');
+      if (!a) return;
+      e.preventDefault();
+      const value = a.dataset.filter || '';
+      setActive(a);
+      applyFilter(value);
+      setParam('door_type', value);
+    });
+  }
+
+  // Apply filter from URL on first load
+  const initial = getParam('door_type') || '';
+  const initialBtn = filterNav && filterNav.querySelector(`.broen-filter-btn-{{ ai_gen_id }}[data-filter="${initial}"]`);
+  if (initialBtn) setActive(initialBtn);
+  applyFilter(initial);
+
+  function applyFilter(value) {
+    let shown = 0;
+    cards.forEach(card => {
+      const type = card.getAttribute('data-door-type');
+      const visible = !value || value === '' ? true : (type === value);
+      card.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    });
+    if (emptyEl) emptyEl.style.display = shown === 0 ? '' : 'none';
+  }
+
+  class BroenSmartLocks extends HTMLElement {
+    constructor() {
+      super();
+      this.cartEndpoint = '/cart/add.js';
+      this.init();
+    }
+
+    init() {
+      this.setupAddToCart();
+      this.setupAccessibility();
+      this.setupVideoInteractions();
+    }
+
+    setupAddToCart() {
+      const addToCartButtons = this.querySelectorAll('[data-product-id]');
+      addToCartButtons.forEach(button => {
+        button.addEventListener('click', this.handleAddToCart.bind(this));
+      });
+    }
+
+    async handleAddToCart(event) {
+      event.preventDefault();
+      const button = event.currentTarget;
+      const variantId = button.dataset.variantId;
+      const isAvailable = button.dataset.variantAvailable === 'true';
+      if (!isAvailable) return;
+
+      const originalText = button.textContent.trim();
+      button.textContent = '{{ block.settings.adding_text | default: "Adding..." }}';
+      button.disabled = true;
+      button.style.opacity = '0.7';
+
+      try {
+        const response = await fetch(this.cartEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          body: JSON.stringify({ id: variantId, quantity: 1 })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          button.textContent = '{{ block.settings.added_text | default: "Added!" }}';
+          button.style.opacity = '1';
+
+          this.dispatchEvent(new CustomEvent('cart:updated', {
+            bubbles: true,
+            detail: { item: data, cart: await this.getCart() }
+          }));
+
+          setTimeout(() => { button.textContent = originalText; button.disabled = false; }, {{ block.settings.feedback_duration | default: 2000 }});
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Add to cart failed:', error);
+        button.textContent = '{{ block.settings.error_text | default: "Error" }}';
+        setTimeout(() => { button.textContent = originalText; button.disabled = false; button.style.opacity = '1'; }, {{ block.settings.feedback_duration | default: 2000 }});
+      }
+    }
+
+    async getCart() {
+      try {
+        const response = await fetch('/cart.js');
+        return response.ok ? await response.json() : null;
+      } catch (error) {
+        console.error('Failed to fetch cart:', error);
+        return null;
+      }
+    }
+
+    setupVideoInteractions() {
+      const productVideos = this.querySelectorAll('.broen-product-video-{{ ai_gen_id }}');
+
+      productVideos.forEach(video => {
+        const card = video.closest('.broen-card-{{ ai_gen_id }}');
+        const isHoverOnly = video.dataset.hoverOnly === 'true';
+
+        if (isHoverOnly) {
+          video.pause();
+          card.addEventListener('mouseenter', () => video.play().catch(() => {}));
+          card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+        } else {
+          card.addEventListener('mouseenter', () => video.play().catch(() => {}));
+        }
+
+        video.addEventListener('error', () => {
+          const fallbackImg = card.querySelector('img');
+          if (fallbackImg) { video.style.display = 'none'; fallbackImg.style.display = 'block'; }
+        });
+      });
+
+      // Pause offscreen videos to save power
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          const v = e.target;
+          if (v.tagName !== 'VIDEO') return;
+          e.isIntersecting ? v.play().catch(()=>{}) : v.pause();
+        });
+      }, { threshold: 0.2 });
+      this.querySelectorAll('video').forEach(v => io.observe(v));
+    }
+
+    setupAccessibility() {
+      const filterButtons = this.querySelectorAll('.broen-filter-btn-{{ ai_gen_id }}');
+      filterButtons.forEach((button, index) => {
+        button.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const direction = e.key === 'ArrowRight' ? 1 : -1;
+            const nextIndex = (index + direction + filterButtons.length) % filterButtons.length;
+            filterButtons[nextIndex].focus();
+          }
+        });
+      });
+    }
+  }
+
+  if (!customElements.get('broen-smart-locks-{{ ai_gen_id }}')) {
+    customElements.define('broen-smart-locks-{{ ai_gen_id }}', BroenSmartLocks);
+  }
+})();
+</script>
+
+
+{% schema %}
+{
+  "name": "Broen – Smart Locks",
+  "class": "section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Collection Title",
+      "default": "Different Smart Locks Built for Different Doors"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Collection Subtitle",
+      "default": "What kind of door do you have?"
+    },
+    {
+      "type": "text",
+      "id": "filter_all_text",
+      "label": "'All' Filter Text",
+      "default": "All"
+    },
+    {
+      "type": "text",
+      "id": "filter_main_text",
+      "label": "'Main Door' Filter Text",
+      "default": "Main Door"
+    },
+    {
+      "type": "text",
+      "id": "filter_outdoor_text",
+      "label": "'Outdoor' Filter Text",
+      "default": "Outdoor (Waterproof)"
+    },
+    {
+      "type": "text",
+      "id": "filter_indoor_text",
+      "label": "'Indoor' Filter Text",
+      "default": "Indoor"
+    },
+    {
+      "type": "text",
+      "id": "filter_glass_text",
+      "label": "'Glass Door' Filter Text",
+      "default": "Glass Door"
+    },
+    {
+      "type": "text",
+      "id": "filter_sliding_text",
+      "label": "'Sliding Door' Filter Text",
+      "default": "Sliding Door"
+    },
+    {
+      "type": "text",
+      "id": "atc_text",
+      "label": "ATC Button Text",
+      "default": "ATC"
+    },
+    {
+      "type": "text",
+      "id": "buy_now_text",
+      "label": "Buy Now Button Text",
+      "default": "BUY NOW"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Sold Out Text",
+      "default": "Sold Out"
+    },
+    {
+      "type": "text",
+      "id": "adding_text",
+      "label": "Adding to Cart Text",
+      "default": "Adding..."
+    },
+    {
+      "type": "text",
+      "id": "added_text",
+      "label": "Added to Cart Text",
+      "default": "Added!"
+    },
+    {
+      "type": "text",
+      "id": "error_text",
+      "label": "Error Text",
+      "default": "Error"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty State Title",
+      "default": "No products found"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty State Message",
+      "default": "Try selecting a different door type or browse all products."
+    },
+    {
+      "type": "header",
+      "content": "Product Media Settings"
+    },
+    {
+      "type": "select",
+      "id": "default_media_type",
+      "label": "Default Media Type",
+      "info": "Used when product doesn't have custom.media_type metafield",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "checkbox",
+      "id": "default_video_hover",
+      "label": "Default: Play Video on Hover Only",
+      "info": "Used when product doesn't have custom.video_hover_only metafield",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Color Palette"
+    },
+    {
+      "type": "color",
+      "id": "bg_gradient_start",
+      "label": "Background Gradient Start",
+      "default": "#0E1116"
+    },
+    {
+      "type": "color",
+      "id": "bg_gradient_end",
+      "label": "Background Gradient End",
+      "default": "#1A1F27"
+    },
+    {
+      "type": "color",
+      "id": "surface_card",
+      "label": "Card Surface Color",
+      "default": "#161B22"
+    },
+    {
+      "type": "color",
+      "id": "border_muted",
+      "label": "Border Color",
+      "default": "#2A303B"
+    },
+    {
+      "type": "color",
+      "id": "text_primary",
+      "label": "Primary Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_secondary",
+      "label": "Secondary Text Color",
+      "default": "#A8B0BB"
+    },
+    {
+      "type": "color",
+      "id": "accent_primary",
+      "label": "Primary Accent Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "active_filter_text",
+      "label": "Active Filter Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_primary_text",
+      "label": "Primary Button Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_primary_hover",
+      "label": "Primary Button Hover Color",
+      "default": "#F0F0F0"
+    },
+    {
+      "type": "checkbox",
+      "id": "uniform_buttons",
+      "label": "Make Both Buttons Same Style",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "btn_secondary_bg",
+      "label": "Secondary Button Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "btn_secondary_text",
+      "label": "Secondary Button Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_secondary_hover",
+      "label": "Secondary Button Hover Color",
+      "default": "#F0F0F0"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_brand_blue",
+      "label": "Enable Brand Blue for Links",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "brand_blue",
+      "label": "Brand Blue Color",
+      "default": "#007AFF"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star Rating Color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Title Font Size",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle Font Size",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Subtitle Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Card Title Font Size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Card Title Font Weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "title_truncate",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "label": "Card Title Character Limit",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Price Font Size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "price_weight",
+      "label": "Price Font Weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "compare_price_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Compare Price Font Size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Filter Styling"
+    },
+    {
+      "type": "range",
+      "id": "filter_font_size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Filter Font Size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "filter_font_weight",
+      "label": "Filter Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "filter_padding_y",
+      "min": 8,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Filter Vertical Padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "filter_padding_x",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Filter Horizontal Padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "filter_border_radius",
+      "min": 16,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Filter Border Radius",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Button Styling"
+    },
+    {
+      "type": "range",
+      "id": "btn_font_size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Button Font Size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "btn_font_weight",
+      "label": "Button Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_y",
+      "min": 8,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Vertical Padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_x",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Horizontal Padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "btn_border_radius",
+      "min": 16,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Border Radius",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Layout & Spacing"
+    },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "min": 1000,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Container Max Width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "min": 16,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Container Side Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "header_padding_y",
+      "min": 16,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Header Vertical Padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "title_margin",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Title Bottom Margin",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subtitle_margin",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Subtitle Bottom Margin",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "filter_margin_top",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Filter Section Top Margin",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "filter_gap",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "label": "Filter Button Gap",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "grid_padding_top",
+      "min": 24,
+      "max": 80,
+      "step": 8,
+      "unit": "px",
+      "label": "Grid Top Padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "grid_padding_bottom",
+      "min": 24,
+      "max": 80,
+      "step": 8,
+      "unit": "px",
+      "label": "Grid Bottom Padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "card_min_width",
+      "min": 280,
+      "max": 360,
+      "step": 20,
+      "unit": "px",
+      "label": "Card Minimum Width (Desktop)",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_desktop",
+      "min": 16,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid Gap (Desktop)",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid Gap (Mobile)",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_breakpoint",
+      "min": 640,
+      "max": 768,
+      "step": 16,
+      "unit": "px",
+      "label": "Mobile Breakpoint",
+      "default": 768
+    },
+    {
+      "type": "header",
+      "content": "Card Design"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Border Radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 16,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Card Content Padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_title_margin",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Title Bottom Margin",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_hover_lift",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Card Hover Lift",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_y",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Card Shadow Y Offset",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "min": 20,
+      "max": 60,
+      "step": 10,
+      "unit": "px",
+      "label": "Card Shadow Blur",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "image_hover_scale",
+      "min": 100,
+      "max": 110,
+      "step": 1,
+      "unit": "%",
+      "label": "Image Hover Scale",
+      "default": 105
+    },
+    {
+      "type": "range",
+      "id": "action_gap",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Action Button Gap",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "action_margin_top",
+      "min": 12,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "label": "Action Section Top Margin",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "price_margin",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Price Section Margin",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Door Classification Styling"
+    },
+    {
+      "type": "color",
+      "id": "classification_bg_color",
+      "label": "Classification Background Color",
+      "default": "#00D4FF"
+    },
+    {
+      "type": "color",
+      "id": "classification_text_color",
+      "label": "Classification Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "classification_padding_y",
+      "min": 4,
+      "max": 12,
+      "step": 2,
+      "unit": "px",
+      "label": "Classification Vertical Padding",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "classification_padding_x",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Classification Horizontal Padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "classification_border_radius",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Classification Border Radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "classification_font_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Classification Font Size",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "classification_font_weight",
+      "label": "Classification Font Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "classification_margin",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Classification Margin",
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "classification_placeholder_text",
+      "label": "Door Classification Placeholder",
+      "default": "Premium Lock",
+      "info": "Text shown when product doesn't have door_type metafield"
+    },
+    {
+      "type": "header",
+      "content": "Advanced Effects"
+    },
+    {
+      "type": "range",
+      "id": "header_z_index",
+      "min": 10,
+      "max": 100,
+      "step": 10,
+      "label": "Header Z-Index",
+      "default": 50,
+      "info": "Lower values allow sticky buttons to appear above this section"
+    },
+    {
+      "type": "range",
+      "id": "header_blur",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Header Backdrop Blur",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "header_opacity",
+      "min": 60,
+      "max": 95,
+      "step": 5,
+      "unit": "%",
+      "label": "Header Background Opacity",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "%",
+      "label": "Border Opacity",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_bg_opacity",
+      "min": 60,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Card Background Opacity",
+      "default": 75
+    },
+    {
+      "type": "range",
+      "id": "card_border_opacity",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "%",
+      "label": "Card Border Opacity",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_hover_opacity",
+      "min": 80,
+      "max": 95,
+      "step": 5,
+      "unit": "%",
+      "label": "Card Hover Background Opacity",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 20,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Card Shadow Opacity",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "filter_bg_opacity",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Filter Background Opacity",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "filter_hover_opacity",
+      "min": 60,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Filter Hover Background Opacity",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "filter_border_opacity",
+      "min": 10,
+      "max": 30,
+      "step": 5,
+      "unit": "%",
+      "label": "Filter Border Opacity",
+      "default": 15
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filter_effects",
+      "label": "Enable Filter Button Effects",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Empty State"
+    },
+    {
+      "type": "range",
+      "id": "empty_state_padding",
+      "min": 40,
+      "max": 100,
+      "step": 20,
+      "unit": "px",
+      "label": "Empty State Padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "empty_title_size",
+      "min": 18,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Empty State Title Size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "empty_text_size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Empty State Text Size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Interaction Feedback"
+    },
+    {
+      "type": "range",
+      "id": "feedback_duration",
+      "min": 1000,
+      "max": 4000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Button Feedback Duration",
+      "default": 2000
+    }
+  ],
+  "presets": [
+    {
+      "name": "Broen – Smart Locks"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,429 @@
+{% comment %}
+  Video Hero Banner Section with URL input
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .video-hero-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.section_height }}vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .video-hero__background-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .video-hero__video-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-hero__fallback-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-hero__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-hero__placeholder-{{ ai_gen_id }} svg {
+    width: 200px;
+    height: 200px;
+    opacity: 0.3;
+  }
+
+  .video-hero__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 2;
+  }
+
+  .video-hero__content-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    color: {{ block.settings.headline_color | default: '#ffffff' }};
+    max-width: 800px;
+    padding: 0 20px;
+    width: 100%;
+  }
+
+  .video-hero__headline-{{ ai_gen_id }} {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+    color: {{ block.settings.headline_color | default: '#ffffff' }};
+  }
+
+  .video-hero__subtitle-{{ ai_gen_id }} {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
+    line-height: 1.4;
+    margin: 0 0 1.5rem;
+    opacity: 0.9;
+    color: {{ block.settings.subtitle_color | default: '#ffffff' }};
+  }
+
+  .video-hero__buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .video-hero__button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    border: 2px solid transparent;
+  }
+
+  .video-hero__button-{{ ai_gen_id }}:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  .video-hero__button--primary-{{ ai_gen_id }} {
+    background-color: {{ block.settings.primary_button_color | default: '#ffffff' }};
+    color: {{ block.settings.primary_button_text_color | default: '#000000' }};
+    border-color: {{ block.settings.primary_button_color | default: '#ffffff' }};
+  }
+
+  .video-hero__button--primary-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.primary_button_hover_color | default: '#f0f0f0' }};
+    border-color: {{ block.settings.primary_button_hover_color | default: '#f0f0f0' }};
+    transform: translateY(-2px);
+  }
+
+  .video-hero__button--secondary-{{ ai_gen_id }} {
+    background-color: transparent;
+    color: {{ block.settings.secondary_button_text_color | default: '#ffffff' }};
+    border-color: {{ block.settings.secondary_button_border_color | default: '#ffffff' }};
+  }
+
+  .video-hero__button--secondary-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.secondary_button_hover_bg | default: '#ffffff' }};
+    color: {{ block.settings.secondary_button_hover_text | default: '#000000' }};
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .video-hero-{{ ai_gen_id }} {
+      height: {{ block.settings.section_height | times: 0.8 }}vh;
+    }
+
+    .video-hero__buttons-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .video-hero__button-{{ ai_gen_id }} {
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .video-hero__headline-{{ ai_gen_id }} {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+    }
+
+    .video-hero__subtitle-{{ ai_gen_id }} {
+      font-size: clamp(0.875rem, 3vw, 1.125rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video-hero__video-{{ ai_gen_id }} {
+      display: none;
+    }
+  }
+{% endstyle %}
+
+<div class="video-hero-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="video-hero__background-{{ ai_gen_id }}">
+    {% if block.settings.background_video != blank %}
+      <video
+        class="video-hero__video-{{ ai_gen_id }}"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+        preload="metadata"
+      >
+        <source src="{{ block.settings.background_video }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    {% endif %}
+
+    {% if block.settings.fallback_image %}
+      <img
+        src="{{ block.settings.fallback_image | image_url: width: 2000 }}"
+        alt=""
+        class="video-hero__fallback-image-{{ ai_gen_id }}"
+        loading="lazy"
+        width="{{ block.settings.fallback_image.width }}"
+        height="{{ block.settings.fallback_image.height }}"
+      >
+    {% elsif block.settings.background_video == blank %}
+      <div class="video-hero__placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="video-hero__overlay-{{ ai_gen_id }}"></div>
+
+  <div class="video-hero__content-{{ ai_gen_id }}">
+    {% if block.settings.headline_line_1 or block.settings.headline_line_2 %}
+      <h1 class="video-hero__headline-{{ ai_gen_id }}">
+        {% if block.settings.headline_line_1 %}
+          {{ block.settings.headline_line_1 }}<br>
+        {% endif %}
+        {% if block.settings.headline_line_2 %}
+          {{ block.settings.headline_line_2 }}
+        {% endif %}
+      </h1>
+    {% endif %}
+
+    {% if block.settings.subtitle %}
+      <p class="video-hero__subtitle-{{ ai_gen_id }}">
+        {{ block.settings.subtitle }}
+      </p>
+    {% endif %}
+
+    <div class="video-hero__buttons-{{ ai_gen_id }}">
+      {% if block.settings.primary_button_label and block.settings.primary_button_link %}
+        <a
+          href="{{ block.settings.primary_button_link }}"
+          class="video-hero__button-{{ ai_gen_id }} video-hero__button--primary-{{ ai_gen_id }}"
+        >
+          {{ block.settings.primary_button_label }}
+        </a>
+      {% endif %}
+
+      {% if block.settings.secondary_button_label and block.settings.secondary_button_link %}
+        <a
+          href="{{ block.settings.secondary_button_link }}"
+          class="video-hero__button-{{ ai_gen_id }} video-hero__button--secondary-{{ ai_gen_id }}"
+        >
+          {{ block.settings.secondary_button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const video = document.querySelector('.video-hero__video-{{ ai_gen_id }}');
+  if (video) {
+    // Ensure video plays after load
+    video.addEventListener('loadeddata', function() {
+      this.play().catch(function(error) {
+        console.log('Video autoplay failed:', error);
+      });
+    });
+    
+    // Retry play if video is ready
+    if (video.readyState >= 3) {
+      video.play().catch(function(error) {
+        console.log('Video autoplay failed:', error);
+      });
+    }
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Video Hero Banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner Size"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Banner Height",
+      "default": 60,
+      "info": "Adjust banner height as percentage of viewport"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "url",
+      "id": "background_video",
+      "label": "Background video URL",
+      "info": "Go to Settings > Files, upload your video, then copy and paste the URL here"
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Fallback image",
+      "info": "Shown when video is not available or on reduced motion"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_1",
+      "label": "Headline line 1",
+      "default": "Ditch the Keys"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_2",
+      "label": "Headline line 2",
+      "default": "Upgrade to Stylish Smart Locks Today"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Experience the future of home security with our premium smart lock collection"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Primary button"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_color",
+      "label": "Button color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_text_color",
+      "label": "Button text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_hover_color",
+      "label": "Button hover color",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "header",
+      "content": "Secondary button"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "label": "Button label",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_border_color",
+      "label": "Button border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_hover_bg",
+      "label": "Button hover background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_hover_text",
+      "label": "Button hover text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Hero Banner"
+    }
+  ]
+}
+{% endschema %}

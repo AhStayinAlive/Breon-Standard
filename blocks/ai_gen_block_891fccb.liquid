@@ -1,0 +1,576 @@
+{% doc %}
+  @prompt
+    Create a Liquid section named broen-footer-metafields that renders a clean, Apple-like footer in the Broen visual style and pulls content from shop + product metafields. Make it production-ready, responsive, and accessible.
+    
+    1) Layout & style
+    
+    5 columns (accordion on mobile). Headings styled like SF Pro (system sans), muted link color, hover = Broen accent.
+    
+    White / neutral background with subtle dividers between columns and above the bottom bar.
+    
+    Bottom row: “© {{ ‘now’ | date: ‘%Y’ }} | {{ shop.name }} | {{ shop.metafields.custom.footer_tagline }}”.
+    
+    Badges block (right side on desktop, full width on mobile): stacked Apple partner/reseller badges.
+    
+    Social row: small minimalist icons (Facebook, Instagram, TikTok, YouTube). Icon color = muted; on hover use the accent color.
+    
+    Everything should be scoped under a wrapper class (e.g., .broen-footer) so it doesn’t leak styles.
+    
+    2) Content sources (metafields first)
+    
+    Use metafields for all content whenever present; fall back to theme settings/menus only if metafields are empty.
+    
+    Shop metafields (define + use)
+    
+    shop.metafields.custom.footer_products → list_product
+    
+    For each product, read product.metafields.custom.product_classification (single_line_text_field).
+    
+    Render as pill buttons (chips) linking to the product URL.
+    
+    If classification is blank, use product.title.
+    
+    shop.metafields.custom.footer_ctas → list.metaobject_reference to a metaobject type footer_cta with fields:
+    
+    label (single_line_text_field), url (url)
+    
+    Render these as additional pill buttons to fill whitespace: e.g., “Check out our clients”, “What our clients say”, “FAQ”, “Contact us”, “Download catalog”.
+    
+    shop.metafields.custom.footer_badges → list.file_reference (images).
+    
+    Render vertically with alt text from file.alt and lazy-load.
+    
+    shop.metafields.custom.facebook_url, instagram_url, tiktok_url, youtube_url → url
+    
+    Only show icons that have a URL set.
+    
+    shop.metafields.custom.footer_tagline → single_line_text_field (used in the bottom bar).
+    
+    shop.metafields
+
+{% enddoc %}
+{% assign ai_gen_id = 'broen-footer' %}
+
+{% style %}
+  .broen-footer-{{ ai_gen_id }} {
+    background-color: #ffffff;
+    border-top: 1px solid #e5e5e7;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1d1d1f;
+    line-height: 1.47059;
+  }
+
+  .broen-footer-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .broen-footer-main-{{ ai_gen_id }} {
+    padding: 40px 0;
+  }
+
+  .broen-footer-columns-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 40px;
+  }
+
+  .broen-footer-column-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .broen-footer-column-heading-{{ ai_gen_id }} {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1d1d1f;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+  }
+
+  .broen-footer-links-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .broen-footer-link-{{ ai_gen_id }} {
+    color: #515154;
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 1.33337;
+    transition: color 0.2s ease;
+  }
+
+  .broen-footer-link-{{ ai_gen_id }}:hover {
+    color: #0171e3;
+  }
+
+  .broen-footer-pills-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .broen-footer-pill-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: #f5f5f7;
+    color: #515154;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 400;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .broen-footer-pill-{{ ai_gen_id }}:hover {
+    background-color: #0171e3;
+    color: #ffffff;
+  }
+
+  .broen-footer-badges-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .broen-footer-badge-{{ ai_gen_id }} {
+    max-width: 120px;
+    height: auto;
+  }
+
+  .broen-footer-badge-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .broen-footer-social-{{ ai_gen_id }} {
+    padding: 20px 0;
+    border-top: 1px solid #e5e5e7;
+  }
+
+  .broen-footer-social-content-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .broen-footer-social-link-{{ ai_gen_id }} {
+    color: #86868b;
+    transition: color 0.2s ease;
+  }
+
+  .broen-footer-social-link-{{ ai_gen_id }}:hover {
+    color: #0171e3;
+  }
+
+  .broen-footer-social-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+  }
+
+  .broen-footer-bottom-{{ ai_gen_id }} {
+    padding: 20px 0;
+    border-top: 1px solid #e5e5e7;
+    text-align: center;
+  }
+
+  .broen-footer-copyright-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #86868b;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .broen-footer-main-{{ ai_gen_id }} {
+      padding: 20px 0;
+    }
+
+    .broen-footer-columns-{{ ai_gen_id }} {
+      display: block;
+    }
+
+    .broen-footer-column-{{ ai_gen_id }} {
+      border-bottom: 1px solid #e5e5e7;
+    }
+
+    .broen-footer-column-{{ ai_gen_id }}:last-child {
+      border-bottom: none;
+    }
+
+    .broen-footer-accordion-{{ ai_gen_id }} {
+      position: relative;
+    }
+
+    .broen-footer-accordion-toggle-{{ ai_gen_id }} {
+      width: 100%;
+      padding: 16px 0;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #1d1d1f;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .broen-footer-accordion-icon-{{ ai_gen_id }} {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .broen-footer-accordion-content-{{ ai_gen_id }} {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .broen-footer-accordion-content-{{ ai_gen_id }}.active {
+      max-height: 500px;
+      padding-bottom: 16px;
+    }
+
+    .broen-footer-accordion-toggle-{{ ai_gen_id }}.active .broen-footer-accordion-icon-{{ ai_gen_id }} {
+      transform: rotate(45deg);
+    }
+
+    .broen-footer-badges-{{ ai_gen_id }} {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 16px 0;
+    }
+
+    .broen-footer-badge-{{ ai_gen_id }} {
+      max-width: 100px;
+    }
+  }
+{% endstyle %}
+
+<footer class="broen-footer-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="broen-footer-container-{{ ai_gen_id }}">
+    <div class="broen-footer-main-{{ ai_gen_id }}">
+      <div class="broen-footer-columns-{{ ai_gen_id }}">
+        
+        <!-- Products Column -->
+        <div class="broen-footer-column-{{ ai_gen_id }}">
+          <div class="broen-footer-accordion-{{ ai_gen_id }}">
+            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
+              Products
+              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
+              <div class="broen-footer-pills-{{ ai_gen_id }}">
+                {% if shop.metafields.custom.footer_products != blank %}
+                  {% for product in shop.metafields.custom.footer_products %}
+                    {% assign classification = product.metafields.custom.product_classification %}
+                    {% assign label = classification | default: product.title %}
+                    <a href="{{ product.url }}" class="broen-footer-pill-{{ ai_gen_id }}">
+                      {{ label }}
+                    </a>
+                  {% endfor %}
+                {% else %}
+                  {% for product in collections.all.products limit: 6 %}
+                    <a href="{{ product.url }}" class="broen-footer-pill-{{ ai_gen_id }}">
+                      {{ product.title }}
+                    </a>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Solutions Column -->
+        <div class="broen-footer-column-{{ ai_gen_id }}">
+          <div class="broen-footer-accordion-{{ ai_gen_id }}">
+            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
+              Solutions
+              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
+              <div class="broen-footer-links-{{ ai_gen_id }}">
+                {% if linklists.solutions.links.size > 0 %}
+                  {% for link in linklists.solutions.links %}
+                    <a href="{{ link.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ link.title }}</a>
+                  {% endfor %}
+                {% else %}
+                  <a href="/pages/industrial" class="broen-footer-link-{{ ai_gen_id }}">Industrial</a>
+                  <a href="/pages/commercial" class="broen-footer-link-{{ ai_gen_id }}">Commercial</a>
+                  <a href="/pages/residential" class="broen-footer-link-{{ ai_gen_id }}">Residential</a>
+                  <a href="/pages/marine" class="broen-footer-link-{{ ai_gen_id }}">Marine</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Column -->
+        <div class="broen-footer-column-{{ ai_gen_id }}">
+          <div class="broen-footer-accordion-{{ ai_gen_id }}">
+            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
+              Support
+              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
+              <div class="broen-footer-links-{{ ai_gen_id }}">
+                {% if linklists.support.links.size > 0 %}
+                  {% for link in linklists.support.links %}
+                    <a href="{{ link.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ link.title }}</a>
+                  {% endfor %}
+                {% else %}
+                  <a href="/pages/contact" class="broen-footer-link-{{ ai_gen_id }}">Contact Us</a>
+                  <a href="/pages/technical-support" class="broen-footer-link-{{ ai_gen_id }}">Technical Support</a>
+                  <a href="/pages/documentation" class="broen-footer-link-{{ ai_gen_id }}">Documentation</a>
+                  <a href="/pages/warranty" class="broen-footer-link-{{ ai_gen_id }}">Warranty</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Column -->
+        <div class="broen-footer-column-{{ ai_gen_id }}">
+          <div class="broen-footer-accordion-{{ ai_gen_id }}">
+            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
+              Company
+              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
+              <div class="broen-footer-links-{{ ai_gen_id }}">
+                {% if linklists.company.links.size > 0 %}
+                  {% for link in linklists.company.links %}
+                    <a href="{{ link.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ link.title }}</a>
+                  {% endfor %}
+                {% else %}
+                  <a href="/pages/about" class="broen-footer-link-{{ ai_gen_id }}">About Broen</a>
+                  <a href="/pages/careers" class="broen-footer-link-{{ ai_gen_id }}">Careers</a>
+                  <a href="/pages/news" class="broen-footer-link-{{ ai_gen_id }}">News</a>
+                  <a href="/pages/sustainability" class="broen-footer-link-{{ ai_gen_id }}">Sustainability</a>
+                {% endif %}
+              </div>
+              
+              {% if shop.metafields.custom.footer_ctas != blank %}
+                <div class="broen-footer-pills-{{ ai_gen_id }}" style="margin-top: 16px;">
+                  {% for cta in shop.metafields.custom.footer_ctas %}
+                    <a href="{{ cta.url }}" class="broen-footer-pill-{{ ai_gen_id }}">
+                      {{ cta.label }}
+                    </a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges Column -->
+        <div class="broen-footer-column-{{ ai_gen_id }}">
+          <div class="broen-footer-accordion-{{ ai_gen_id }}">
+            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
+              Certifications
+              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
+              <div class="broen-footer-badges-{{ ai_gen_id }}">
+                {% if shop.metafields.custom.footer_badges != blank %}
+                  {% for badge in shop.metafields.custom.footer_badges %}
+                    <div class="broen-footer-badge-{{ ai_gen_id }}">
+                      <img
+                        src="{{ badge | image_url: width: 240 }}"
+                        alt="{{ badge.alt | escape }}"
+                        loading="lazy"
+                        width="120"
+                        height="auto"
+                      >
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="broen-footer-badge-{{ ai_gen_id }}">
+                    {{ 'image' | placeholder_svg_tag: 'ISO Certification' }}
+                  </div><div class="broen-footer-badge-{{ ai_gen_id }}">
+                    {{ 'image' | placeholder_svg_tag: 'CE Marking' }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Social Media Row -->
+    {% assign facebook_url = shop.metafields.custom.facebook_url | default: settings.social_facebook_link %}
+    {% assign instagram_url = shop.metafields.custom.instagram_url | default: settings.social_instagram_link %}
+    {% assign tiktok_url = shop.metafields.custom.tiktok_url | default: settings.social_tiktok_link %}
+    {% assign youtube_url = shop.metafields.custom.youtube_url | default: settings.social_youtube_link %}
+
+    {% if facebook_url != blank or instagram_url != blank or tiktok_url != blank or youtube_url != blank %}
+      <div class="broen-footer-social-{{ ai_gen_id }}">
+        <div class="broen-footer-social-content-{{ ai_gen_id }}">
+          {% if facebook_url != blank %}
+            <a href="{{ facebook_url }}" class="broen-footer-social-link-{{ ai_gen_id }}" aria-label="Facebook">
+              <svg class="broen-footer-social-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+          {% endif %}
+          
+          {% if instagram_url != blank %}
+            <a href="{{ instagram_url }}" class="broen-footer-social-link-{{ ai_gen_id }}" aria-label="Instagram">
+              <svg class="broen-footer-social-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.297C4.198 14.895 3.708 13.744 3.708 12.447s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323c-.875.807-2.026 1.297-3.323 1.297zm7.718-1.297c-.875.807-2.026 1.297-3.323 1.297s-2.448-.49-3.323-1.297c-.807-.875-1.297-2.026-1.297-3.323s.49-2.448 1.297-3.323c.875-.807 2.026-1.297 3.323-1.297s2.448.49 3.323 1.297c.807.875 1.297 2.026 1.297 3.323s-.49 2.448-1.297 3.323z"/>
+              </svg>
+            </a>
+          {% endif %}
+          
+          {% if tiktok_url != blank %}
+            <a href="{{ tiktok_url }}" class="broen-footer-social-link-{{ ai_gen_id }}" aria-label="TikTok">
+              <svg class="broen-footer-social-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+              </svg>
+            </a>
+          {% endif %}
+          
+          {% if youtube_url != blank %}
+            <a href="{{ youtube_url }}" class="broen-footer-social-link-{{ ai_gen_id }}" aria-label="YouTube">
+              <svg class="broen-footer-social-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Bottom Copyright Row -->
+    <div class="broen-footer-bottom-{{ ai_gen_id }}">
+      <p class="broen-footer-copyright-{{ ai_gen_id }}">
+        © {{ 'now' | date: '%Y' }} | {{ shop.name }}
+        {% if shop.metafields.custom.footer_tagline != blank %}
+          | {{ shop.metafields.custom.footer_tagline }}
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    class BroenFooter extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccordions();
+      }
+
+      setupAccordions() {
+        const toggles = this.querySelectorAll('.broen-footer-accordion-toggle-{{ ai_gen_id }}');
+        
+        toggles.forEach(toggle => {
+          toggle.addEventListener('click', () => {
+            const content = toggle.nextElementSibling;
+            const isActive = toggle.classList.contains('active');
+            
+            if (window.innerWidth <= 768) {
+              if (isActive) {
+                toggle.classList.remove('active');
+                content.classList.remove('active');
+                toggle.setAttribute('aria-expanded', 'false');
+              } else {
+                toggle.classList.add('active');
+                content.classList.add('active');
+                toggle.setAttribute('aria-expanded', 'true');
+              }
+            }
+          });
+        });
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 768) {
+            toggles.forEach(toggle => {
+              const content = toggle.nextElementSibling;
+              toggle.classList.remove('active');
+              content.classList.remove('active');
+              toggle.setAttribute('aria-expanded', 'false');
+            });
+          }
+        });
+      }
+    }
+
+    customElements.define('broen-footer-{{ ai_gen_id }}', BroenFooter);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Broen footer metafields",
+  "tag": null,
+  "class": "broen-footer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Metafield configuration"
+    },
+    {
+      "type": "paragraph",
+      "content": "This footer pulls content from shop metafields. Configure the following metafields in your shop settings:"
+    },
+    {
+      "type": "paragraph",
+      "content": "• shop.metafields.custom.footer_products (list_product) - Products to display as pills"
+    },
+    {
+      "type": "paragraph",
+      "content": "• shop.metafields.custom.footer_ctas (list.metaobject_reference) - Additional CTA buttons"
+    },
+    {
+      "type": "paragraph",
+      "content": "• shop.metafields.custom.footer_badges (list.file_reference) - Certification badges"
+    },
+    {
+      "type": "paragraph",
+      "content": "• shop.metafields.custom.footer_tagline (single_line_text_field) - Tagline for footer"
+    },
+    {
+      "type": "paragraph",
+      "content": "• shop.metafields.custom.facebook_url, instagram_url, tiktok_url, youtube_url (url) - Social media links"
+    },
+    {
+      "type": "paragraph",
+      "content": "• product.metafields.custom.product_classification (single_line_text_field) - Custom product labels"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Broen footer metafields"
+    }
+  ]
+}
+{% endschema %}

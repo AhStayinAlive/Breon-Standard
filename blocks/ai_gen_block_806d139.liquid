@@ -1,0 +1,435 @@
+{% doc %}
+  @prompt
+    Create a mobile-first "Product Drop Announcement" section with zero hardcoding for Shopify Online Store 2.0. Single announcement bar with light gradient background spanning full width. Theme Editor settings include: eyebrow text (optional), headline text (required), subtext richtext, cta_label and cta_link, product_image picker supporting PNG transparency, max_width range, padding_y range, text align options, image_side left/right, image_max_height_desktop and mobile ranges, use_light_gradient boolean, bg_color/text_color fallbacks, button_style solid/outline. Layout: content left-aligned, product image right-aligned inside bar with responsive sizing. Mobile: stack content first, product image below, full-width CTA button. Use SF Pro font stack, tight letter-spacing, rounded button with hover states, object-fit contain for images, lazy loading with srcset, aria-live="polite" announcement region, aria-label on button, prefers-reduced-motion support, no animations, scoped CSS to section ID, intrinsic aspect ratio to prevent CLS. Match dark Apple aesthetic with subtle depth and premium styling.
+
+{% enddoc %}
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-drop-announcement-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ section.settings.padding_y }}px 20px;
+    {% if section.settings.use_light_gradient %}
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    {% else %}
+      background-color: {{ section.settings.bg_color }};
+    {% endif %}
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-product-drop-announcement__container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    {% if section.settings.image_side == 'left' %}
+      flex-direction: row;
+    {% else %}
+      flex-direction: row-reverse;
+    {% endif %}
+  }
+
+  .ai-product-drop-announcement__content-{{ ai_gen_id }} {
+    flex: 1;
+    text-align: {{ section.settings.text_align }};
+    color: {{ section.settings.text_color }};
+  }
+
+  .ai-product-drop-announcement__eyebrow-{{ ai_gen_id }} {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    margin: 0 0 8px 0;
+  }
+
+  .ai-product-drop-announcement__headline-{{ ai_gen_id }} {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 12px 0;
+  }
+
+  .ai-product-drop-announcement__subtext-{{ ai_gen_id }} {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
+    margin: 0 0 24px 0;
+  }
+
+  .ai-product-drop-announcement__cta-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    min-width: 120px;
+    {% if section.settings.button_style == 'solid' %}
+      background-color: {{ section.settings.text_color }};
+      color: {{ section.settings.bg_color }};
+      border: 2px solid {{ section.settings.text_color }};
+    {% else %}
+      background-color: transparent;
+      color: {{ section.settings.text_color }};
+      border: 2px solid {{ section.settings.text_color }};
+    {% endif %}
+  }
+
+  .ai-product-drop-announcement__cta-{{ ai_gen_id }}:hover {
+    {% if section.settings.button_style == 'solid' %}
+      background-color: transparent;
+      color: {{ section.settings.text_color }};
+    {% else %}
+      background-color: {{ section.settings.text_color }};
+      color: {{ section.settings.bg_color }};
+    {% endif %}
+    transform: translateY(-1px);
+  }
+
+  .ai-product-drop-announcement__image-wrapper-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: auto;
+    height: {{ section.settings.image_max_height_desktop }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-product-drop-announcement__image-{{ ai_gen_id }} {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    object-fit: contain;
+    aspect-ratio: attr(width) / attr(height);
+  }
+
+  .ai-product-drop-announcement__image-placeholder-{{ ai_gen_id }} {
+    width: 200px;
+    height: {{ section.settings.image_max_height_desktop }}px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-product-drop-announcement__image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-product-drop-announcement__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: {{ section.settings.text_color }};
+    opacity: 0.5;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-product-drop-announcement__cta-{{ ai_gen_id }} {
+      transition: none;
+    }
+    .ai-product-drop-announcement__cta-{{ ai_gen_id }}:hover {
+      transform: none;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-product-drop-announcement-{{ ai_gen_id }} {
+      padding: {{ section.settings.padding_y | times: 0.8 }}px 16px;
+    }
+
+    .ai-product-drop-announcement__container-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .ai-product-drop-announcement__content-{{ ai_gen_id }} {
+      text-align: center;
+    }
+
+    .ai-product-drop-announcement__headline-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-product-drop-announcement__subtext-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+
+    .ai-product-drop-announcement__image-wrapper-{{ ai_gen_id }} {
+      height: {{ section.settings.image_max_height_mobile }}px;
+      width: 100%;
+    }
+
+    .ai-product-drop-announcement__image-placeholder-{{ ai_gen_id }} {
+      width: 100%;
+      height: {{ section.settings.image_max_height_mobile }}px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .ai-product-drop-announcement__cta-{{ ai_gen_id }} {
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+{% endstyle %}
+
+<section
+  class="ai-product-drop-announcement-{{ ai_gen_id }}"
+  aria-live="polite"
+  {{ section.shopify_attributes }}
+>
+  <div class="ai-product-drop-announcement__container-{{ ai_gen_id }}">
+    <div class="ai-product-drop-announcement__content-{{ ai_gen_id }}">
+      {% if section.settings.eyebrow_text != blank %}
+        <div class="ai-product-drop-announcement__eyebrow-{{ ai_gen_id }}">
+          {{ section.settings.eyebrow_text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.headline_text != blank %}
+        <h2 class="ai-product-drop-announcement__headline-{{ ai_gen_id }}">
+          {{ section.settings.headline_text }}
+        </h2>
+      {% endif %}
+
+      {% if section.settings.subtext != blank %}
+        <div class="ai-product-drop-announcement__subtext-{{ ai_gen_id }}">
+          {{ section.settings.subtext }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+        <a
+          href="{{ section.settings.cta_link }}"
+          class="ai-product-drop-announcement__cta-{{ ai_gen_id }}"
+          aria-label="{{ section.settings.cta_label }} - {{ section.settings.headline_text }}"
+        >
+          {{ section.settings.cta_label }}
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="ai-product-drop-announcement__image-wrapper-{{ ai_gen_id }}">
+      {% if section.settings.product_image %}
+        <img
+          src="{{ section.settings.product_image | image_url: width: 400 }}"
+          srcset="
+            {{ section.settings.product_image | image_url: width: 200 }} 200w,
+            {{ section.settings.product_image | image_url: width: 400 }} 400w,
+            {{ section.settings.product_image | image_url: width: 600 }} 600w
+          "
+          sizes="(max-width: 768px) 300px, 400px"
+          alt="{{ section.settings.product_image.alt | escape }}"
+          class="ai-product-drop-announcement__image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ section.settings.product_image.width }}"
+          height="{{ section.settings.product_image.height }}"
+        >
+      {% else %}
+        <div class="ai-product-drop-announcement__image-placeholder-{{ ai_gen_id }}">
+          {{ 'product-apparel-1' | placeholder_svg_tag }}
+          <div class="ai-product-drop-announcement__empty-state-{{ ai_gen_id }}">
+            Add product image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product drop announcement",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text"
+    },
+    {
+      "type": "text",
+      "id": "headline_text",
+      "label": "Headline text",
+      "default": "New Product Drop"
+    },
+    {
+      "type": "richtext",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "<p>Discover our latest collection featuring premium quality and innovative design.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product image"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 60
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "image_side",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_desktop",
+      "min": 100,
+      "max": 400,
+      "step": 20,
+      "unit": "px",
+      "label": "Image max height (desktop)",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "image_max_height_mobile",
+      "min": 80,
+      "max": 300,
+      "step": 20,
+      "unit": "px",
+      "label": "Image max height (mobile)",
+      "default": 160
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_light_gradient",
+      "label": "Use light gradient background",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "solid"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product drop announcement"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,1426 @@
+{% comment %}
+  HOW IT WORKS CAROUSEL - FIXED VERSION:
+  - FIXED: Full width utilization (removed max-width constraint)
+  - FIXED: Proper cards per view functionality
+  - FIXED: Autoplay properly respects theme editor setting
+  - Enhanced layout to match How It Works design
+  - Improved mobile responsiveness
+  - Fixed arrow positioning and navigation
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-broen-carousel-{{ ai_gen_id }} {
+    display: block; /* custom elements are inline by default */
+    width: 100%;
+    position: relative;
+
+    /* background */
+    background: {{ block.settings.background_color | default: '#000000' }};
+    background: linear-gradient(
+      180deg,
+      {{ block.settings.background_color | default: '#000000' }} 0%,
+      {{ block.settings.background_color | default: '#000000' | color_darken: 5 }} 100%
+    );
+
+    /* Theme Editor paddings via CSS vars so sliders always win */
+    padding-top: var(--pt, {{ block.settings.section_padding_top | default: 80 }}px);
+    padding-bottom: var(--pb, {{ block.settings.section_padding | default: 60 }}px);
+
+    overflow: visible; /* allow hover lift/shadows */
+  }
+
+  .ai-broen-carousel-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      {{ block.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.95 }} 0%,
+      {{ block.settings.background_color | default: '#000000' | color_darken: 8 | color_modify: 'alpha', 0.98 }} 50%,
+      {{ block.settings.background_color | default: '#000000' | color_darken: 3 | color_modify: 'alpha', 0.95 }} 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .ai-broen-carousel__container-{{ ai_gen_id }} {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ai-broen-carousel__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color | default: '#ffffff' }};
+    font-size: clamp({{ block.settings.heading_size | default: 32 | minus: 8 }}px, 5vw, {{ block.settings.heading_size | default: 32 }}px);
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 {{ block.settings.heading_spacing | default: 48 }}px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    position: relative;
+  }
+
+  .ai-broen-carousel__heading-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.8 }}, transparent);
+  }
+
+  .ai-broen-carousel__wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: visible;
+    margin: 0;
+    padding: 20px 0 56px; /* extra room for lifted card shadows */
+  }
+
+  .ai-broen-carousel__track-container-{{ ai_gen_id }} {
+    position: relative;
+    overflow: visible; /* was hidden; caused hover clipping */
+    margin: 0 80px;
+    border-radius: 20px;
+  }
+
+  .ai-broen-carousel__track-{{ ai_gen_id }} {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    padding: 0 20px;
+  }
+
+  .ai-broen-carousel__card-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    width: calc((100% - ({{ block.settings.cards_per_view_desktop | default: 3 | minus: 1 }} * 24px)) / {{ block.settings.cards_per_view_desktop | default: 3 }});
+    min-width: 280px;
+    height: 520px;
+    background: {{ block.settings.card_background | default: '#1a1a1a' | color_modify: 'alpha', 0.95 }};
+    border: 1px solid {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 20 | color_modify: 'alpha', 0.1 }};
+    border-radius: {{ block.settings.card_border_radius | default: 16 }}px;
+    box-shadow: 0 8px 32px {{ block.settings.card_background | default: '#000000' | color_modify: 'alpha', 0.4 }};
+    overflow: visible; /* allow scale/shadow to breathe */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    will-change: transform;
+    transform-origin: center;
+    backface-visibility: hidden;
+  }
+
+  .ai-broen-carousel__card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 40 | color_modify: 'alpha', 0.3 }};
+    box-shadow: 0 20px 60px {{ block.settings.card_background | default: '#000000' | color_modify: 'alpha', 0.6 }};
+    background: {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
+  }
+
+  .ai-broen-carousel__card-media-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 10 }} 0%, {{ block.settings.card_background | default: '#1a1a1a' | color_darken: 5 }} 100%);
+    overflow: hidden; /* keep media rounded */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    border-radius: 12px;
+  }
+
+  .ai-broen-carousel__card-media-{{ ai_gen_id }} img,
+  .ai-broen-carousel__card-media-{{ ai_gen_id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-media-{{ ai_gen_id }} img,
+  .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-media-{{ ai_gen_id }} video {
+    transform: scale(1.05);
+  }
+
+  .ai-broen-carousel__card-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 15 }} 0%, {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 5 }} 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: {{ block.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.6 }};
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 20 | color_modify: 'alpha', 0.1 }};
+  }
+
+  .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-placeholder-{{ ai_gen_id }} {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 25 }} 0%, {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 10 }} 100%);
+    border-color: {{ block.settings.card_background | default: '#1a1a1a' | color_lighten: 30 | color_modify: 'alpha', 0.2 }};
+  }
+
+  .ai-broen-carousel__card-content-{{ ai_gen_id }} {
+    padding: 28px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .ai-broen-carousel__card-title-{{ ai_gen_id }} {
+    color: {{ block.settings.card_text_color | default: '#ffffff' }};
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .ai-broen-carousel__card-subtext-{{ ai_gen_id }} {
+    color: {{ block.settings.card_subtext_color | default: '#cccccc' }};
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+    flex-grow: 1;
+  }
+
+  .ai-broen-carousel__card-button-{{ ai_gen_id }} {
+    font-size: 15px;
+    font-weight: 500;
+    color: {{ block.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.9 }}%;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    text-decoration: none;
+    display: block;
+  }
+
+  .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-button-{{ ai_gen_id }} {
+    color: {{ block.settings.card_text_color | default: '#ffffff' }};
+    transform: translateX(4px);
+  }
+
+  /* NAVIGATION ARROWS */
+  .ai-broen-carousel__navigation-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    background: {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.9 }};
+    border: 2px solid {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.2 }};
+    border-radius: 50%;
+    color: {{ block.settings.background_color | default: '#000000' }};
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px {{ block.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.3 }};
+  }
+
+  .ai-broen-carousel__navigation-{{ ai_gen_id }}:hover {
+    background: {{ block.settings.heading_color | default: '#ffffff' }};
+    border-color: {{ block.settings.heading_color | default: '#ffffff' }};
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 30px {{ block.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.4 }};
+  }
+
+  .ai-broen-carousel__navigation-{{ ai_gen_id }}:active { transform: translateY(-50%) scale(0.95); }
+  .ai-broen-carousel__navigation-{{ ai_gen_id }}:disabled { opacity: 0.4; cursor: not-allowed; transform: translateY(-50%) scale(0.9); }
+  .ai-broen-carousel__navigation-{{ ai_gen_id }}:disabled:hover { transform: translateY(-50%) scale(0.9); }
+  .ai-broen-carousel__navigation--prev-{{ ai_gen_id }} { left: 20px; }
+  .ai-broen-carousel__navigation--next-{{ ai_gen_id }} { right: 20px; }
+  .ai-broen-carousel__navigation-{{ ai_gen_id }} svg { width: 22px; height: 22px; stroke-width: 2.5; }
+
+  .ai-broen-carousel__pagination-{{ ai_gen_id }} { display: flex; justify-content: center; gap: 8px; margin-top: 40px; }
+  .ai-broen-carousel__dot-{{ ai_gen_id }} {
+    width: 12px; height: 12px; border-radius: 50%;
+    background-color: {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.25 }};
+    border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94); padding: 0; outline: none;
+  }
+  .ai-broen-carousel__dot-{{ ai_gen_id }}.active { background-color: {{ block.settings.heading_color | default: '#ffffff' }}; transform: scale(1); box-shadow: none; }
+
+  .ai-broen-carousel__empty-state-{{ ai_gen_id }} { text-align: center; padding: 80px 20px; color: {{ block.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.6 }}; }
+  .ai-broen-carousel__empty-title-{{ ai_gen_id }} { font-size: 20px; font-weight: 600; margin: 0 0 12px; }
+  .ai-broen-carousel__empty-text-{{ ai_gen_id }} { font-size: 15px; opacity: 0.8; }
+
+  /* Mobile */
+  @media screen and (max-width: 1200px) {
+    .ai-broen-carousel__container-{{ ai_gen_id }} { padding: 0 16px; }
+    .ai-broen-carousel__track-container-{{ ai_gen_id }} { margin: 0 60px; }
+    .ai-broen-carousel__track-{{ ai_gen_id }} { padding: 0 15px; }
+    .ai-broen-carousel__navigation--prev-{{ ai_gen_id }} { left: 8px; }
+    .ai-broen-carousel__navigation--next-{{ ai_gen_id }} { right: 8px; }
+  }
+
+  @media screen and (max-width: 768px) {
+    /* rewrite vars for mobile scale */
+    .ai-broen-carousel-{{ ai_gen_id }}{
+      --pt: {{ block.settings.section_padding_top | default: 80 | times: 0.6 | round }}px;
+      --pb: {{ block.settings.section_padding | default: 60 | times: 0.6 | round }}px;
+    }
+
+    .ai-broen-carousel__container-{{ ai_gen_id }} { padding: 0 12px; }
+    .ai-broen-carousel__heading-{{ ai_gen_id }} { margin-bottom: {{ block.settings.heading_spacing | default: 48 | times: 0.67 | round }}px; }
+    .ai-broen-carousel__wrapper-{{ ai_gen_id }} { padding: 16px 0 48px; }
+
+    .ai-broen-carousel__track-container-{{ ai_gen_id }} {
+      margin: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      border-radius: 16px;
+    }
+    .ai-broen-carousel__track-container-{{ ai_gen_id }}::-webkit-scrollbar { display: none; }
+
+    .ai-broen-carousel__track-{{ ai_gen_id }} { gap: 16px; padding: 0 12px; }
+
+    .ai-broen-carousel__card-{{ ai_gen_id }} {
+      scroll-snap-align: center;
+      width: 300px;
+      min-width: 300px;
+      height: 480px;
+    }
+    .ai-broen-carousel__card-media-{{ ai_gen_id }} { height: 280px; padding: 20px; }
+    .ai-broen-carousel__card-content-{{ ai_gen_id }} { padding: 24px 20px 20px; }
+    .ai-broen-carousel__card-title-{{ ai_gen_id }} { font-size: 20px; }
+    .ai-broen-carousel__card-subtext-{{ ai_gen_id }} { font-size: 14px; }
+    .ai-broen-carousel__card-button-{{ ai_gen_id }} { font-size: 14px; }
+
+    .ai-broen-carousel__navigation-{{ ai_gen_id }} { display: none; }
+    .ai-broen-carousel__pagination-{{ ai_gen_id }} { gap: 6px; margin-top: 32px; }
+    .ai-broen-carousel__dot-{{ ai_gen_id }} { width: 10px; height: 10px; }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-broen-carousel__card-{{ ai_gen_id }} { width: 280px; min-width: 280px; height: 460px; }
+    .ai-broen-carousel__card-media-{{ ai_gen_id }} { height: 260px; padding: 16px; }
+    .ai-broen-carousel__card-content-{{ ai_gen_id }} { padding: 20px 16px 16px 16px; }
+    .ai-broen-carousel__card-title-{{ ai_gen_id }} { font-size: 18px; }
+    .ai-broen-carousel__card-subtext-{{ ai_gen_id }} { font-size: 13px; }
+    .ai-broen-carousel__card-button-{{ ai_gen_id }} { font-size: 13px; }
+  }
+
+  /* Prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .ai-broen-carousel__card-{{ ai_gen_id }},
+    .ai-broen-carousel__card-media-{{ ai_gen_id }} img,
+    .ai-broen-carousel__card-media-{{ ai_gen_id }} video,
+    .ai-broen-carousel__card-placeholder-{{ ai_gen_id }},
+    .ai-broen-carousel__card-button-{{ ai_gen_id }},
+    .ai-broen-carousel__navigation-{{ ai_gen_id }},
+    .ai-broen-carousel__track-{{ ai_gen_id }},
+    .ai-broen-carousel__dot-{{ ai_gen_id }} { transition: none; }
+
+    .ai-broen-carousel__card-{{ ai_gen_id }}:hover,
+    .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-media-{{ ai_gen_id }} img,
+    .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-media-{{ ai_gen_id }} video,
+    .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-placeholder-{{ ai_gen_id }},
+    .ai-broen-carousel__card-{{ ai_gen_id }}:hover .ai-broen-carousel__card-button-{{ ai_gen_id }} { transform: none; }
+  }
+{% endstyle %}
+
+
+<broen-carousel-{{ ai_gen_id }}
+  class="ai-broen-carousel-{{ ai_gen_id }}"
+  style="--pt: {{ block.settings.section_padding_top | default: 80 }}px; --pb: {{ block.settings.section_padding | default: 60 }}px;"
+  {{ block.shopify_attributes }}
+  data-cards-per-view="{{ block.settings.cards_per_view_desktop | default: 3 }}"
+  data-auto-play="{{ block.settings.enable_autoplay }}"
+  data-auto-play-speed="{{ block.settings.autoplay_speed | default: 5000 }}"
+>
+  <div class="ai-broen-carousel__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-broen-carousel__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    {% assign has_cards = false %}
+    {% for i in (1..8) %}
+      {% assign card_enabled_key = 'card_' | append: i | append: '_enabled' %}
+      {% if block.settings[card_enabled_key] %}
+        {% assign has_cards = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_cards %}
+      <div class="ai-broen-carousel__wrapper-{{ ai_gen_id }}">
+        <div class="ai-broen-carousel__track-container-{{ ai_gen_id }}">
+          <div class="ai-broen-carousel__track-{{ ai_gen_id }}" role="region" aria-label="Carousel content">
+            {% for i in (1..8) %}
+              {% liquid
+                assign card_enabled_key = 'card_' | append: i | append: '_enabled'
+                assign card_media_type_key = 'card_' | append: i | append: '_media_type'
+                assign card_image_key = 'card_' | append: i | append: '_image'
+                assign card_video_key = 'card_' | append: i | append: '_video'
+                assign card_video_poster_key = 'card_' | append: i | append: '_video_poster'
+                assign card_video_hover_key = 'card_' | append: i | append: '_video_hover_only'
+                assign card_title_key = 'card_' | append: i | append: '_title'
+                assign card_subtext_key = 'card_' | append: i | append: '_subtext'
+                assign card_button_label_key = 'card_' | append: i | append: '_button_label'
+                assign card_link_key = 'card_' | append: i | append: '_link'
+
+                assign card_enabled = block.settings[card_enabled_key]
+                assign card_media_type = block.settings[card_media_type_key]
+                assign card_image = block.settings[card_image_key]
+                assign card_video = block.settings[card_video_key]
+                assign card_video_poster = block.settings[card_video_poster_key]
+                assign card_video_hover_only = block.settings[card_video_hover_key]
+                assign card_title = block.settings[card_title_key]
+                assign card_subtext = block.settings[card_subtext_key]
+                assign card_button_label = block.settings[card_button_label_key]
+                assign card_link = block.settings[card_link_key]
+              %}
+
+              {% if card_enabled %}
+                <a
+                  href="{{ card_link | default: '#' }}"
+                  class="ai-broen-carousel__card-{{ ai_gen_id }}"
+                  aria-label="{% if card_title != blank %}{{ card_title | escape }}{% else %}Card {{ i }}{% endif %}"
+                >
+                  <div class="ai-broen-carousel__card-media-{{ ai_gen_id }}">
+                    {% if card_media_type == 'video' and card_video %}
+                      <video
+                        src="{{ card_video.sources[1].url }}"
+                        poster="{% if card_video_poster %}{{ card_video_poster | image_url: width: 600 }}{% else %}{{ card_video.preview_image | image_url: width: 600 }}{% endif %}"
+                        muted
+                        loop
+                        playsinline
+                        loading="lazy"
+                        width="600"
+                        height="400"
+                        data-hover-only="{{ card_video_hover_only }}"
+                        {% unless card_video_hover_only %}autoplay{% endunless %}
+                      ></video>
+                    {% elsif card_media_type == 'image' and card_image %}
+                      <img
+                        src="{{ card_image | image_url: width: 600 }}"
+                        alt="{{ card_image.alt | escape }}"
+                        loading="lazy"
+                        width="600"
+                        height="400"
+                      >
+                    {% else %}
+                      <div class="ai-broen-carousel__card-placeholder-{{ ai_gen_id }}">
+                        {{ 'image' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="ai-broen-carousel__card-content-{{ ai_gen_id }}">
+                    {% if card_title != blank %}
+                      <h3 class="ai-broen-carousel__card-title-{{ ai_gen_id }}">{{ card_title }}</h3>
+                    {% endif %}
+
+                    {% if card_subtext != blank %}
+                      <p class="ai-broen-carousel__card-subtext-{{ ai_gen_id }}">{{ card_subtext }}</p>
+                    {% endif %}
+
+                    {% if card_button_label != blank %}
+                      <div class="ai-broen-carousel__card-button-{{ ai_gen_id }}">{{ card_button_label }}</div>
+                    {% endif %}
+                  </div>
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <button
+          class="ai-broen-carousel__navigation-{{ ai_gen_id }} ai-broen-carousel__navigation--prev-{{ ai_gen_id }}"
+          aria-label="Previous slide"
+          type="button"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18L9 12L15 6"/>
+          </svg>
+        </button>
+
+        <button
+          class="ai-broen-carousel__navigation-{{ ai_gen_id }} ai-broen-carousel__navigation--next-{{ ai_gen_id }}"
+          aria-label="Next slide"
+          type="button"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18L15 12L9 6"/>
+          </svg>
+        </button>
+
+        <div class="ai-broen-carousel__pagination-{{ ai_gen_id }}" role="tablist" aria-label="Carousel pagination"></div>
+      </div>
+    {% else %}
+      <div class="ai-broen-carousel__empty-state-{{ ai_gen_id }}">
+        <h3 class="ai-broen-carousel__empty-title-{{ ai_gen_id }}">Ready to show your process</h3>
+        <p class="ai-broen-carousel__empty-text-{{ ai_gen_id }}">Enable steps in the theme editor to get started</p>
+      </div>
+    {% endif %}
+  </div>
+</broen-carousel-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class BroenCarousel{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.currentSlide = 0;
+      this.isDesktop = window.innerWidth >= 768;
+      this.cardsPerView = this.isDesktop ? parseInt(this.dataset.cardsPerView) || 3 : 1;
+      this.isTransitioning = false;
+      this.totalCards = 0;
+      this.autoPlayEnabled = this.dataset.autoPlay === 'true' || this.dataset.autoPlay === '1';
+      this.autoPlaySpeed = parseInt(this.dataset.autoPlaySpeed) || 5000;
+      this.autoPlayInterval = null;
+      this.totalSlides = 0;
+    }
+
+    connectedCallback() {
+      this.track = this.querySelector('.ai-broen-carousel__track-{{ ai_gen_id }}');
+      this.trackContainer = this.querySelector('.ai-broen-carousel__track-container-{{ ai_gen_id }}');
+      this.cards = this.querySelectorAll('.ai-broen-carousel__card-{{ ai_gen_id }}');
+      this.prevBtn = this.querySelector('.ai-broen-carousel__navigation--prev-{{ ai_gen_id }}');
+      this.nextBtn = this.querySelector('.ai-broen-carousel__navigation--next-{{ ai_gen_id }}');
+      this.pagination = this.querySelector('.ai-broen-carousel__pagination-{{ ai_gen_id }}');
+
+      this.totalCards = this.cards.length;
+      if (this.totalCards === 0) return;
+
+      this.calculateSlides();
+      this.setupPagination();
+      this.setupEventListeners();
+      this.setupTouchSupport();
+      this.setupKeyboardNavigation();
+      this.setupWheelNavigation(); // safe: won’t hijack page scroll
+      this.updateNavigation();
+      this.setupAutoPlay();
+
+      setTimeout(() => this.goToSlide(0), 100);
+    }
+
+    calculateSlides() {
+      this.totalSlides = Math.ceil(this.totalCards / this.cardsPerView);
+    }
+
+    setupPagination() {
+      this.pagination.innerHTML = '';
+      for (let i = 0; i < this.totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `ai-broen-carousel__dot-{{ ai_gen_id }}${i === 0 ? ' active' : ''}`;
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        dot.setAttribute('role', 'tab');
+        dot.addEventListener('click', () => this.goToSlide(i));
+        this.pagination.appendChild(dot);
+      }
+    }
+
+    setupEventListeners() {
+      this.prevBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.prevSlide();
+      });
+
+      this.nextBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.nextSlide();
+      });
+
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          const wasDesktop = this.isDesktop;
+          this.isDesktop = window.innerWidth >= 768;
+          const newCardsPerView = this.isDesktop ? parseInt(this.dataset.cardsPerView) || 3 : 1;
+
+          if (wasDesktop !== this.isDesktop || newCardsPerView !== this.cardsPerView) {
+            this.cardsPerView = newCardsPerView;
+            this.currentSlide = 0;
+            this.calculateSlides();
+            this.setupPagination();
+            this.updateNavigation();
+            this.goToSlide(0);
+          }
+        }, 250);
+      });
+
+      // Enhanced video hover effects
+      this.cards.forEach(card => {
+        const video = card.querySelector('video');
+        if (video) {
+          const isHoverOnly = video.dataset.hoverOnly === 'true';
+          if (isHoverOnly) {
+            video.pause();
+            card.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
+            card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+          } else {
+            card.addEventListener('mouseenter', () => { video.play().catch(() => {}); });
+            card.addEventListener('mouseleave', () => { video.play().catch(() => {}); });
+          }
+        }
+      });
+    }
+
+    setupTouchSupport() {
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      let startTime = 0;
+
+      this.trackContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startTime = Date.now();
+        isDragging = true;
+        this.pauseAutoPlay();
+      }, { passive: true });
+
+      this.trackContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.trackContainer.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const diff = startX - currentX;
+        const timeDiff = Date.now() - startTime;
+        const threshold = 50;
+        const speed = Math.abs(diff) / timeDiff;
+
+        if (Math.abs(diff) > threshold || speed > 0.5) {
+          if (diff > 0) this.nextSlide();
+          else this.prevSlide();
+        }
+        this.resumeAutoPlay();
+      }, { passive: true });
+    }
+
+    setupKeyboardNavigation() {
+      this.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.prevSlide();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          this.nextSlide();
+        }
+      });
+      this.setAttribute('tabindex', '0');
+    }
+
+    // ✅ No scroll hijacking: only act on Shift + wheel (optional power-user gesture)
+    setupWheelNavigation() {
+      if (!this.isDesktop) return;
+      this.addEventListener('wheel', (e) => {
+        // Let normal wheel events bubble to the page (no preventDefault)
+        if (!e.shiftKey) return; // Only when user clearly intends horizontal control
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        e.preventDefault(); // consume only this explicit gesture
+        if (delta > 0) this.nextSlide();
+        else this.prevSlide();
+      }, { passive: false });
+    }
+
+    setupAutoPlay() {
+      if (!this.autoPlayEnabled || !this.dataset.autoPlay) return;
+      this.addEventListener('mouseenter', () => this.pauseAutoPlay());
+      this.addEventListener('mouseleave', () => this.resumeAutoPlay());
+      this.resumeAutoPlay();
+    }
+
+    pauseAutoPlay() {
+      if (this.autoPlayInterval) {
+        clearInterval(this.autoPlayInterval);
+        this.autoPlayInterval = null;
+      }
+    }
+
+    resumeAutoPlay() {
+      if (!this.autoPlayEnabled || !this.dataset.autoPlay) return;
+      this.pauseAutoPlay();
+      this.autoPlayInterval = setInterval(() => { this.nextSlide(); }, this.autoPlaySpeed);
+    }
+
+    goToSlide(index) {
+      if (this.isTransitioning || this.totalCards === 0) return;
+      this.currentSlide = Math.max(0, Math.min(index, this.totalSlides - 1));
+      this.isTransitioning = true;
+
+      if (this.isDesktop) {
+        const firstCard = this.cards[0];
+        if (firstCard) {
+          const cardWidth = firstCard.offsetWidth;
+          const gap = 24;
+          const cardIndex = this.currentSlide * this.cardsPerView;
+          const offset = cardIndex * (cardWidth + gap);
+          this.track.style.transform = `translateX(-${offset}px)`;
+        }
+      } else {
+        const cardWidth = this.cards[0].offsetWidth;
+        const gap = 16;
+        const offset = this.currentSlide * (cardWidth + gap);
+        this.trackContainer.scrollTo({ left: offset, behavior: 'smooth' });
+      }
+
+      setTimeout(() => { this.isTransitioning = false; }, 600);
+      this.updateNavigation();
+    }
+
+    prevSlide() { this.goToSlide(Math.max(0, this.currentSlide - 1)); }
+    nextSlide() { this.goToSlide(Math.min(this.totalSlides - 1, this.currentSlide + 1)); }
+
+    updateNavigation() {
+      if (this.prevBtn) this.prevBtn.disabled = this.currentSlide <= 0;
+      if (this.nextBtn) this.nextBtn.disabled = this.currentSlide >= this.totalSlides - 1;
+
+      this.querySelectorAll('.ai-broen-carousel__dot-{{ ai_gen_id }}').forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentSlide);
+        dot.setAttribute('aria-selected', index === this.currentSlide);
+      });
+    }
+
+    disconnectedCallback() { this.pauseAutoPlay(); }
+  }
+
+  customElements.define('broen-carousel-{{ ai_gen_id }}', BroenCarousel{{ ai_gen_id }});
+})();
+</script>
+
+
+{% schema %}
+{
+  "name": "How It Works",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How It Works"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background color",
+      "default": "#000000",
+      "info": "The background now properly responds to this setting"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "cards_per_view_desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Cards per view on desktop",
+      "default": 3,
+      "info": "Now properly controls how many cards are visible and how the carousel scrolls"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Heading bottom spacing",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable autoplay",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "min": 3000,
+      "max": 9500,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay speed",
+      "default": 5000
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_subtext_color",
+      "label": "Card subtext color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Card shadow opacity",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_enabled",
+      "label": "Enable card 1",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_1_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_1_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Request for Help"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_subtext",
+      "label": "Subtext",
+      "default": "24/7 support and maintenance for complete peace of mind"
+    },
+    {
+      "type": "text",
+      "id": "card_1_button_label",
+      "label": "Call-to-action text",
+      "default": "Get Support →"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_enabled",
+      "label": "Enable card 2",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_2_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_2_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "See All Products"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_subtext",
+      "label": "Subtext",
+      "default": "Browse our complete collection of premium smart locks"
+    },
+    {
+      "type": "text",
+      "id": "card_2_button_label",
+      "label": "Button label",
+      "default": "View Catalog →"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_enabled",
+      "label": "Enable card 3",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_3_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_3_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Schedule Installation"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_subtext",
+      "label": "Subtext",
+      "default": "Professional installation by certified technicians"
+    },
+    {
+      "type": "text",
+      "id": "card_3_button_label",
+      "label": "Button label",
+      "default": "Book Now →"
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_enabled",
+      "label": "Enable card 4",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_4_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_4_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Free Installation"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_subtext",
+      "label": "Subtext",
+      "default": "Complimentary professional installation with warranty"
+    },
+    {
+      "type": "text",
+      "id": "card_4_button_label",
+      "label": "Button label",
+      "default": "Learn More →"
+    },
+    {
+      "type": "url",
+      "id": "card_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_5_enabled",
+      "label": "Enable card 5",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_5_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_5_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_5_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_5_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "card_5_subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "card_5_button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "card_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_6_enabled",
+      "label": "Enable card 6"
+    },
+    {
+      "type": "select",
+      "id": "card_6_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_6_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_6_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_6_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_6_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "card_6_subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "card_6_button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "card_6_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 7"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_7_enabled",
+      "label": "Enable card 7"
+    },
+    {
+      "type": "select",
+      "id": "card_7_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_7_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_7_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_7_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_7_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "card_7_subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "card_7_button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "card_7_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 8"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_8_enabled",
+      "label": "Enable card 8"
+    },
+    {
+      "type": "select",
+      "id": "card_8_media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_8_image",
+      "label": "Image"
+    },
+    {
+      "type": "video",
+      "id": "card_8_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_8_video_poster",
+      "label": "Video poster image",
+      "info": "Custom image to show when video is not playing. If not set, uses video's default preview."
+    },
+    {
+      "type": "checkbox",
+      "id": "card_8_video_hover_only",
+      "label": "Play video on hover only",
+      "default": true,
+      "info": "When enabled, video only plays when hovering over the card"
+    },
+    {
+      "type": "text",
+      "id": "card_8_title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "card_8_subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "text",
+      "id": "card_8_button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "card_8_link",
+      "label": "Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "How It Works"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

@@ -1,0 +1,652 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ======================================================
+     Video Hero – Full Style (Apple-like matte glass CTAs)
+     ====================================================== */
+
+  .ai-video-hero-{{ ai_gen_id }}{
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display","Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    text-align: {{ block.settings.text_align }};
+    padding: calc({{ block.settings.vertical_padding }}px + 80px) 20px {{ block.settings.vertical_padding }}px 20px;
+
+    /* Liquid glass tokens */
+    --lg-blur: 18px;
+    --lg-saturate: 180%;
+    --lg-border: hsla(0,0%,100%,.22);
+    --lg-shadow: rgba(0,0,0,.25);
+    --btn-radius: {{ block.settings.button_radius }}px;
+
+    /* smoother Apple-y type rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Background layer */
+  .ai-video-hero-background-{{ ai_gen_id }}{ position:absolute; inset:0; z-index:1; }
+  .ai-video-hero-video-{{ ai_gen_id }},
+  .ai-video-hero-fallback-{{ ai_gen_id }}{
+    width:100%; height:100%; object-fit:cover; object-position:center;
+  }
+
+  /* Placeholder + helper text */
+  .ai-video-hero-placeholder-{{ ai_gen_id }}{
+    width:100%; height:100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .ai-video-hero-placeholder-{{ ai_gen_id }} svg{ width:100px; height:100px; opacity:.3; color:#fff; }
+  .ai-video-hero-empty-state-{{ ai_gen_id }}{
+    position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+    color:rgba(255,255,255,.8); font-size:14px; text-align:center; max-width:300px; line-height:1.4;
+  }
+
+  /* Dark overlay */
+  .ai-video-hero-overlay-{{ ai_gen_id }}{
+    position:absolute; inset:0; z-index:2;
+    background: linear-gradient(
+      to bottom,
+      {{ block.settings.overlay_color | color_modify: 'alpha', block.settings.overlay_opacity | divided_by: 100.0 }},
+      {{ block.settings.overlay_color | color_modify: 'alpha', block.settings.overlay_opacity | divided_by: 100.0 }}
+    );
+  }
+
+  /* Content */
+  .ai-video-hero-content-{{ ai_gen_id }}{ position:relative; z-index:3; max-width: {{ block.settings.max_width }}px; width:100%; }
+  .ai-video-hero-headline-{{ ai_gen_id }}{
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: .95;
+    margin: 0 0 40px;
+    font-size: clamp({{ block.settings.headline_size_mobile }}px, 8vw, {{ block.settings.headline_size_desktop }}px);
+    color: {{ block.settings.headline_color }};
+  }
+
+  /* CTA layout */
+  .ai-video-hero-ctas-{{ ai_gen_id }}{
+    display:flex; flex-direction:column; gap:calc(16px * {{ block.settings.gap_scale }}); align-items:center;
+  }
+  .ai-video-hero-primary-ctas-{{ ai_gen_id }}{ display:flex; gap:calc(16px * {{ block.settings.gap_scale }}); flex-wrap:wrap; justify-content:center; }
+  .ai-video-hero-secondary-ctas-{{ ai_gen_id }}{ display:flex; gap:calc(12px * {{ block.settings.gap_scale }}); flex-wrap:wrap; justify-content:center; }
+
+  /* =========================
+     Pure Liquid Glass Buttons (All Identical)
+     ========================= */
+  .ai-video-hero-btn-{{ ai_gen_id }}{
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display",system-ui,sans-serif !important;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-size: 16px !important;
+    line-height: 1;
+
+    display:inline-flex; align-items:center; justify-content:center;
+    text-decoration:none; cursor:pointer; white-space:nowrap;
+    min-height:44px; padding:14px 28px !important;
+    border-radius: var(--btn-radius) !important;
+    border: 1px solid var(--lg-border) !important;
+
+    /* Pure liquid glass - no customizable background */
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)) !important;
+    backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    -webkit-backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    box-shadow: 0 6px 18px var(--lg-shadow), inset 0 1px 0 rgba(255,255,255,.12) !important;
+
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+
+  /* Primary buttons text colors */
+  .ai-video-hero-btn-primary-solid-{{ ai_gen_id }}{
+    color: {{ block.settings.primary_solid_text }} !important;
+  }
+  .ai-video-hero-btn-primary-outline-{{ ai_gen_id }}{
+    color: {{ block.settings.primary_outline_text }} !important;
+  }
+
+  /* Secondary buttons text color */
+  .ai-video-hero-btn-secondary-{{ ai_gen_id }}{
+    color: {{ block.settings.secondary_text }} !important;
+  }
+
+  /* Sticky Specialist Button */
+  .ai-video-hero-sticky-specialist-{{ ai_gen_id }}{
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display",system-ui,sans-serif !important;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-size: 16px !important;
+    line-height: 1;
+    color: {{ block.settings.specialist_text }} !important;
+
+    display:inline-flex; align-items:center; justify-content:center;
+    text-decoration:none; cursor:pointer; white-space:nowrap;
+    min-height:44px; padding:14px 28px !important;
+    border-radius: var(--btn-radius) !important;
+    border: 1px solid var(--lg-border) !important;
+
+    /* Pure liquid glass */
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)) !important;
+    backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    -webkit-backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    box-shadow: 0 6px 18px var(--lg-shadow), inset 0 1px 0 rgba(255,255,255,.12) !important;
+
+    position: fixed; left:50%; bottom:20px; transform: translateX(-50%);
+    z-index:1000;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+
+  /* Hover states (identical for all buttons) */
+  .ai-video-hero-btn-{{ ai_gen_id }}:hover{
+    transform: translateY(-1px);
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.24)) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14) !important;
+  }
+  .ai-video-hero-sticky-specialist-{{ ai_gen_id }}:hover{
+    transform: translateX(-50%) translateY(-1px);
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.24)) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14) !important;
+  }
+
+  /* Strip any shine layers */
+  .ai-video-hero-btn-{{ ai_gen_id }}::before,
+  .ai-video-hero-btn-{{ ai_gen_id }}::after,
+  .ai-video-hero-sticky-specialist-{{ ai_gen_id }}::before,
+  .ai-video-hero-sticky-specialist-{{ ai_gen_id }}::after{ content:none !important; display:none !important; }
+
+  /* Active states */
+  .ai-video-hero-btn-{{ ai_gen_id }}:active,
+  .ai-video-hero-sticky-specialist-{{ ai_gen_id }}:active{
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.10) !important;
+  }
+
+  /* Focus ring */
+  .ai-video-hero-btn-{{ ai_gen_id }}:focus-visible,
+  .ai-video-hero-sticky-specialist-{{ ai_gen_id }}:focus-visible{
+    outline: 3px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* ===========
+     Mobile
+     =========== */
+  @media (max-width: 768px){
+    .ai-video-hero-{{ ai_gen_id }}{
+      padding: calc({{ block.settings.vertical_padding | times: 0.7 }}px + 60px) 16px {{ block.settings.vertical_padding | times: 0.7 }}px 16px;
+    }
+    .ai-video-hero-primary-ctas-{{ ai_gen_id }},
+    .ai-video-hero-secondary-ctas-{{ ai_gen_id }}{
+      flex-direction: column; width: 100%; max-width: 320px;
+    }
+    .ai-video-hero-btn-primary-solid-{{ ai_gen_id }},
+    .ai-video-hero-btn-primary-outline-{{ ai_gen_id }},
+    .ai-video-hero-btn-secondary-{{ ai_gen_id }}{ width:100%; }
+    .ai-video-hero-sticky-specialist-{{ ai_gen_id }}{ bottom: calc(20px + env(safe-area-inset-bottom)); }
+  }
+
+  /* Reduced motion: hide video */
+  @media (prefers-reduced-motion: reduce){
+    .ai-video-hero-video-{{ ai_gen_id }}{ display:none; }
+  }
+{% endstyle %}
+
+
+
+<video-hero-{{ ai_gen_id }}
+  class="ai-video-hero-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-video-hero-background-{{ ai_gen_id }}">
+    {% if block.settings.background_video %}
+      <video
+        class="ai-video-hero-video-{{ ai_gen_id }}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-hidden="true"
+      >
+        <source src="{{ block.settings.background_video }}" type="video/mp4">
+      </video>
+    {% endif %}
+
+    {% if block.settings.fallback_image %}
+      <img
+        class="ai-video-hero-fallback-{{ ai_gen_id }}"
+        src="{{ block.settings.fallback_image | image_url: width: 2000 }}"
+        alt=""
+        loading="lazy"
+        width="{{ block.settings.fallback_image.width }}"
+        height="{{ block.settings.fallback_image.height }}"
+        {% unless block.settings.background_video %}style="display: block;"{% endunless %}
+      >
+    {% endif %}
+
+    {% unless block.settings.background_video or block.settings.fallback_image %}
+      <div class="ai-video-hero-placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+        <div class="ai-video-hero-empty-state-{{ ai_gen_id }}">
+          Add a background video or fallback image to get started
+        </div>
+      </div>
+    {% endunless %}
+  </div>
+
+  <div class="ai-video-hero-overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-video-hero-content-{{ ai_gen_id }}">
+    {% if block.settings.headline_line_one != blank or block.settings.headline_line_two != blank or block.settings.headline_line_three != blank %}
+      <h1 class="ai-video-hero-headline-{{ ai_gen_id }}">
+        {% if block.settings.headline_line_one != blank %}
+          {{ block.settings.headline_line_one }}<br>
+        {% endif %}
+        {% if block.settings.headline_line_two != blank %}
+          {{ block.settings.headline_line_two }}<br>
+        {% endif %}
+        {% if block.settings.headline_line_three != blank %}
+          {{ block.settings.headline_line_three }}
+        {% endif %}
+      </h1>
+    {% endif %}
+
+    <div class="ai-video-hero-ctas-{{ ai_gen_id }}">
+      {% if block.settings.primary_label_1 != blank or block.settings.primary_label_2 != blank %}
+        <div class="ai-video-hero-primary-ctas-{{ ai_gen_id }}">
+          {% if block.settings.primary_label_1 != blank %}
+            <a
+              href="{{ block.settings.primary_link_1 | default: '#' }}"
+              class="ai-video-hero-btn-{{ ai_gen_id }} ai-video-hero-btn-primary-solid-{{ ai_gen_id }}"
+            >
+              {{ block.settings.primary_label_1 }}
+            </a>
+          {% endif %}
+
+          {% if block.settings.primary_label_2 != blank %}
+            <a
+              href="{{ block.settings.primary_link_2 | default: '#' }}"
+              class="ai-video-hero-btn-{{ ai_gen_id }} ai-video-hero-btn-primary-outline-{{ ai_gen_id }}"
+            >
+              {{ block.settings.primary_label_2 }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if block.settings.secondary_label_a != blank or block.settings.secondary_label_b != blank or block.settings.secondary_label_c != blank %}
+        <div class="ai-video-hero-secondary-ctas-{{ ai_gen_id }}">
+          {% if block.settings.secondary_label_a != blank %}
+            <a
+              href="{{ block.settings.secondary_link_a | default: '#' }}"
+              class="ai-video-hero-btn-{{ ai_gen_id }} ai-video-hero-btn-secondary-{{ ai_gen_id }}"
+            >
+              {{ block.settings.secondary_label_a }}
+            </a>
+          {% endif %}
+
+          {% if block.settings.secondary_label_b != blank %}
+            <a
+              href="{{ block.settings.secondary_link_b | default: '#' }}"
+              class="ai-video-hero-btn-{{ ai_gen_id }} ai-video-hero-btn-secondary-{{ ai_gen_id }}"
+            >
+              {{ block.settings.secondary_label_b }}
+            </a>
+          {% endif %}
+
+          {% if block.settings.secondary_label_c != blank %}
+            <a
+              href="{{ block.settings.secondary_link_c | default: '#' }}"
+              class="ai-video-hero-btn-{{ ai_gen_id }} ai-video-hero-btn-secondary-{{ ai_gen_id }}"
+            >
+              {{ block.settings.secondary_label_c }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</video-hero-{{ ai_gen_id }}>
+
+{% if block.settings.show_sticky_specialist and block.settings.specialist_label != blank %}
+  <a
+    href="{{ block.settings.specialist_link | default: '#' }}"
+    class="ai-video-hero-sticky-specialist-{{ ai_gen_id }}"
+  >
+    {{ block.settings.specialist_label }}
+  </a>
+{% endif %}
+
+<script>
+  (function() {
+    class VideoHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.video = this.querySelector('.ai-video-hero-video-{{ ai_gen_id }}');
+        this.fallbackImage = this.querySelector('.ai-video-hero-fallback-{{ ai_gen_id }}');
+        this.observer = null;
+      }
+
+      connectedCallback() {
+        this.setupIntersectionObserver();
+        this.setupReducedMotion();
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+
+      setupIntersectionObserver() {
+        if (!this.video) return;
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.video.play().catch(() => {});
+            } else {
+              this.video.pause();
+            }
+          });
+        }, {
+          threshold: 0.1
+        });
+
+        this.observer.observe(this);
+      }
+
+      setupReducedMotion() {
+        if (!this.video || !this.fallbackImage) return;
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const handleMotionPreference = (e) => {
+          if (e.matches) {
+            this.video.style.display = 'none';
+            this.fallbackImage.style.display = 'block';
+          } else {
+            this.video.style.display = 'block';
+            this.fallbackImage.style.display = 'none';
+          }
+        };
+
+        handleMotionPreference(prefersReducedMotion);
+        prefersReducedMotion.addEventListener('change', handleMotionPreference);
+      }
+    }
+
+    customElements.define('video-hero-{{ ai_gen_id }}', VideoHero{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_one",
+      "label": "Headline line 1",
+      "default": "Peak Security"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_two",
+      "label": "Headline line 2",
+      "default": "Peak Style"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_three",
+      "label": "Headline line 3",
+      "default": "Peak Innovation"
+    },
+    {
+      "type": "header",
+      "content": "Primary buttons"
+    },
+    {
+      "type": "text",
+      "id": "primary_label_1",
+      "label": "Primary button 1 label",
+      "default": "Browse Products"
+    },
+    {
+      "type": "url",
+      "id": "primary_link_1",
+      "label": "Primary button 1 link"
+    },
+    {
+      "type": "text",
+      "id": "primary_label_2",
+      "label": "Primary button 2 label",
+      "default": "Choose a Smart Lock"
+    },
+    {
+      "type": "url",
+      "id": "primary_link_2",
+      "label": "Primary button 2 link"
+    },
+    {
+      "type": "header",
+      "content": "Secondary buttons"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label_a",
+      "label": "Secondary button A label",
+      "default": "Check My Door"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link_a",
+      "label": "Secondary button A link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label_b",
+      "label": "Secondary button B label",
+      "default": "Download Catalog"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link_b",
+      "label": "Secondary button B link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label_c",
+      "label": "Secondary button C label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link_c",
+      "label": "Secondary button C link"
+    },
+    {
+      "type": "header",
+      "content": "Sticky specialist button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sticky_specialist",
+      "label": "Show sticky specialist button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "specialist_label",
+      "label": "Specialist button label",
+      "default": "Talk to a Specialist"
+    },
+    {
+      "type": "url",
+      "id": "specialist_link",
+      "label": "Specialist button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "primary_solid_text",
+      "label": "Primary button 1 text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "primary_outline_text",
+      "label": "Primary button 2 text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_text",
+      "label": "Secondary buttons text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "specialist_text",
+      "label": "Specialist button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "url",
+      "id": "background_video",
+      "label": "Background video URL",
+      "info": "Go to Settings > Files, upload your video, then copy and paste the URL here"
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Fallback image"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum content width",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 60
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "headline_size_desktop",
+      "min": 48,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Headline size desktop",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "headline_size_mobile",
+      "min": 32,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size mobile",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "gap_scale",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.1,
+      "label": "Button spacing scale",
+      "default": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video hero"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

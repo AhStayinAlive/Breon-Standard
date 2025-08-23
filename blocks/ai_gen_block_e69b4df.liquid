@@ -1,0 +1,1146 @@
+{% doc %}
+  @prompt
+    Create a simple "Join the Team + Contact Us" section in my Broen dark style: centered "Join the Team" heading with an editable blurb and editable email shown as a mailto pill; below it a compact "Contact Us" card using Shopify's {% form 'contact' %} with fields for name, email (required), optional phone (toggle), and message, plus success/error messages—mobile-first, max-width ~720px, 20px gaps, rounded inputs, glassy surface, large primary submit button, accessible labels and focus rings, no JS. Full theme editor customization for all colors, typography, spacing, and layout.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* Apply background to entire page */
+  body,
+  .shopify-section-group-header-group,
+  .shopify-section-group-footer-group,
+  main,
+  #MainContent,
+  .main-content,
+  .page-container,
+  .container,
+  .content-wrapper {
+    background: {{ block.settings.section_background }} !important;
+  }
+
+  .ai-join-contact-{{ ai_gen_id }} {
+    background: transparent;
+    width: 100%;
+    position: relative;
+    color: {{ block.settings.text_color }};
+    padding: {{ block.settings.section_padding }}px 20px;
+  }
+
+  .ai-join-contact__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .ai-join-section-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: {{ block.settings.section_gap }}px;
+  }
+
+  .ai-join-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size_mobile }}px;
+    font-weight: {{ block.settings.heading_weight }};
+    margin: 0 0 {{ block.settings.heading_margin_bottom }}px 0;
+    color: {{ block.settings.heading_color }};
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: {{ block.settings.heading_letter_spacing }};
+    line-height: {{ block.settings.heading_line_height }};
+  }
+
+  .ai-join-blurb-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.blurb_margin_bottom }}px 0;
+    line-height: {{ block.settings.text_line_height }};
+    color: {{ block.settings.text_color }};
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-size: {{ block.settings.text_size }}px;
+  }
+
+  .ai-email-pill-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: {{ block.settings.email_pill_bg }};
+    color: {{ block.settings.email_pill_text }};
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    text-decoration: none;
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.email_pill_border }};
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: {{ block.settings.button_font_weight }};
+    backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    box-shadow: {{ block.settings.button_shadow }};
+    font-size: {{ block.settings.button_font_size }}px;
+    min-height: {{ block.settings.button_min_height }}px;
+  }
+
+  .ai-email-pill-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.email_pill_hover_bg }};
+    color: {{ block.settings.email_pill_hover_text }};
+    transform: translateY(-{{ block.settings.hover_lift }}px);
+    box-shadow: {{ block.settings.button_hover_shadow }};
+    border-color: {{ block.settings.email_pill_hover_border }};
+  }
+
+  .ai-email-pill-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.focus_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-contact-card-{{ ai_gen_id }} {
+    background: {{ block.settings.card_bg }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    box-shadow: {{ block.settings.card_shadow }};
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-contact-card-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, {{ block.settings.card_border | color_modify: 'alpha', 0.6 }}, transparent);
+  }
+
+  .ai-contact-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.contact_heading_size }}px;
+    font-weight: {{ block.settings.heading_weight }};
+    margin: 0 0 {{ block.settings.contact_heading_margin }}px 0;
+    text-align: center;
+    color: {{ block.settings.heading_color }};
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: {{ block.settings.heading_letter_spacing }};
+  }
+
+  .ai-contact-form-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.form_gap }}px;
+  }
+
+  .ai-form-group-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.label_gap }}px;
+  }
+
+  .ai-form-label-{{ ai_gen_id }} {
+    font-weight: {{ block.settings.label_font_weight }};
+    color: {{ block.settings.label_color }};
+    font-size: {{ block.settings.label_font_size }}px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .ai-form-input-{{ ai_gen_id }},
+  .ai-form-textarea-{{ ai_gen_id }} {
+    padding: {{ block.settings.input_padding_y }}px {{ block.settings.input_padding_x }}px;
+    background: {{ block.settings.input_bg }};
+    border: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    color: {{ block.settings.input_text_color }};
+    font-size: {{ block.settings.input_font_size }}px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    outline: none;
+    box-shadow: {{ block.settings.input_shadow }};
+  }
+
+  .ai-form-input-{{ ai_gen_id }}::placeholder,
+  .ai-form-textarea-{{ ai_gen_id }}::placeholder {
+    color: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-form-input-{{ ai_gen_id }}:focus,
+  .ai-form-textarea-{{ ai_gen_id }}:focus {
+    border-color: {{ block.settings.input_focus_border }};
+    background: {{ block.settings.input_focus_bg }};
+    box-shadow: 0 0 0 3px {{ block.settings.input_focus_ring }};
+  }
+
+  .ai-form-textarea-{{ ai_gen_id }} {
+    min-height: {{ block.settings.textarea_min_height }}px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  .ai-submit-button-{{ ai_gen_id }} {
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    background-color: {{ block.settings.submit_button_bg }};
+    color: {{ block.settings.submit_button_text }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.submit_button_border }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: {{ block.settings.button_font_weight }};
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: {{ block.settings.heading_letter_spacing }};
+    backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    box-shadow: {{ block.settings.button_shadow }};
+    min-height: {{ block.settings.button_min_height }}px;
+  }
+
+  .ai-submit-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.submit_button_hover_bg }};
+    color: {{ block.settings.submit_button_hover_text }};
+    transform: translateY(-{{ block.settings.hover_lift }}px);
+    box-shadow: {{ block.settings.button_hover_shadow }};
+    border-color: {{ block.settings.submit_button_hover_border }};
+  }
+
+  .ai-submit-button-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.focus_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-submit-button-{{ ai_gen_id }}:active {
+    transform: translateY(-1px);
+  }
+
+  .ai-form-message-{{ ai_gen_id }} {
+    padding: {{ block.settings.message_padding }}px;
+    border-radius: {{ block.settings.input_border_radius }}px;
+    margin-top: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 500;
+    backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    -webkit-backdrop-filter: blur({{ block.settings.blur_amount }}px);
+    font-size: {{ block.settings.message_font_size }}px;
+  }
+
+  .ai-form-success-{{ ai_gen_id }} {
+    background: {{ block.settings.success_bg }};
+    border: 1px solid {{ block.settings.success_border }};
+    color: {{ block.settings.success_text }};
+  }
+
+  .ai-form-error-{{ ai_gen_id }} {
+    background: {{ block.settings.error_bg }};
+    border: 1px solid {{ block.settings.error_border }};
+    color: {{ block.settings.error_text }};
+  }
+
+  @media (min-width: 768px) {
+    .ai-join-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_desktop }}px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ai-join-contact-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding | times: 0.7 }}px 16px;
+    }
+
+    .ai-contact-card-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.75 }}px;
+    }
+
+    .ai-form-input-{{ ai_gen_id }},
+    .ai-form-textarea-{{ ai_gen_id }} {
+      padding: {{ block.settings.input_padding_y | times: 0.85 }}px {{ block.settings.input_padding_x | times: 0.85 }}px;
+    }
+
+    .ai-submit-button-{{ ai_gen_id }},
+    .ai-email-pill-{{ ai_gen_id }} {
+      padding: {{ block.settings.button_padding_y | times: 0.85 }}px {{ block.settings.button_padding_x | times: 0.85 }}px;
+    }
+  }
+
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .ai-email-pill-{{ ai_gen_id }},
+    .ai-form-input-{{ ai_gen_id }},
+    .ai-form-textarea-{{ ai_gen_id }},
+    .ai-submit-button-{{ ai_gen_id }} {
+      transition: none;
+    }
+
+    .ai-email-pill-{{ ai_gen_id }}:hover,
+    .ai-submit-button-{{ ai_gen_id }}:hover {
+      transform: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .ai-contact-card-{{ ai_gen_id }} {
+      border-width: 2px;
+    }
+
+    .ai-form-input-{{ ai_gen_id }},
+    .ai-form-textarea-{{ ai_gen_id }},
+    .ai-email-pill-{{ ai_gen_id }},
+    .ai-submit-button-{{ ai_gen_id }} {
+      border-width: 2px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-join-contact-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-join-contact__container-{{ ai_gen_id }}">
+    <div class="ai-join-section-{{ ai_gen_id }}">
+      {% if block.settings.join_heading != blank %}
+        <h2 class="ai-join-heading-{{ ai_gen_id }}">{{ block.settings.join_heading }}</h2>
+      {% endif %}
+      
+      {% if block.settings.join_blurb != blank %}
+        <div class="ai-join-blurb-{{ ai_gen_id }}">{{ block.settings.join_blurb }}</div>
+      {% endif %}
+      
+      {% if block.settings.join_email != blank %}
+        <a href="mailto:{{ block.settings.join_email }}" class="ai-email-pill-{{ ai_gen_id }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+          {{ block.settings.join_email }}
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="ai-contact-card-{{ ai_gen_id }}">
+      {% if block.settings.contact_heading != blank %}
+        <h3 class="ai-contact-heading-{{ ai_gen_id }}">{{ block.settings.contact_heading }}</h3>
+      {% endif %}
+
+      {% form 'contact' %}
+        <div class="ai-contact-form-{{ ai_gen_id }}">
+          <div class="ai-form-group-{{ ai_gen_id }}">
+            <label for="contact-name-{{ ai_gen_id }}" class="ai-form-label-{{ ai_gen_id }}">{{ block.settings.name_label }}</label>
+            <input
+              type="text"
+              id="contact-name-{{ ai_gen_id }}"
+              name="contact[name]"
+              class="ai-form-input-{{ ai_gen_id }}"
+              value="{{ form.name }}"
+              placeholder="{{ block.settings.name_placeholder }}"
+              required
+              aria-required="true"
+            >
+          </div>
+
+          <div class="ai-form-group-{{ ai_gen_id }}">
+            <label for="contact-email-{{ ai_gen_id }}" class="ai-form-label-{{ ai_gen_id }}">{{ block.settings.email_label }}</label>
+            <input
+              type="email"
+              id="contact-email-{{ ai_gen_id }}"
+              name="contact[email]"
+              class="ai-form-input-{{ ai_gen_id }}"
+              value="{{ form.email }}"
+              placeholder="{{ block.settings.email_placeholder }}"
+              required
+              aria-required="true"
+              autocomplete="email"
+            >
+          </div>
+
+          {% if block.settings.show_phone %}
+            <div class="ai-form-group-{{ ai_gen_id }}">
+              <label for="contact-phone-{{ ai_gen_id }}" class="ai-form-label-{{ ai_gen_id }}">{{ block.settings.phone_label }}</label>
+              <input
+                type="tel"
+                id="contact-phone-{{ ai_gen_id }}"
+                name="contact[phone]"
+                class="ai-form-input-{{ ai_gen_id }}"
+                value="{{ form.phone }}"
+                placeholder="{{ block.settings.phone_placeholder }}"
+                autocomplete="tel"
+              >
+            </div>
+          {% endif %}
+
+          <div class="ai-form-group-{{ ai_gen_id }}">
+            <label for="contact-message-{{ ai_gen_id }}" class="ai-form-label-{{ ai_gen_id }}">{{ block.settings.message_label }}</label>
+            <textarea
+              id="contact-message-{{ ai_gen_id }}"
+              name="contact[body]"
+              class="ai-form-textarea-{{ ai_gen_id }}"
+              placeholder="{{ block.settings.message_placeholder }}"
+              required
+              aria-required="true">{{ form.body }}</textarea>
+          </div>
+
+          <button type="submit" class="ai-submit-button-{{ ai_gen_id }}">
+            {{ block.settings.submit_label }}
+          </button>
+        </div>
+
+        {% if form.posted_successfully? %}
+          <div class="ai-form-message-{{ ai_gen_id }} ai-form-success-{{ ai_gen_id }}">
+            {{ block.settings.success_message }}
+          </div>
+        {% endif %}
+
+        {% if form.errors %}
+          <div class="ai-form-message-{{ ai_gen_id }} ai-form-error-{{ ai_gen_id }}">
+            {% for field in form.errors %}
+              {{ field | capitalize }} {{ form.errors.messages[field] }}.
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Join team + contact",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "join_heading",
+      "label": "Join heading",
+      "default": "Join the Team"
+    },
+    {
+      "type": "richtext",
+      "id": "join_blurb",
+      "label": "Join description",
+      "default": "<p>Send an email to broen.philippines@gmail.com along with your CV/Resume</p>"
+    },
+    {
+      "type": "text",
+      "id": "join_email",
+      "label": "Email address",
+      "default": "broen.philippines@gmail.com"
+    },
+    {
+      "type": "text",
+      "id": "contact_heading",
+      "label": "Contact heading",
+      "default": "Contact Us"
+    },
+    {
+      "type": "header",
+      "content": "Form Labels & Placeholders"
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Name field label",
+      "default": "Name *"
+    },
+    {
+      "type": "text",
+      "id": "name_placeholder",
+      "label": "Name placeholder",
+      "default": "Your full name"
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Email field label",
+      "default": "Email *"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Email placeholder",
+      "default": "your.email@example.com"
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Phone field label",
+      "default": "Phone"
+    },
+    {
+      "type": "text",
+      "id": "phone_placeholder",
+      "label": "Phone placeholder",
+      "default": "+63 912 345 6789"
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Message field label",
+      "default": "Message *"
+    },
+    {
+      "type": "text",
+      "id": "message_placeholder",
+      "label": "Message placeholder",
+      "default": "Tell us how we can help you..."
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Submit button text",
+      "default": "Send"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for your message! We'll get back to you soon."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone field",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 720
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_gap",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between sections",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "form_gap",
+      "min": 15,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Form field gap",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "label_gap",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Label to input gap",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 24,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile heading size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 32,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop heading size",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        {"value": "400", "label": "Normal"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semi Bold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 1.0,
+      "max": 1.5,
+      "step": 0.1,
+      "label": "Heading line height",
+      "default": 1.2
+    },
+    {
+      "type": "select",
+      "id": "heading_letter_spacing",
+      "label": "Heading letter spacing",
+      "options": [
+        {"value": "-0.02em", "label": "Tight"},
+        {"value": "-0.01em", "label": "Slightly tight"},
+        {"value": "0", "label": "Normal"},
+        {"value": "0.01em", "label": "Slightly loose"}
+      ],
+      "default": "-0.01em"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading bottom margin",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "contact_heading_size",
+      "min": 20,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Contact heading size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "contact_heading_margin",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Contact heading margin",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Body text size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "min": 1.4,
+      "max": 1.8,
+      "step": 0.1,
+      "label": "Body text line height",
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "blurb_margin_bottom",
+      "min": 15,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Blurb bottom margin",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#0E1116"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder color",
+      "default": "#A8B0BB"
+    },
+    {
+      "type": "color",
+      "id": "focus_color",
+      "label": "Focus outline color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Card Styling"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "rgba(22, 27, 34, 0.8)"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card border",
+      "default": "rgba(42, 48, 59, 0.4)"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Card border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 32
+    },
+    {
+      "type": "text",
+      "id": "card_shadow",
+      "label": "Card shadow",
+      "default": "0 4px 24px rgba(0, 0, 0, 0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Input Styling"
+    },
+    {
+      "type": "color",
+      "id": "input_bg",
+      "label": "Input background",
+      "default": "rgba(22, 27, 34, 0.6)"
+    },
+    {
+      "type": "color",
+      "id": "input_border",
+      "label": "Input border",
+      "default": "rgba(42, 48, 59, 0.4)"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_bg",
+      "label": "Input focus background",
+      "default": "rgba(22, 27, 34, 0.8)"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_border",
+      "label": "Input focus border",
+      "default": "rgba(255, 255, 255, 0.6)"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_ring",
+      "label": "Input focus ring",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Input border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Input border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "input_padding_y",
+      "min": 10,
+      "max": 18,
+      "step": 2,
+      "unit": "px",
+      "label": "Input vertical padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "input_padding_x",
+      "min": 12,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Input horizontal padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "input_font_size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Input font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Label font size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "label_font_weight",
+      "label": "Label font weight",
+      "options": [
+        {"value": "400", "label": "Normal"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semi Bold"}
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "textarea_min_height",
+      "min": 100,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Textarea minimum height",
+      "default": 120
+    },
+    {
+      "type": "text",
+      "id": "input_shadow",
+      "label": "Input shadow",
+      "default": "0 1px 3px rgba(0, 0, 0, 0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Email Pill Button"
+    },
+    {
+      "type": "color",
+      "id": "email_pill_bg",
+      "label": "Email pill background",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "color",
+      "id": "email_pill_text",
+      "label": "Email pill text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "email_pill_border",
+      "label": "Email pill border",
+      "default": "rgba(255, 255, 255, 0.3)"
+    },
+    {
+      "type": "color",
+      "id": "email_pill_hover_bg",
+      "label": "Email pill hover background",
+      "default": "rgba(255, 255, 255, 0.2)"
+    },
+    {
+      "type": "color",
+      "id": "email_pill_hover_text",
+      "label": "Email pill hover text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "email_pill_hover_border",
+      "label": "Email pill hover border",
+      "default": "rgba(255, 255, 255, 0.5)"
+    },
+    {
+      "type": "header",
+      "content": "Submit Button"
+    },
+    {
+      "type": "color",
+      "id": "submit_button_bg",
+      "label": "Submit button background",
+      "default": "rgba(22, 27, 34, 0.95)"
+    },
+    {
+      "type": "color",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "submit_button_border",
+      "label": "Submit button border",
+      "default": "rgba(255, 255, 255, 0.2)"
+    },
+    {
+      "type": "color",
+      "id": "submit_button_hover_bg",
+      "label": "Submit button hover background",
+      "default": "rgba(28, 33, 40, 0.98)"
+    },
+    {
+      "type": "color",
+      "id": "submit_button_hover_text",
+      "label": "Submit button hover text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "submit_button_hover_border",
+      "label": "Submit button hover border",
+      "default": "rgba(255, 255, 255, 0.4)"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "min": 12,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Button border width",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Button font size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Button font weight",
+      "options": [
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semi Bold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "button_min_height",
+      "min": 44,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Button minimum height",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "hover_lift",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Hover lift distance",
+      "default": 2
+    },
+    {
+      "type": "text",
+      "id": "button_shadow",
+      "label": "Button shadow",
+      "default": "0 2px 8px rgba(0, 0, 0, 0.1)"
+    },
+    {
+      "type": "text",
+      "id": "button_hover_shadow",
+      "label": "Button hover shadow",
+      "default": "0 8px 25px rgba(0, 0, 0, 0.3)"
+    },
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "color",
+      "id": "success_bg",
+      "label": "Success background",
+      "default": "rgba(34, 197, 94, 0.1)"
+    },
+    {
+      "type": "color",
+      "id": "success_border",
+      "label": "Success border",
+      "default": "rgba(34, 197, 94, 0.4)"
+    },
+    {
+      "type": "color",
+      "id": "success_text",
+      "label": "Success text",
+      "default": "#22C55E"
+    },
+    {
+      "type": "color",
+      "id": "error_bg",
+      "label": "Error background",
+      "default": "rgba(239, 68, 68, 0.1)"
+    },
+    {
+      "type": "color",
+      "id": "error_border",
+      "label": "Error border",
+      "default": "rgba(239, 68, 68, 0.4)"
+    },
+    {
+      "type": "color",
+      "id": "error_text",
+      "label": "Error text",
+      "default": "#EF4444"
+    },
+    {
+      "type": "range",
+      "id": "message_padding",
+      "min": 12,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Message padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "message_font_size",
+      "min": 13,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Message font size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Effects"
+    },
+    {
+      "type": "range",
+      "id": "blur_amount",
+      "min": 5,
+      "max": 25,
+      "step": 5,
+      "unit": "px",
+      "label": "Blur effect amount",
+      "default": 10
+    }
+  ],
+  "presets": [
+    {
+      "name": "Join team + contact"
+    }
+  ]
+}
+{% endschema %}
