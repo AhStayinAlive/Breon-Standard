@@ -1172,41 +1172,36 @@ debugLog.log('Carousel element check:', {
   if (!customElements.get('product-metafield-carousel-{{ carousel_id }}')) {
     debugLog.log('Defining new custom element product-metafield-carousel-{{ carousel_id }}');
     
-    class extends HTMLElement {
-      constructor() {
-        super();
-        this.carousels = {};
-        this.isDesktop = window.innerWidth >= 768;
-        this.initialized = false;
-      }
-
-      connectedCallback() {
-        debugLog.log('ConnectedCallback fired for carousel {{ carousel_id }}', {
-          initialized: this.initialized,
-          element: this
-        });
-        
-        // Prevent duplicate initialization
-        if (this.initialized) {
-          debugLog.warn('Already initialized, skipping');
-          return;
+    customElements.define(
+      'product-metafield-carousel-{{ carousel_id }}',
+      class ProductMetafieldCarousel extends HTMLElement {
+        constructor() {
+          super();
+          this.carousels = {};
+          this.isDesktop = window.innerWidth >= 768;
+          this.initialized = false;
+          this.resizeHandlerAttached = false;
         }
-        this.initialized = true;
-        
-        // Use requestAnimationFrame to ensure layout is complete
-        requestAnimationFrame(() => {
-          debugLog.log('RequestAnimationFrame executing for {{ carousel_id }}');
-          this.initializeCarousels();
-          this.setupEventListeners();
-          this.setupVideoControls();
-          this.logComputedStyles();
-        });
-      }
 
-      disconnectedCallback() {
-        debugLog.log('DisconnectedCallback fired for carousel {{ carousel_id }}');
-        this.initialized = false;
-      }
+        connectedCallback() {
+          if (this.initialized) return;
+          this.initialized = true;
+          requestAnimationFrame(() => {
+            this.initializeCarousels();
+            this.setupEventListeners();
+            this.setupVideoControls();
+            this.logComputedStyles();
+          });
+        }
+
+        disconnectedCallback() {
+          this.initialized = false;
+          // remove global listeners if attached
+          if (this.__resizeHandler) {
+            window.removeEventListener('resize', this.__resizeHandler);
+            this.__resizeHandler = null;
+          }
+        }
 
       logComputedStyles() {
         const element = this;
@@ -1367,8 +1362,8 @@ debugLog.log('Carousel element check:', {
 
         if (!this.resizeHandlerAttached) {
           this.resizeHandlerAttached = true;
-          debugLog.log('Attaching resize handler');
-          window.addEventListener('resize', handleResize);
+          this.__resizeHandler = handleResize;
+          window.addEventListener('resize', this.__resizeHandler);
         }
       }
 
@@ -1588,9 +1583,39 @@ debugLog.log('Carousel element check:', {
           this.updateCarouselPosition(section, carousel.currentSlide - 1);
         }
       }
+      // keep the rest of the methods exactly as they exist in the file:
+      // initializeCarousels, computeCarouselDimensions, setupEventListeners,
+      // setupVideoControls, setupTouchSupport, updateNavigationState, updateCarouselPosition,
+      // nextSlide, prevSlide, logComputedStyles
     }
+  );
+  }
 
-    customElements.define('product-metafield-carousel-{{ carousel_id }}', ProductMetafieldCarousel{{ carousel_id }});
+  // Theme Editor changes re-initialize the section
+  if (window.Shopify && window.Shopify.designMode) {
+    document.addEventListener('shopify:section:load', (e) => {
+      if (e.detail.sectionId === '{{ section.id }}') {
+        // New DOM for this section has just been injected; the custom element
+        // class is already registered, so its connectedCallback will run.
+        debugLog.log('shopify:section:load -> reinit {{ carousel_id }}');
+      }
+    });
+
+    document.addEventListener('shopify:section:unload', (e) => {
+      if (e.detail.sectionId === '{{ section.id }}') {
+        const el = document.querySelector('product-metafield-carousel-{{ carousel_id }}');
+        // call cleanup if present
+        el?.disconnectedCallback?.();
+        debugLog.log('shopify:section:unload -> cleanup {{ carousel_id }}');
+      }
+    });
+
+    // Optional: when selecting/deselecting the section in the editor, re-run video bindings
+    document.addEventListener('shopify:section:select', (e) => {
+      if (e.detail.sectionId === '{{ section.id }}') {
+        document.querySelector('product-metafield-carousel-{{ carousel_id }}')?.setupVideoControls?.();
+      }
+    });
   }
 })();
 </script>
