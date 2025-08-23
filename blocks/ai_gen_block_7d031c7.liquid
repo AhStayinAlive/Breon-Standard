@@ -164,7 +164,7 @@
   /* CLIENT INFO OVERLAY */
   .ai-clients-carousel__client-info-{{ ai_gen_id }} {
     position: absolute; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 30%, rgba(0,0,0,0.95) 100%);
+    background: linear-gradient(180deg, {{ block.settings.client_info_overlay_bg | default: '#000000' | color_modify: 'alpha', 0 }} 0%, {{ block.settings.client_info_overlay_bg | default: '#000000' | color_modify: 'alpha', 0.7 }} 30%, {{ block.settings.client_info_overlay_bg | default: '#000000' | color_modify: 'alpha', 0.95 }} 100%);
     padding: 32px 28px 28px 28px;
     color: {{ block.settings.card_text_color | default: '#ffffff' }};
     backdrop-filter: blur(15px);
@@ -175,9 +175,9 @@
   }
 
   .ai-clients-carousel__location-{{ ai_gen_id }} {
-    font-size: 11px; font-weight: 600; color: #deb887; text-transform: uppercase; letter-spacing: 1px;
-    padding: 8px 16px; background: rgba(97,69,36,0.4);
-    border: 1px solid rgba(97,69,36,0.6);
+    font-size: 11px; font-weight: 600; color: {{ block.settings.location_badge_color | default: '#deb887' }}; text-transform: uppercase; letter-spacing: 1px;
+    padding: 8px 16px; background: {{ block.settings.location_badge_bg | default: '#614524' | color_modify: 'alpha', 0.4 }};
+    border: 1px solid {{ block.settings.location_badge_bg | default: '#614524' | color_modify: 'alpha', 0.6 }};
     border-radius: 20px; display: inline-block; width: fit-content;
     backdrop-filter: blur(10px);
   }
@@ -189,20 +189,21 @@
 
   .ai-clients-carousel__door-type-{{ ai_gen_id }} {
     font-size: 13px; font-weight: 500; color: {{ block.settings.card_text_color | default: '#ffffff' }};
-    padding: 8px 16px; background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 16px; background: {{ block.settings.door_type_badge_bg | default: '#ffffff' | color_modify: 'alpha', 0.1 }};
+    border: 1px solid {{ block.settings.door_type_badge_bg | default: '#ffffff' | color_modify: 'alpha', 0.2 }};
     border-radius: 20px; backdrop-filter: blur(10px);
     display: inline-block; width: fit-content; transition: transform .3s, background .3s, border-color .3s;
   }
 
   .ai-clients-carousel__card-{{ ai_gen_id }}:hover .ai-clients-carousel__door-type-{{ ai_gen_id }} {
-    background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); transform: translateY(-2px);
+    background: {{ block.settings.door_type_badge_bg | default: '#ffffff' | color_modify: 'alpha', 0.15 }}; border-color: {{ block.settings.door_type_badge_bg | default: '#ffffff' | color_modify: 'alpha', 0.25 }}; transform: translateY(-2px);
   }
 
   /* TESTIMONIAL OVERLAY */
   .ai-clients-carousel__testimonial-overlay-{{ ai_gen_id }} {
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.95) 100%);
+    background: linear-gradient(180deg, {{ block.settings.testimonial_overlay_color | default: '#000000' | color_modify: 'alpha', 0.85 }} 0%, {{ block.settings.testimonial_overlay_color | default: '#000000' | color_modify: 'alpha', 0.95 }} 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--testimonial-overlay-bg, {{ block.settings.testimonial_overlay_color | default: '#000000' }}) 85%, transparent) 0%, color-mix(in srgb, var(--testimonial-overlay-bg, {{ block.settings.testimonial_overlay_color | default: '#000000' }}) 95%, transparent) 100%);
     padding: 40px 28px 28px 28px;
     opacity: 0; transform: translateY(20px);
     transition: opacity .4s cubic-bezier(0.25,0.46,0.45,0.94), transform .4s cubic-bezier(0.25,0.46,0.45,0.94);
@@ -230,28 +231,28 @@
     position: absolute; bottom: -32px; right: -8px; font-family: Georgia, serif;
   }
 
-  /* GLASSY BUTTON — color is fixed glass; only text color is configurable */
+  /* GLASSY BUTTON — now fully customizable */
   .ai-clients-carousel__testimonial-button-{{ ai_gen_id }} {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 14px 28px;
-    background: rgba(255,255,255,0.18);
+    background: {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.18 }};
     color: {{ block.settings.button_text_color | default: '#000000' }};
-    border: 1px solid rgba(255,255,255,0.28);
+    border: 1px solid {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.28 }};
     border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none;
     transition: transform .3s, box-shadow .3s, background .2s, border-color .2s;
     text-align: center; letter-spacing: -0.01em;
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.25);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.25 }};
   }
   .ai-clients-carousel__testimonial-button-{{ ai_gen_id }}:hover {
-    background: rgba(255,255,255,0.26);
-    border-color: rgba(255,255,255,0.38);
+    background: {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.26 }};
+    border-color: {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.38 }};
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35), inset 0 1px 0 {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.35 }};
   }
   .ai-clients-carousel__testimonial-button-{{ ai_gen_id }}:active {
     transform: translateY(0);
-    background: rgba(255,255,255,0.22);
+    background: {{ block.settings.testimonial_button_bg | default: '#ffffff' | color_modify: 'alpha', 0.22 }};
   }
 
   /* NAVIGATION ARROWS */
@@ -384,8 +385,8 @@
   data-cards-per-view="{{ block.settings.cards_per_view_desktop | default: 3 }}"
   data-auto-play="{{ block.settings.enable_autoplay }}"
   data-auto-play-speed="{{ block.settings.autoplay_speed | default: 5000 }}"
-  /* NEW: pass padding to CSS via vars so editor controls work predictably */
-  style="--pt: {{ block.settings.section_padding_top | default: 100 }}px; --pb: {{ block.settings.section_padding | default: 80 }}px;"
+  /* NEW: pass all colors and padding to CSS via vars so editor controls work predictably */
+  style="--pt: {{ block.settings.section_padding_top | default: 100 }}px; --pb: {{ block.settings.section_padding | default: 80 }}px; --testimonial-overlay-bg: {{ block.settings.testimonial_overlay_color | default: '#000000' }}; --testimonial-btn-bg: {{ block.settings.testimonial_button_bg | default: '#ffffff' }}; --location-badge-color: {{ block.settings.location_badge_color | default: '#deb887' }}; --location-badge-bg: {{ block.settings.location_badge_bg | default: '#614524' }}; --door-type-badge-bg: {{ block.settings.door_type_badge_bg | default: '#ffffff' }}; --client-info-bg: {{ block.settings.client_info_overlay_bg | default: '#000000' }};"
 >
   <div class="ai-clients-carousel__container-{{ ai_gen_id }}">
     {% if block.settings.heading != blank %}
@@ -804,6 +805,47 @@
       "id": "button_text_color",
       "label": "Testimonial button text color",
       "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_overlay_color",
+      "label": "Testimonial overlay background",
+      "default": "#000000",
+      "info": "Background color for the testimonial hover overlay"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_button_bg",
+      "label": "Testimonial button background",
+      "default": "#ffffff",
+      "info": "Background color for the testimonial button (glass effect)"
+    },
+    {
+      "type": "color",
+      "id": "location_badge_color",
+      "label": "Location badge text color",
+      "default": "#deb887"
+    },
+    {
+      "type": "color",
+      "id": "location_badge_bg",
+      "label": "Location badge background",
+      "default": "#614524",
+      "info": "Background color for location badges"
+    },
+    {
+      "type": "color",
+      "id": "door_type_badge_bg",
+      "label": "Door type badge background",
+      "default": "#ffffff",
+      "info": "Background color for door type badges"
+    },
+    {
+      "type": "color",
+      "id": "client_info_overlay_bg",
+      "label": "Client info overlay background",
+      "default": "#000000",
+      "info": "Background color for the client information overlay"
     },
     {
       "type": "header",
