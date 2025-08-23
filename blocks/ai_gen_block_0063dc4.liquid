@@ -48,6 +48,11 @@
     padding-top: var(--pt);
     padding-bottom: var(--pb);
   }
+  
+  /* Ensure parent sections allow overflow for hover expansion */
+  .shopify-section:has(.product-metafield-carousel-{{ carousel_id }}) {
+    overflow: visible;
+  }
 
   .product-metafield-carousel-{{ carousel_id }}::before {
     content: '';
@@ -701,6 +706,11 @@
                   endcomment
                   assign media_item = nil
                   
+                  comment 'Debug: Log available fields'
+                  endcomment
+                  comment 'Available fields: {{ feature_card | json }}'
+                  endcomment
+                  
                   comment 'Try media_files.value first (metaobject list)'
                   endcomment
                   if feature_card.media_files.value
@@ -727,6 +737,11 @@
                   if media_item == nil and feature_card.file
                     assign media_item = feature_card.file
                   endif
+                  
+                  comment 'Debug: Log final media_item'
+                  endcomment
+                  comment 'Media item: {{ media_item | json }}'
+                  endcomment
                   
                   comment 'Video detection logic'
                   endcomment
@@ -809,29 +824,7 @@
             </div>
           </div>
 
-          {% if about_card_count > 1 %}
-            <button
-              class="carousel-navigation-{{ carousel_id }} carousel-navigation--prev-{{ carousel_id }}"
-              aria-label="Previous about slide"
-              data-section="about"
-              type="button"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 18L9 12L15 6"/>
-              </svg>
-            </button>
 
-            <button
-              class="carousel-navigation-{{ carousel_id }} carousel-navigation--next-{{ carousel_id }}"
-              aria-label="Next about slide"
-              data-section="about"
-              type="button"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18L15 12L9 6"/>
-              </svg>
-            </button>
-          {% endif %}
         </div>
       {% else %}
         <div class="empty-state-{{ carousel_id }}">
