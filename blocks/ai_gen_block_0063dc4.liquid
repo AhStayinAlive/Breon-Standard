@@ -693,25 +693,27 @@
                   assign item_link = feature_card.url | default: '#'
                   assign item_button_text = feature_card.button_text | default: 'Learn More'
                   
-                  comment 'Get media from metaobject - could be single file or array'
+                  comment 'Get media from metaobject - prioritize media_files.value, fallback to media'
                   endcomment
-                  assign media_item = feature_card.media
-                  if media_item == blank
-                    assign media_item = feature_card.media_files.value
+                  assign media_item = nil
+                  assign media_list = feature_card.media_files.value
+                  
+                  if media_list
+                    for media in media_list limit: 1
+                      assign media_item = media
+                    endfor
                   endif
                   
-                  comment 'If its an array, get first item'
-                  endcomment
-                  if media_item.first
-                    assign media_item = media_item.first
+                  if media_item == nil
+                    assign media_item = feature_card.media
                   endif
                   
                   assign is_video = false
-                  if media_item and media_item.media_type == 'video'
+                  if section.settings.about_media_type == 'video'
                     assign is_video = true
-                  elsif media_item and media_item contains '.mp4'
+                  elsif section.settings.about_media_type == 'auto' and media_item and media_item.media_type == 'video'
                     assign is_video = true
-                  elsif section.settings.about_media_type == 'video'
+                  elsif section.settings.about_media_type == 'auto' and media_item and media_item contains '.mp4'
                     assign is_video = true
                   endif
                 %}
