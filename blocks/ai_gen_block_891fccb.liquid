@@ -129,22 +129,17 @@
     text-transform: uppercase;
   }
 
-  .broen-footer-accordion-toggle-{{ ai_gen_id }} {
+  .broen-footer-column-heading-{{ ai_gen_id }} {
     font-size: 13px;
     font-weight: 600;
     letter-spacing: -0.01em;
     color: #1d1d1f;
     margin: 0 0 20px 0;
     text-transform: uppercase;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    text-align: left;
     position: relative;
   }
 
-  .broen-footer-accordion-toggle-{{ ai_gen_id }}::after {
+  .broen-footer-column-heading-{{ ai_gen_id }}::after {
     content: '';
     position: absolute;
     bottom: -8px;
@@ -156,7 +151,7 @@
     transition: width 0.3s ease;
   }
 
-  .broen-footer-accordion-toggle-{{ ai_gen_id }}:hover::after {
+  .broen-footer-column-heading-{{ ai_gen_id }}:hover::after {
     width: 32px;
   }
 
@@ -303,52 +298,12 @@
 
     .broen-footer-column-{{ ai_gen_id }} {
       border-bottom: 1px solid #e5e5e7;
+      padding-bottom: 20px;
     }
 
     .broen-footer-column-{{ ai_gen_id }}:last-child {
       border-bottom: none;
-    }
-
-    .broen-footer-accordion-{{ ai_gen_id }} {
-      position: relative;
-    }
-
-    .broen-footer-accordion-toggle-{{ ai_gen_id }} {
-      width: 100%;
-      padding: 16px 0;
-      background: none;
-      border: none;
-      text-align: left;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-      color: #1d1d1f;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .broen-footer-accordion-icon-{{ ai_gen_id }} {
-      width: 12px;
-      height: 12px;
-      transition: transform 0.3s ease;
-    }
-
-    .broen-footer-accordion-content-{{ ai_gen_id }} {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-    }
-
-    .broen-footer-accordion-content-{{ ai_gen_id }}.active {
-      max-height: 500px;
-      padding-bottom: 16px;
-    }
-
-    .broen-footer-accordion-toggle-{{ ai_gen_id }}.active .broen-footer-accordion-icon-{{ ai_gen_id }} {
-      transform: rotate(45deg);
+      padding-bottom: 0;
     }
 
     .broen-footer-badges-{{ ai_gen_id }} {
@@ -382,116 +337,84 @@
     <div class="broen-footer-main-{{ ai_gen_id }}">
       <div class="broen-footer-columns-{{ ai_gen_id }}">
         
-        <!-- Products Column (Leftmost) -->
+        <!-- Door Classifications Column (Leftmost) -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
-          <div class="broen-footer-accordion-{{ ai_gen_id }}">
-            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              {{ block.settings.products_column_title | default: 'Products' }}
-              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
-              <div class="broen-footer-pills-{{ ai_gen_id }}">
-                {% comment %} Get all unique door classifications from products {% endcomment %}
-                {% assign all_products = collections.all.products %}
-                {% assign door_classifications = '' | split: '' %}
-                
-                {% for product in all_products %}
-                  {% assign classification = product.metafields.custom.door_type.value | default: product.metafields.custom.door_classification.value %}
-                  {% if classification != blank %}
-                    {% unless door_classifications contains classification %}
-                      {% assign door_classifications = door_classifications | push: classification %}
-                      <a href="/collections/all?filter.v.option.door_type={{ classification | url_encode }}" class="broen-footer-pill-{{ ai_gen_id }}">
-                        {{ classification | replace: '-', ' ' | upcase }}
-                      </a>
-                    {% endunless %}
-                  {% endif %}
-                {% endfor %}
-                
-                {% comment %} Fallback if no metafields {% endcomment %}
-                {% if door_classifications.size == 0 %}
-                  <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">All Products</a>
-                  <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">Door Types</a>
-                  <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">Classifications</a>
-                {% endif %}
-              </div>
-            </div>
+          <h3 class="broen-footer-column-heading-{{ ai_gen_id }}">
+            {{ block.settings.door_classifications_title | default: 'Which Lock is for Your Door?' }}
+          </h3>
+          <div class="broen-footer-pills-{{ ai_gen_id }}">
+            {% comment %} Get all unique door classifications from products {% endcomment %}
+            {% assign all_products = collections.all.products %}
+            {% assign door_classifications = '' | split: '' %}
+            
+            {% for product in all_products %}
+              {% assign classification = product.metafields.custom.door_type.value | default: product.metafields.custom.door_classification.value %}
+              {% if classification != blank %}
+                {% unless door_classifications contains classification %}
+                  {% assign door_classifications = door_classifications | push: classification %}
+                  <a href="/collections/all?filter.v.option.door_type={{ classification | url_encode }}" class="broen-footer-pill-{{ ai_gen_id }}">
+                    {{ classification | replace: '-', ' ' | upcase }}
+                  </a>
+                {% endunless %}
+              {% endif %}
+            {% endfor %}
+            
+            {% comment %} Fallback if no metafields {% endcomment %}
+            {% if door_classifications.size == 0 %}
+              <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">All Products</a>
+              <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">Door Types</a>
+              <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">Classifications</a>
+            {% endif %}
           </div>
         </div>
 
         <!-- Carousel Pages Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
-          <div class="broen-footer-accordion-{{ ai_gen_id }}">
-            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              {{ block.settings.story_column_title | default: 'Our Story' }}
-              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
-              <div class="broen-footer-links-{{ ai_gen_id }}">
-                <a href="/pages/the-broen-standard" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.broen_standard_text | default: 'The Broen Standard' }}</a>
-                <a href="/pages/how-it-works" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.how_it_works_text | default: 'How It Works' }}</a>
-                <a href="/pages/our-clients" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.our_clients_text | default: 'Our Clients' }}</a>
-                <a href="/pages/about" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.about_broen_text | default: 'About Broen' }}</a>
-                <a href="/pages/company-history" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.company_history_text | default: 'Company History' }}</a>
-              </div>
-            </div>
+          <h3 class="broen-footer-column-heading-{{ ai_gen_id }}">
+            {{ block.settings.story_column_title | default: 'Our Story' }}
+          </h3>
+          <div class="broen-footer-links-{{ ai_gen_id }}">
+            <a href="{{ block.settings.broen_standard_url | default: '/pages/the-broen-standard' }}{{ block.settings.broen_standard_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.broen_standard_text | default: 'The Broen Standard' }}</a>
+            <a href="{{ block.settings.how_it_works_url | default: '/pages/how-it-works' }}{{ block.settings.how_it_works_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.how_it_works_text | default: 'How It Works' }}</a>
+            <a href="{{ block.settings.our_clients_url | default: '/pages/our-clients' }}{{ block.settings.our_clients_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.our_clients_text | default: 'Our Clients' }}</a>
+            <a href="{{ block.settings.about_broen_url | default: '/pages/about' }}{{ block.settings.about_broen_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.about_broen_text | default: 'About Broen' }}</a>
+            <a href="{{ block.settings.company_history_url | default: '/pages/company-history' }}{{ block.settings.company_history_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.company_history_text | default: 'Company History' }}</a>
           </div>
         </div>
 
         <!-- Contact Us Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
-          <div class="broen-footer-accordion-{{ ai_gen_id }}">
-            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              {{ block.settings.contact_column_title | default: 'Contact Us' }}
-              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
-              <div class="broen-footer-links-{{ ai_gen_id }}">
-                <a href="/pages/contact" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.talk_to_us_text | default: 'Talk to Us' }}</a>
-                <a href="/pages/specialist" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.talk_to_specialist_text | default: 'Talk to a Specialist' }}</a>
-                <a href="/pages/team" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.reach_team_text | default: 'Reach the Team' }}</a>
-                <a href="/pages/careers" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.join_team_text | default: 'Join the Team' }}</a>
-                <a href="/pages/support" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.technical_support_text | default: 'Technical Support' }}</a>
-                <a href="/pages/warranty" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.warranty_text | default: 'Warranty' }}</a>
-              </div>
-            </div>
+          <h3 class="broen-footer-column-heading-{{ ai_gen_id }}">
+            {{ block.settings.contact_column_title | default: 'Contact Us' }}
+          </h3>
+          <div class="broen-footer-links-{{ ai_gen_id }}">
+            <a href="{{ block.settings.talk_to_us_url | default: '/pages/contact' }}{{ block.settings.talk_to_us_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.talk_to_us_text | default: 'Talk to Us' }}</a>
+            <a href="{{ block.settings.talk_to_specialist_url | default: '/pages/specialist' }}{{ block.settings.talk_to_specialist_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.talk_to_specialist_text | default: 'Talk to a Specialist' }}</a>
+            <a href="{{ block.settings.reach_team_url | default: '/pages/team' }}{{ block.settings.reach_team_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.reach_team_text | default: 'Reach the Team' }}</a>
+            <a href="{{ block.settings.join_team_url | default: '/pages/careers' }}{{ block.settings.join_team_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.join_team_text | default: 'Join the Team' }}</a>
+            <a href="{{ block.settings.technical_support_url | default: '/pages/support' }}{{ block.settings.technical_support_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.technical_support_text | default: 'Technical Support' }}</a>
+            <a href="{{ block.settings.warranty_url | default: '/pages/warranty' }}{{ block.settings.warranty_anchor | default: '' }}" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.warranty_text | default: 'Warranty' }}</a>
           </div>
         </div>
 
-        <!-- Company & Resources Column -->
+        <!-- Products Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
-          <div class="broen-footer-accordion-{{ ai_gen_id }}">
-            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              {{ block.settings.company_column_title | default: 'Company' }}
-              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
-              <div class="broen-footer-links-{{ ai_gen_id }}">
-                <a href="/pages/about" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.about_link_text | default: 'About Broen' }}</a>
-                <a href="/pages/careers" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.careers_link_text | default: 'Careers' }}</a>
-                <a href="/pages/sustainability" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.sustainability_link_text | default: 'Sustainability' }}</a>
-                <a href="/pages/quality" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.quality_link_text | default: 'Quality Standards' }}</a>
-                <a href="/pages/certifications" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.certifications_link_text | default: 'Certifications' }}</a>
-                <a href="/pages/faq" class="broen-footer-link-{{ ai_gen_id }}">{{ block.settings.faq_link_text | default: 'FAQ' }}</a>
-              </div>
-              
-              {% if shop.metafields.custom.footer_ctas != blank %}
-                <div class="broen-footer-pills-{{ ai_gen_id }}" style="margin-top: 16px;">
-                  {% for cta in shop.metafields.custom.footer_ctas %}
-                    <a href="{{ cta.url }}" class="broen-footer-pill-{{ ai_gen_id }}">
-                      {{ cta.label }}
-                    </a>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
+          <h3 class="broen-footer-column-heading-{{ ai_gen_id }}">
+            {{ block.settings.products_column_title | default: 'Products' }}
+          </h3>
+          <div class="broen-footer-links-{{ ai_gen_id }}">
+            {% comment %} Show all available products {% endcomment %}
+            {% assign all_products = collections.all.products %}
+            {% assign products_to_show = all_products | slice: 0, 8 %}
+            
+            {% for product in products_to_show %}
+              <a href="{{ product.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ product.title }}</a>
+            {% endfor %}
+            
+            {% comment %} Show "View All Products" link if there are more than 8 products {% endcomment %}
+            {% if all_products.size > 8 %}
+              <a href="/collections/all" class="broen-footer-link-{{ ai_gen_id }}" style="font-weight: 600; color: #0171e3;">View All Products</a>
+            {% endif %}
           </div>
         </div>
 
@@ -554,55 +477,7 @@
   </div>
 </footer>
 
-<script>
-  (function() {
-    class BroenFooter extends HTMLElement {
-      constructor() {
-        super();
-      }
 
-      connectedCallback() {
-        this.setupAccordions();
-      }
-
-      setupAccordions() {
-        const toggles = this.querySelectorAll('.broen-footer-accordion-toggle-{{ ai_gen_id }}');
-        
-        toggles.forEach(toggle => {
-          toggle.addEventListener('click', () => {
-            const content = toggle.nextElementSibling;
-            const isActive = toggle.classList.contains('active');
-            
-            if (window.innerWidth <= 768) {
-              if (isActive) {
-                toggle.classList.remove('active');
-                content.classList.remove('active');
-                toggle.setAttribute('aria-expanded', 'false');
-              } else {
-                toggle.classList.add('active');
-                content.classList.add('active');
-                toggle.setAttribute('aria-expanded', 'true');
-              }
-            }
-          });
-        });
-
-        window.addEventListener('resize', () => {
-          if (window.innerWidth > 768) {
-            toggles.forEach(toggle => {
-              const content = toggle.nextElementSibling;
-              toggle.classList.remove('active');
-              content.classList.remove('active');
-              toggle.setAttribute('aria-expanded', 'false');
-            });
-          }
-        });
-      }
-    }
-
-    customElements.define('broen-footer-{{ ai_gen_id }}', BroenFooter);
-  })();
-</script>
 
 {% schema %}
 {
@@ -626,9 +501,9 @@
     },
     {
       "type": "text",
-      "id": "products_column_title",
-      "label": "Products Column Title",
-      "default": "Products"
+      "id": "door_classifications_title",
+      "label": "Door Classifications Column Title",
+      "default": "Which Lock is for Your Door?"
     },
     {
       "type": "text",
@@ -644,9 +519,9 @@
     },
     {
       "type": "text",
-      "id": "company_column_title",
-      "label": "Company Column Title",
-      "default": "Company"
+      "id": "products_column_title",
+      "label": "Products Column Title",
+      "default": "Products"
     },
     {
       "type": "header",
@@ -659,10 +534,34 @@
       "default": "The Broen Standard"
     },
     {
+      "type": "url",
+      "id": "broen_standard_url",
+      "label": "The Broen Standard URL",
+      "default": "/pages/the-broen-standard"
+    },
+    {
+      "type": "text",
+      "id": "broen_standard_anchor",
+      "label": "The Broen Standard Anchor (e.g., #section-name)",
+      "default": ""
+    },
+    {
       "type": "text",
       "id": "how_it_works_text",
       "label": "How It Works Text",
       "default": "How It Works"
+    },
+    {
+      "type": "url",
+      "id": "how_it_works_url",
+      "label": "How It Works URL",
+      "default": "/pages/how-it-works"
+    },
+    {
+      "type": "text",
+      "id": "how_it_works_anchor",
+      "label": "How It Works Anchor (e.g., #section-name)",
+      "default": ""
     },
     {
       "type": "text",
@@ -671,16 +570,52 @@
       "default": "Our Clients"
     },
     {
+      "type": "url",
+      "id": "our_clients_url",
+      "label": "Our Clients URL",
+      "default": "/pages/our-clients"
+    },
+    {
+      "type": "text",
+      "id": "our_clients_anchor",
+      "label": "Our Clients Anchor (e.g., #section-name)",
+      "default": ""
+    },
+    {
       "type": "text",
       "id": "about_broen_text",
       "label": "About Broen Text",
       "default": "About Broen"
     },
     {
+      "type": "url",
+      "id": "about_broen_url",
+      "label": "About Broen URL",
+      "default": "/pages/about"
+    },
+    {
+      "type": "text",
+      "id": "about_broen_anchor",
+      "label": "About Broen Anchor (e.g., #section-name)",
+      "default": ""
+    },
+    {
       "type": "text",
       "id": "company_history_text",
       "label": "Company History Text",
       "default": "Company History"
+    },
+    {
+      "type": "url",
+      "id": "company_history_url",
+      "label": "Company History URL",
+      "default": "/pages/company-history"
+    },
+    {
+      "type": "text",
+      "id": "company_history_anchor",
+      "label": "Company History Anchor (e.g., #section-name)",
+      "default": ""
     },
     {
       "type": "header",
@@ -693,10 +628,34 @@
       "default": "Talk to Us"
     },
     {
+      "type": "url",
+      "id": "talk_to_us_url",
+      "label": "Talk to Us URL",
+      "default": "/pages/contact"
+    },
+    {
+      "type": "text",
+      "id": "talk_to_us_anchor",
+      "label": "Talk to Us Anchor (e.g., #section-name)",
+      "default": ""
+    },
+    {
       "type": "text",
       "id": "talk_to_specialist_text",
       "label": "Talk to Specialist Text",
       "default": "Talk to a Specialist"
+    },
+    {
+      "type": "url",
+      "id": "talk_to_specialist_url",
+      "label": "Talk to Specialist URL",
+      "default": "/pages/specialist"
+    },
+    {
+      "type": "text",
+      "id": "talk_to_specialist_anchor",
+      "label": "Talk to Specialist Anchor (e.g., #section-name)",
+      "default": ""
     },
     {
       "type": "text",
@@ -705,10 +664,34 @@
       "default": "Reach the Team"
     },
     {
+      "type": "url",
+      "id": "reach_team_url",
+      "label": "Reach Team URL",
+      "default": "/pages/team"
+    },
+    {
+      "type": "text",
+      "id": "reach_team_anchor",
+      "label": "Reach Team Anchor (e.g., #section-name)",
+      "default": ""
+    },
+    {
       "type": "text",
       "id": "join_team_text",
       "label": "Join Team Text",
       "default": "Join the Team"
+    },
+    {
+      "type": "url",
+      "id": "join_team_url",
+      "label": "Join Team URL",
+      "default": "/pages/careers"
+    },
+    {
+      "type": "text",
+      "id": "join_team_anchor",
+      "label": "Join Team Anchor (e.g., #section-name)",
+      "default": ""
     },
     {
       "type": "text",
@@ -717,51 +700,36 @@
       "default": "Technical Support"
     },
     {
+      "type": "url",
+      "id": "technical_support_url",
+      "label": "Technical Support URL",
+      "default": "/pages/support"
+    },
+    {
+      "type": "text",
+      "id": "technical_support_anchor",
+      "label": "Technical Support Anchor (e.g., #section-name)",
+      "default": ""
+    },
+    {
       "type": "text",
       "label": "Warranty Text",
       "id": "warranty_text",
       "default": "Warranty"
     },
     {
-      "type": "header",
-      "content": "Company Column Links"
+      "type": "url",
+      "id": "warranty_url",
+      "label": "Warranty URL",
+      "default": "/pages/warranty"
     },
     {
       "type": "text",
-      "id": "about_link_text",
-      "label": "About Link Text",
-      "default": "About Broen"
+      "id": "warranty_anchor",
+      "label": "Warranty Anchor (e.g., #section-name)",
+      "default": ""
     },
-    {
-      "type": "text",
-      "id": "careers_link_text",
-      "label": "Careers Link Text",
-      "default": "Careers"
-    },
-    {
-      "type": "text",
-      "id": "sustainability_link_text",
-      "label": "Sustainability Link Text",
-      "default": "Sustainability"
-    },
-    {
-      "type": "text",
-      "id": "quality_link_text",
-      "label": "Quality Standards Link Text",
-      "default": "Quality Standards"
-    },
-    {
-      "type": "text",
-      "id": "certifications_link_text",
-      "label": "Certifications Link Text",
-      "default": "Certifications"
-    },
-    {
-      "type": "text",
-      "id": "faq_link_text",
-      "label": "FAQ Link Text",
-      "default": "FAQ"
-    },
+
     {
       "type": "header",
       "content": "Metafield configuration"
