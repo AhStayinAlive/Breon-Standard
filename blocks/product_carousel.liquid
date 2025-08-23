@@ -364,16 +364,7 @@
     margin: 0;
   }
 
-  .ai-product-carousel__debug-{{ ai_gen_id }} {
-    background: #333;
-    color: #fff;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-    font-family: monospace;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+
 
   /* Responsive tweaks */
   @media (max-width: 1200px){
@@ -535,33 +526,7 @@
       <h2 class="ai-product-carousel__heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
     {% endif %}
 
-    <!-- DEBUG INFO -->
-    <div class="ai-product-carousel__debug-{{ ai_gen_id }}">
-      <strong>DEBUG INFO:</strong><br>
-      Collection Handle: "{{ section.settings.product_collection | default: 'NOT SET' }}"<br>
-      {% if section.settings.product_collection != blank %}
-        {% assign debug_collection = collections[section.settings.product_collection] %}
-        {% if debug_collection %}
-          Collection Exists: YES<br>
-          Collection Title: "{{ debug_collection.title }}"<br>
-          Total Products in Collection: {{ debug_collection.products.size }}<br>
-          {% assign debug_products = debug_collection.products | limit: 3 %}
-          First 3 Product Names:<br>
-          {% for product in debug_products %}
-            - {{ product.title }}<br>
-          {% endfor %}
-        {% else %}
-          Collection Exists: NO<br>
-          Collection Object: NULL/BLANK<br>
-        {% endif %}
-      {% else %}
-        Collection Handle: BLANK<br>
-      {% endif %}
-      Available Collections (first 5): 
-      {% for collection in collections limit: 5 %}
-        "{{ collection.handle }}"{% unless forloop.last %}, {% endunless %}
-      {% endfor %}
-    </div>
+
 
     {% assign collection_handle = section.settings.product_collection | default: 'all' %}
     {% assign selected_collection = collections[collection_handle] %}
@@ -674,7 +639,195 @@
   </div>
 </product-carousel-{{ ai_gen_id }}>
 
-z
+<script>
+(function() {
+  class ProductCarousel{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.currentSlide = 0;
+      this.isDesktop = window.innerWidth >= 768;
+      this.cardsPerView = this.isDesktop ? (parseInt(this.dataset.cardsPerView) || 3) : 1;
+      this.isTransitioning = false;
+      this.totalCards = 0;
+      this.autoPlayEnabled = this.dataset.autoPlay === 'true' || this.dataset.autoPlay === '1';
+      this.autoPlaySpeed = parseInt(this.dataset.autoPlaySpeed) || 5000;
+      this.autoPlayInterval = null;
+      this.totalSlides = 0;
+    }
+
+    connectedCallback() {
+      this.track = this.querySelector('.ai-product-carousel__track-{{ ai_gen_id }}');
+      this.trackContainer = this.querySelector('.ai-product-carousel__track-container-{{ ai_gen_id }}');
+      this.cards = this.querySelectorAll('.ai-product-carousel__card-{{ ai_gen_id }}');
+      this.prevBtn = this.querySelector('.ai-product-carousel__navigation--prev-{{ ai_gen_id }}');
+      this.nextBtn = this.querySelector('.ai-product-carousel__navigation--next-{{ ai_gen_id }}');
+      this.pagination = this.querySelector('.ai-product-carousel__pagination-{{ ai_gen_id }}');
+
+      this.totalCards = this.cards.length;
+      if (this.totalCards === 0) return;
+
+      this.cardsPerView = this.isDesktop ? (parseInt(this.dataset.cardsPerView) || 3) : 1;
+      this.calculateSlides();
+      this.setupPagination();
+      this.setupEventListeners();
+      this.setupTouchSupport();
+      this.setupKeyboardNavigation();
+      this.setupWheelNavigation();
+      this.updateNavigation();
+      this.setupAutoPlay();
+
+      setTimeout(() => this.goToSlide(0), 100);
+    }
+
+    calculateSlides() {
+      this.totalSlides = Math.ceil(this.totalCards / this.cardsPerView);
+    }
+
+    setupPagination() {
+      this.pagination.innerHTML = '';
+      for (let i = 0; i < this.totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `ai-product-carousel__dot-{{ ai_gen_id }}${i === 0 ? ' active' : ''}`;
+        dot.setAttribute('aria-label', `Go to page ${i + 1}`);
+        dot.setAttribute('role', 'tab');
+        dot.addEventListener('click', () => this.goToSlide(i));
+        this.pagination.appendChild(dot);
+      }
+    }
+
+    setupEventListeners() {
+      this.prevBtn?.addEventListener('click', (e) => { e.preventDefault(); this.prevSlide(); });
+      this.nextBtn?.addEventListener('click', (e) => { e.preventDefault(); this.nextSlide(); });
+
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          const wasDesktop = this.isDesktop;
+          this.isDesktop = window.innerWidth >= 768;
+          const newCardsPerView = this.isDesktop ? (parseInt(this.dataset.cardsPerView) || 3) : 1;
+
+          if (wasDesktop !== this.isDesktop || newCardsPerView !== this.cardsPerView) {
+            this.cardsPerView = newCardsPerView;
+            this.currentSlide = 0;
+            this.calculateSlides();
+            this.setupPagination();
+            this.updateNavigation();
+            this.goToSlide(0);
+          }
+        }, 250);
+      });
+    }
+
+    setupTouchSupport() {
+      let startX = 0, currentX = 0, isDragging = false, startTime = 0;
+
+      this.trackContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX; startTime = Date.now(); isDragging = true; this.pauseAutoPlay();
+      }, { passive: true });
+
+      this.trackContainer.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+      }, { passive: true });
+
+      this.trackContainer.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const diff = startX - currentX;
+        const timeDiff = Date.now() - startTime;
+        const threshold = 50;
+        const speed = Math.abs(diff) / timeDiff;
+
+        if (Math.abs(diff) > threshold || speed > 0.5) {
+          if (diff > 0) this.nextSlide(); else this.prevSlide();
+        }
+        this.resumeAutoPlay();
+      }, { passive: true });
+    }
+
+    setupKeyboardNavigation() {
+      this.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); this.prevSlide(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); this.nextSlide(); }
+      });
+      this.setAttribute('tabindex', '0');
+    }
+
+    setupWheelNavigation() {
+      if (!this.isDesktop) return;
+      this.addEventListener('wheel', (e) => {
+        const horizontalIntent = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+        const allow = e.shiftKey || horizontalIntent;
+        if (!allow) return;
+        e.preventDefault();
+        const delta = horizontalIntent ? e.deltaX : e.deltaY;
+        if (delta > 0) this.nextSlide(); else this.prevSlide();
+      }, { passive: false });
+    }
+
+    setupAutoPlay() {
+      if (!this.autoPlayEnabled || !this.dataset.autoPlay) return;
+      this.addEventListener('mouseenter', () => this.pauseAutoPlay());
+      this.addEventListener('mouseleave', () => this.resumeAutoPlay());
+      this.resumeAutoPlay();
+    }
+
+    pauseAutoPlay() {
+      if (this.autoPlayInterval) { clearInterval(this.autoPlayInterval); this.autoPlayInterval = null; }
+    }
+
+    resumeAutoPlay() {
+      if (!this.autoPlayEnabled || !this.dataset.autoPlay) return;
+      this.pauseAutoPlay();
+      this.autoPlayInterval = setInterval(() => { this.nextSlide(); }, this.autoPlaySpeed);
+    }
+
+    goToSlide(index) {
+      if (this.isTransitioning || this.totalCards === 0) return;
+      this.currentSlide = Math.max(0, Math.min(index, this.totalSlides - 1));
+      this.isTransitioning = true;
+
+      const gapStr = getComputedStyle(this.track).gap || '20px';
+      const gap = parseFloat(gapStr) || 20;
+
+      if (this.isDesktop) {
+        const firstCard = this.cards[0];
+        if (firstCard) {
+          const firstIndexOfPage = this.currentSlide * this.cardsPerView;
+          const cardWidth = firstCard.offsetWidth;
+          const offset = firstIndexOfPage * (cardWidth + gap);
+          this.track.style.transform = `translateX(-${offset}px)`;
+        }
+      } else {
+        const cardWidth = this.cards[0].offsetWidth;
+        const offset = this.currentSlide * (cardWidth + gap);
+        this.trackContainer.scrollTo({ left: offset, behavior: 'smooth' });
+      }
+
+      setTimeout(() => { this.isTransitioning = false; }, 600);
+      this.updateNavigation();
+    }
+
+    prevSlide() { this.goToSlide(Math.max(0, this.currentSlide - 1)); }
+    nextSlide() { this.goToSlide(Math.min(this.totalSlides - 1, this.currentSlide + 1)); }
+
+    updateNavigation() {
+      if (this.prevBtn) this.prevBtn.disabled = this.currentSlide <= 0;
+      if (this.nextBtn) this.nextBtn.disabled = this.currentSlide >= this.totalSlides - 1;
+      this.querySelectorAll('.ai-product-carousel__dot-{{ ai_gen_id }}').forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentSlide);
+        dot.setAttribute('aria-selected', index === this.currentSlide);
+      });
+    }
+
+    disconnectedCallback() { this.pauseAutoPlay(); }
+  }
+
+  customElements.define('product-carousel-{{ ai_gen_id }}', ProductCarousel{{ ai_gen_id }});
+})();
+</script>
 
 {% schema %}
 {
