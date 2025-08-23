@@ -688,19 +688,17 @@
       <h2 class="section-title-{{ carousel_id }}">{{ block.settings.about_heading | default: 'About the Product' }}</h2>
       
       {% if about_card_count > 0 %}
+        <!-- DEBUG: About items count: {{ about_card_count }} -->
         <div class="horizontal-carousel-{{ carousel_id }}">
           <div class="carousel-track-container-{{ carousel_id }}">
             <div class="carousel-track-{{ carousel_id }}" data-section="about">
               {% for feature_card in about_items %}
+                <!-- DEBUG: Feature card {{ forloop.index }}: {{ feature_card | json | truncate: 100 }} -->
                 {% liquid
                   assign item_title = feature_card.feature | default: block.settings.default_feature_text | default: 'Feature'
                   assign item_description = feature_card.description | default: ''
                   assign item_link = feature_card.url | default: '#'
                   assign item_button_text = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
-                  
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
-                  endcomment
-                  assign media_item = nil
                   
                   comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
                   endcomment
@@ -742,6 +740,8 @@
                   endcomment
                   comment 'Media item: {{ media_item | json }}'
                   endcomment
+                  
+                  <!-- DEBUG: Media resolution result: {{ media_item | json | truncate: 100 }} -->
                   
                   comment 'Video detection logic'
                   endcomment
