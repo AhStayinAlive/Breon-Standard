@@ -4,17 +4,17 @@
     
     1) Layout & style
     
-    5 columns (accordion on mobile). Headings styled like SF Pro (system sans), muted link color, hover = Broen accent.
+    4 columns (accordion on mobile). Headings styled like SF Pro (system sans), muted link color, hover = Broen accent.
     
     White / neutral background with subtle dividers between columns and above the bottom bar.
     
-    Bottom row: “© {{ ‘now’ | date: ‘%Y’ }} | {{ shop.name }} | {{ shop.metafields.custom.footer_tagline }}”.
+    Bottom row: "© {{ 'now' | date: '%Y' }} | {{ shop.name }} | {{ shop.metafields.custom.footer_tagline }}".
     
     Badges block (right side on desktop, full width on mobile): stacked Apple partner/reseller badges.
     
     Social row: small minimalist icons (Facebook, Instagram, TikTok, YouTube). Icon color = muted; on hover use the accent color.
     
-    Everything should be scoped under a wrapper class (e.g., .broen-footer) so it doesn’t leak styles.
+    Everything should be scoped under a wrapper class (e.g., .broen-footer) so it doesn't leak styles.
     
     2) Content sources (metafields first)
     
@@ -34,7 +34,7 @@
     
     label (single_line_text_field), url (url)
     
-    Render these as additional pill buttons to fill whitespace: e.g., “Check out our clients”, “What our clients say”, “FAQ”, “Contact us”, “Download catalog”.
+    Render these as additional pill buttons to fill whitespace: e.g., "Check out our clients", "What our clients say", "FAQ", "Contact us", "Download catalog".
     
     shop.metafields.custom.footer_badges → list.file_reference (images).
     
@@ -47,7 +47,6 @@
     shop.metafields.custom.footer_tagline → single_line_text_field (used in the bottom bar).
     
     shop.metafields
-
 {% enddoc %}
 {% assign ai_gen_id = 'broen-footer' %}
 
@@ -72,7 +71,7 @@
 
   .broen-footer-columns-{{ ai_gen_id }} {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 40px;
   }
 
@@ -265,110 +264,104 @@
     <div class="broen-footer-main-{{ ai_gen_id }}">
       <div class="broen-footer-columns-{{ ai_gen_id }}">
         
-        <!-- Products Column -->
+        <!-- Door Classifications Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
           <div class="broen-footer-accordion-{{ ai_gen_id }}">
             <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              Products
+              Which Lock is for Your Door?
               <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </button>
             <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
               <div class="broen-footer-pills-{{ ai_gen_id }}">
-                {% if shop.metafields.custom.footer_products != blank %}
-                  {% for product in shop.metafields.custom.footer_products %}
-                    {% assign classification = product.metafields.custom.product_classification %}
-                    {% assign label = classification | default: product.title %}
-                    <a href="{{ product.url }}" class="broen-footer-pill-{{ ai_gen_id }}">
-                      {{ label }}
-                    </a>
-                  {% endfor %}
-                {% else %}
-                  {% for product in collections.all.products limit: 6 %}
-                    <a href="{{ product.url }}" class="broen-footer-pill-{{ ai_gen_id }}">
-                      {{ product.title }}
-                    </a>
-                  {% endfor %}
+                {% comment %} Get all unique door classifications from products {% endcomment %}
+                {% assign all_products = collections.all.products %}
+                {% assign door_classifications = '' | split: '' %}
+                
+                {% for product in all_products %}
+                  {% assign classification = product.metafields.custom.door_type.value | default: product.metafields.custom.door_classification.value %}
+                  {% if classification != blank %}
+                    {% unless door_classifications contains classification %}
+                      {% assign door_classifications = door_classifications | push: classification %}
+                      <a href="/collections/all?filter.v.option.door_type={{ classification | url_encode }}" class="broen-footer-pill-{{ ai_gen_id }}">
+                        {{ classification | replace: '-', ' ' | upcase }}
+                      </a>
+                    {% endunless %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% comment %} Fallback if no metafields {% endcomment %}
+                {% if door_classifications.size == 0 %}
+                  <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">All Products</a>
+                  <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">Door Types</a>
+                  <a href="/collections/all" class="broen-footer-pill-{{ ai_gen_id }}">Classifications</a>
                 {% endif %}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Solutions Column -->
+        <!-- Carousel Pages Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
           <div class="broen-footer-accordion-{{ ai_gen_id }}">
             <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              Solutions
+              Our Story
               <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </button>
             <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
               <div class="broen-footer-links-{{ ai_gen_id }}">
-                {% if linklists.solutions.links.size > 0 %}
-                  {% for link in linklists.solutions.links %}
-                    <a href="{{ link.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ link.title }}</a>
-                  {% endfor %}
-                {% else %}
-                  <a href="/pages/industrial" class="broen-footer-link-{{ ai_gen_id }}">Industrial</a>
-                  <a href="/pages/commercial" class="broen-footer-link-{{ ai_gen_id }}">Commercial</a>
-                  <a href="/pages/residential" class="broen-footer-link-{{ ai_gen_id }}">Residential</a>
-                  <a href="/pages/marine" class="broen-footer-link-{{ ai_gen_id }}">Marine</a>
-                {% endif %}
+                <a href="/pages/the-broen-standard" class="broen-footer-link-{{ ai_gen_id }}">The Broen Standard</a>
+                <a href="/pages/how-it-works" class="broen-footer-link-{{ ai_gen_id }}">How It Works</a>
+                <a href="/pages/our-clients" class="broen-footer-link-{{ ai_gen_id }}">Our Clients</a>
+                <a href="/pages/about" class="broen-footer-link-{{ ai_gen_id }}">About Broen</a>
+                <a href="/pages/company-history" class="broen-footer-link-{{ ai_gen_id }}">Company History</a>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Support Column -->
+        <!-- Contact Us Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
           <div class="broen-footer-accordion-{{ ai_gen_id }}">
             <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              Support
+              Contact Us
               <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </button>
             <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
               <div class="broen-footer-links-{{ ai_gen_id }}">
-                {% if linklists.support.links.size > 0 %}
-                  {% for link in linklists.support.links %}
-                    <a href="{{ link.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ link.title }}</a>
-                  {% endfor %}
-                {% else %}
-                  <a href="/pages/contact" class="broen-footer-link-{{ ai_gen_id }}">Contact Us</a>
-                  <a href="/pages/technical-support" class="broen-footer-link-{{ ai_gen_id }}">Technical Support</a>
-                  <a href="/pages/documentation" class="broen-footer-link-{{ ai_gen_id }}">Documentation</a>
-                  <a href="/pages/warranty" class="broen-footer-link-{{ ai_gen_id }}">Warranty</a>
-                {% endif %}
+                <a href="/pages/contact" class="broen-footer-link-{{ ai_gen_id }}">Talk to Us</a>
+                <a href="/pages/specialist" class="broen-footer-link-{{ ai_gen_id }}">Talk to a Specialist</a>
+                <a href="/pages/team" class="broen-footer-link-{{ ai_gen_id }}">Reach the Team</a>
+                <a href="/pages/careers" class="broen-footer-link-{{ ai_gen_id }}">Join the Team</a>
+                <a href="/pages/support" class="broen-footer-link-{{ ai_gen_id }}">Technical Support</a>
+                <a href="/pages/warranty" class="broen-footer-link-{{ ai_gen_id }}">Warranty</a>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Company Column -->
+        <!-- Company & Resources Column -->
         <div class="broen-footer-column-{{ ai_gen_id }}">
           <div class="broen-footer-accordion-{{ ai_gen_id }}">
             <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              Company
+              Company & Resources
               <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
                 <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
               </svg>
             </button>
             <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
               <div class="broen-footer-links-{{ ai_gen_id }}">
-                {% if linklists.company.links.size > 0 %}
-                  {% for link in linklists.company.links %}
-                    <a href="{{ link.url }}" class="broen-footer-link-{{ ai_gen_id }}">{{ link.title }}</a>
-                  {% endfor %}
-                {% else %}
-                  <a href="/pages/about" class="broen-footer-link-{{ ai_gen_id }}">About Broen</a>
-                  <a href="/pages/careers" class="broen-footer-link-{{ ai_gen_id }}">Careers</a>
-                  <a href="/pages/news" class="broen-footer-link-{{ ai_gen_id }}">News</a>
-                  <a href="/pages/sustainability" class="broen-footer-link-{{ ai_gen_id }}">Sustainability</a>
-                {% endif %}
+                <a href="/pages/sustainability" class="broen-footer-link-{{ ai_gen_id }}">Sustainability</a>
+                <a href="/pages/innovation" class="broen-footer-link-{{ ai_gen_id }}">Innovation</a>
+                <a href="/pages/quality" class="broen-footer-link-{{ ai_gen_id }}">Quality Standards</a>
+                <a href="/pages/certifications" class="broen-footer-link-{{ ai_gen_id }}">Certifications</a>
+                <a href="/pages/downloads" class="broen-footer-link-{{ ai_gen_id }}">Downloads</a>
+                <a href="/pages/faq" class="broen-footer-link-{{ ai_gen_id }}">FAQ</a>
               </div>
               
               {% if shop.metafields.custom.footer_ctas != blank %}
@@ -380,41 +373,6 @@
                   {% endfor %}
                 </div>
               {% endif %}
-            </div>
-          </div>
-        </div>
-
-        <!-- Badges Column -->
-        <div class="broen-footer-column-{{ ai_gen_id }}">
-          <div class="broen-footer-accordion-{{ ai_gen_id }}">
-            <button class="broen-footer-accordion-toggle-{{ ai_gen_id }}" aria-expanded="false">
-              Certifications
-              <svg class="broen-footer-accordion-icon-{{ ai_gen_id }}" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div class="broen-footer-accordion-content-{{ ai_gen_id }}">
-              <div class="broen-footer-badges-{{ ai_gen_id }}">
-                {% if shop.metafields.custom.footer_badges != blank %}
-                  {% for badge in shop.metafields.custom.footer_badges %}
-                    <div class="broen-footer-badge-{{ ai_gen_id }}">
-                      <img
-                        src="{{ badge | image_url: width: 240 }}"
-                        alt="{{ badge.alt | escape }}"
-                        loading="lazy"
-                        width="120"
-                        height="auto"
-                      >
-                    </div>
-                  {% endfor %}
-                {% else %}
-                  <div class="broen-footer-badge-{{ ai_gen_id }}">
-                    {{ 'image' | placeholder_svg_tag: 'ISO Certification' }}
-                  </div><div class="broen-footer-badge-{{ ai_gen_id }}">
-                    {{ 'image' | placeholder_svg_tag: 'CE Marking' }}
-                  </div>
-                {% endif %}
-              </div>
             </div>
           </div>
         </div>
@@ -544,15 +502,7 @@
     },
     {
       "type": "paragraph",
-      "content": "• shop.metafields.custom.footer_products (list_product) - Products to display as pills"
-    },
-    {
-      "type": "paragraph",
       "content": "• shop.metafields.custom.footer_ctas (list.metaobject_reference) - Additional CTA buttons"
-    },
-    {
-      "type": "paragraph",
-      "content": "• shop.metafields.custom.footer_badges (list.file_reference) - Certification badges"
     },
     {
       "type": "paragraph",
@@ -564,7 +514,7 @@
     },
     {
       "type": "paragraph",
-      "content": "• product.metafields.custom.product_classification (single_line_text_field) - Custom product labels"
+      "content": "• product.metafields.custom.door_type or product.metafields.custom.door_classification (single_line_text_field) - Door classification for filtering"
     }
   ],
   "presets": [
