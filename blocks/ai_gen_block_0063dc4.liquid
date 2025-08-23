@@ -653,6 +653,9 @@
 
 <product-metafield-carousel-{{ carousel_id }}
   class="product-metafield-carousel-{{ carousel_id }}"
+  style="--page-bg: {{ section.settings.background_color | default: '#000000' }}; --card-bg: {{ section.settings.card_background | default: '#111111' }}; --media-bg: {{ section.settings.media_background | default: '#1a1a1a' }}; --text: {{ section.settings.text_color | default: '#ffffff' }}; --muted: {{ section.settings.muted_text_color | default: '#999999' }}; --border: {{ section.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }}; --focus: {{ section.settings.focus_color | default: '#ffffff' }}; --radius: {{ section.settings.border_radius | default: 20 }}px; --pt: {{ section.settings.section_padding_top | default: 80 }}px; --pb: {{ section.settings.section_padding_bottom | default: 80 }}px;"
+  data-video-hover-only="{{ section.settings.video_hover_only }}"
+  data-hero-video-hover-only="{{ section.settings.hero_video_hover_only }}"
   {{ section.shopify_attributes }}
 >
   <div class="carousel-container-{{ carousel_id }}">
@@ -1370,6 +1373,10 @@ debugLog.log('Carousel element check:', {
       setupVideoControls() {
         debugLog.log('SetupVideoControls starting for {{ carousel_id }}');
         
+        // Get current settings from data attributes (updated via Theme Editor)
+        const heroVideoHoverOnly = this.dataset.heroVideoHoverOnly === 'true';
+        const carouselVideoHoverOnly = this.dataset.videoHoverOnly === 'true';
+        
         // Handle featured video
         const videoCard = this.querySelector('.video-card-{{ carousel_id }}');
         const featuredVideo = videoCard?.querySelector('video');
@@ -1377,13 +1384,18 @@ debugLog.log('Carousel element check:', {
         debugLog.log('Featured video elements:', {
           videoCard: !!videoCard,
           featuredVideo: !!featuredVideo,
-          hasHoverOnlyAttr: featuredVideo?.hasAttribute('data-hover-only'),
-          hoverOnlySetting: {{ section.settings.hero_video_hover_only | json }}
+          heroVideoHoverOnly,
+          hasHoverOnlyAttr: featuredVideo?.hasAttribute('data-hover-only')
         });
         
-        if (featuredVideo && videoCard && !videoCard.dataset.videoControlsAttached) {
-          videoCard.dataset.videoControlsAttached = 'true';
-          const isHoverOnly = featuredVideo.hasAttribute('data-hover-only');
+        if (featuredVideo && videoCard) {
+          // Remove existing listeners
+          const oldEnterHandler = videoCard._mouseEnterHandler;
+          const oldLeaveHandler = videoCard._mouseLeaveHandler;
+          if (oldEnterHandler) videoCard.removeEventListener('mouseenter', oldEnterHandler);
+          if (oldLeaveHandler) videoCard.removeEventListener('mouseleave', oldLeaveHandler);
+          
+          const isHoverOnly = heroVideoHoverOnly || featuredVideo.hasAttribute('data-hover-only');
           
           debugLog.log(`Featured video hover-only: ${isHoverOnly}`);
           
@@ -1391,16 +1403,20 @@ debugLog.log('Carousel element check:', {
             featuredVideo.pause();
             debugLog.log('Featured video paused, adding hover listeners');
             
-            videoCard.addEventListener('mouseenter', () => {
+            const enterHandler = () => {
               debugLog.log('Featured video mouseenter - playing');
               featuredVideo.play().catch(e => debugLog.error('Featured video play error:', e));
-            });
-            
-            videoCard.addEventListener('mouseleave', () => {
+            };
+            const leaveHandler = () => {
               debugLog.log('Featured video mouseleave - pausing and resetting');
               featuredVideo.pause();
               featuredVideo.currentTime = 0;
-            });
+            };
+            
+            videoCard.addEventListener('mouseenter', enterHandler);
+            videoCard.addEventListener('mouseleave', leaveHandler);
+            videoCard._mouseEnterHandler = enterHandler;
+            videoCard._mouseLeaveHandler = leaveHandler;
           }
         }
 
@@ -1411,32 +1427,39 @@ debugLog.log('Carousel element check:', {
         carouselCards.forEach((card, index) => {
           const video = card.querySelector('video');
           if (video) {
+            // Remove existing listeners
+            const oldEnterHandler = card._mouseEnterHandler;
+            const oldLeaveHandler = card._mouseLeaveHandler;
+            if (oldEnterHandler) card.removeEventListener('mouseenter', oldEnterHandler);
+            if (oldLeaveHandler) card.removeEventListener('mouseleave', oldLeaveHandler);
+            
+            const isHoverOnly = carouselVideoHoverOnly || video.hasAttribute('data-hover-only');
+            
             debugLog.log(`Card ${index} has video:`, {
               hasVideo: true,
-              hasHoverOnlyAttr: video.hasAttribute('data-hover-only'),
-              alreadyAttached: !!card.dataset.videoControlsAttached,
-              hoverOnlySetting: {{ section.settings.video_hover_only | json }}
+              isHoverOnly,
+              carouselVideoHoverOnly,
+              hasHoverOnlyAttr: video.hasAttribute('data-hover-only')
             });
             
-            if (!card.dataset.videoControlsAttached) {
-              card.dataset.videoControlsAttached = 'true';
-              const isHoverOnly = video.hasAttribute('data-hover-only');
+            if (isHoverOnly) {
+              video.pause();
+              debugLog.log(`Card ${index} video paused, adding hover listeners`);
               
-              if (isHoverOnly) {
+              const enterHandler = () => {
+                debugLog.log(`Card ${index} video mouseenter - playing`);
+                video.play().catch(e => debugLog.error(`Card ${index} video play error:`, e));
+              };
+              const leaveHandler = () => {
+                debugLog.log(`Card ${index} video mouseleave - pausing and resetting`);
                 video.pause();
-                debugLog.log(`Card ${index} video paused, adding hover listeners`);
-                
-                card.addEventListener('mouseenter', () => {
-                  debugLog.log(`Card ${index} video mouseenter - playing`);
-                  video.play().catch(e => debugLog.error(`Card ${index} video play error:`, e));
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                  debugLog.log(`Card ${index} video mouseleave - pausing and resetting`);
-                  video.pause();
-                  video.currentTime = 0;
-                });
-              }
+                video.currentTime = 0;
+              };
+              
+              card.addEventListener('mouseenter', enterHandler);
+              card.addEventListener('mouseleave', leaveHandler);
+              card._mouseEnterHandler = enterHandler;
+              card._mouseLeaveHandler = leaveHandler;
             }
           }
         });
