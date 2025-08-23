@@ -31,13 +31,34 @@
   }
 
   .broen-header-{{ ai_gen_id }}{
-    position: sticky; top: 0; z-index: {{ block.settings.header_z_index | default: 50 }};
+    /* stack under the global header */
+    position: sticky;
+    top: var(--header-height, 56px); /* uses the var set by your StickyHeader script */
+    z-index: {{ block.settings.header_z_index | default: 50 }};
     backdrop-filter: blur({{ block.settings.header_blur }}px);
     -webkit-backdrop-filter: blur({{ block.settings.header_blur }}px);
-    background: rgba({{ block.settings.bg_gradient_start | color_extract: 'red' }}, {{ block.settings.bg_gradient_start | color_extract: 'green' }}, {{ block.settings.bg_gradient_start | color_extract: 'blue' }}, {{ block.settings.header_opacity | divided_by: 100.0 }});
-    border-bottom: 1px solid rgba({{ block.settings.border_muted | color_extract: 'red' }}, {{ block.settings.border_muted | color_extract: 'green' }}, {{ block.settings.border_muted | color_extract: 'blue' }}, {{ block.settings.border_opacity | divided_by: 100.0 }});
+    background: rgba(
+      {{ block.settings.bg_gradient_start | color_extract: 'red' }},
+      {{ block.settings.bg_gradient_start | color_extract: 'green' }},
+      {{ block.settings.bg_gradient_start | color_extract: 'blue' }},
+      {{ block.settings.header_opacity | divided_by: 100.0 }}
+    );
+    border-bottom: 1px solid rgba(
+      {{ block.settings.border_muted | color_extract: 'red' }},
+      {{ block.settings.border_muted | color_extract: 'green' }},
+      {{ block.settings.border_muted | color_extract: 'blue' }},
+      {{ block.settings.border_opacity | divided_by: 100.0 }}
+    );
     padding: {{ block.settings.header_padding_y }}px 0;
-    transition: all .3s ease;
+    transition: background .3s ease, border-color .3s ease, transform .3s ease;
+  }
+
+  /* NEW: while this section is visible, never hide the global header */
+  html.broen-stack-active .section-header.shopify-section-header-hidden{
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
   }
 
   .broen-container-{{ ai_gen_id }}{ max-width: {{ block.settings.container_max_width }}px; margin: 0 auto; padding: 0 {{ block.settings.container_padding }}px; }
@@ -374,6 +395,26 @@
   'use strict';
   const root = document.querySelector('.broen-collection-{{ ai_gen_id }}');
   if (!root) return;
+  /* Keep global header visible while this section is in view,
+    and stack our collection header under it */
+  (function stackWithGlobalHeader() {
+    const siteHeader = document.querySelector('.section-header');
+    if (!siteHeader) return;
+
+    const io = new IntersectionObserver(([entry]) => {
+      const active = entry && entry.isIntersecting;
+      // Toggle page-level flag for CSS override
+      document.documentElement.classList.toggle('broen-stack-active', !!active);
+
+      if (active) {
+        // Ensure header is revealed and sticky while we're in this section
+        siteHeader.classList.add('shopify-section-header-sticky');
+        siteHeader.classList.remove('shopify-section-header-hidden');
+      }
+    }, { threshold: 0 });
+
+    io.observe(root);
+  })();
 
   const grid = root.querySelector('.broen-grid-{{ ai_gen_id }}');
   const cards = Array.from(grid.querySelectorAll('.broen-card-{{ ai_gen_id }}'));

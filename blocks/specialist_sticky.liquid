@@ -125,31 +125,26 @@
     }
   }
 
+  /* Responsive visibility */
   @media screen and (max-width: 749px) {
-    .ai-sticky-cta-{{ ai_gen_id }}.desktop {
-      {% unless block.settings.show_on_mobile %}
-        display: none;
-      {% endunless %}
+    /* Always hide the desktop instance on mobile */
+    .ai-sticky-cta-{{ ai_gen_id }}.desktop { 
+      display: none !important; 
     }
-    
-    .ai-sticky-cta-{{ ai_gen_id }}.mobile {
-      {% if block.settings.show_on_mobile %}
-        display: block;
-      {% endif %}
+    /* Show the mobile instance only if enabled */
+    .ai-sticky-cta-{{ ai_gen_id }}.mobile { 
+      display: {% if block.settings.show_on_mobile %}block{% else %}none{% endif %}; 
     }
   }
 
   @media screen and (min-width: 750px) {
-    .ai-sticky-cta-{{ ai_gen_id }}.mobile {
-      display: none;
+    /* Always hide the mobile instance on desktop */
+    .ai-sticky-cta-{{ ai_gen_id }}.mobile { 
+      display: none !important; 
     }
-    
-    .ai-sticky-cta-{{ ai_gen_id }}.desktop {
-      {% if block.settings.show_on_desktop %}
-        display: block;
-      {% else %}
-        display: none;
-      {% endif %}
+    /* Show the desktop instance only if enabled */
+    .ai-sticky-cta-{{ ai_gen_id }}.desktop { 
+      display: {% if block.settings.show_on_desktop %}block{% else %}none{% endif %}; 
     }
   }
 {% endstyle %}
