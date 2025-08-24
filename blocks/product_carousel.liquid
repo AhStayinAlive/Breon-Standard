@@ -7,7 +7,7 @@
   - Buttons: Buy Now = blue (#007aff), Add to Cart = glass with dynamic colors
 {% endcomment %}
 
-{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
 /* Make the custom element behave like a block container */
@@ -339,40 +339,40 @@ product-carousel-{{ ai_gen_id }} { display:block; isolation:isolate; }
 }
 {% endstyle %}
 
-<product-carousel-{{ ai_gen_id }}
+<product-carousel-{{ ai_gen_id }} {{ block.shopify_attributes }}
   class="ai-product-carousel-{{ ai_gen_id }}"
-  data-cards-per-view="{{ section.settings.cards_per_view_desktop | default: 3 }}"
-  data-auto-play="{{ section.settings.enable_autoplay }}"
-  data-auto-play-speed="{{ section.settings.autoplay_speed | default: 5000 }}"
+  data-cards-per-view="{{ block.settings.cards_per_view_desktop | default: 3 }}"
+  data-auto-play="{{ block.settings.enable_autoplay }}"
+  data-auto-play-speed="{{ block.settings.autoplay_speed | default: 5000 }}"
   style="
-    --pt: {{ section.settings.section_padding_top | default: 80 }}px;
-    --pb: {{ section.settings.section_padding | default: 60 }}px;
-    --bg: {{ section.settings.background_color | default: '#ffffff' }};
-    --heading: {{ section.settings.heading_color | default: '#111111' }};
-    --surface: {{ section.settings.card_background | default: '#ffffff' }};
-    --text: {{ section.settings.card_text_color | default: '#111111' }};
-    --hairline: {{ section.settings.card_background | default: '#ffffff' | color_darken: 12 | color_modify: 'alpha', 0.16 }};
-    --hairline-strong: {{ section.settings.card_background | default: '#ffffff' | color_darken: 22 | color_modify: 'alpha', 0.28 }};
-    --radius: {{ section.settings.card_border_radius | default: 16 }}px;
+    --pt: {{ block.settings.section_padding_top | default: 80 }}px;
+    --pb: {{ block.settings.section_padding | default: 60 }}px;
+    --bg: {{ block.settings.background_color | default: '#ffffff' }};
+    --heading: {{ block.settings.heading_color | default: '#111111' }};
+    --surface: {{ block.settings.card_background | default: '#ffffff' }};
+    --text: {{ block.settings.card_text_color | default: '#111111' }};
+    --hairline: {{ block.settings.card_background | default: '#ffffff' | color_darken: 12 | color_modify: 'alpha', 0.16 }};
+    --hairline-strong: {{ block.settings.card_background | default: '#ffffff' | color_darken: 22 | color_modify: 'alpha', 0.28 }};
+    --radius: {{ block.settings.card_border_radius | default: 16 }}px;
     --gap: 24px;
     --gap-mobile: 16px;
-    --heading-spacing: {{ section.settings.heading_spacing | default: 48 }}px;
-    --heading-size-min: {{ section.settings.heading_size | default: 32 | minus: 6 }}px;
-    --heading-size-max: {{ section.settings.heading_size | default: 32 }}px;
-    --cards-per-view: {{ section.settings.cards_per_view_desktop | default: 3 }};
-    --cards-per-view-minus-one: {{ section.settings.cards_per_view_desktop | default: 3 | minus: 1 }};
-    --pill-bg: {{ section.settings.pill_bg | default: 'color-mix(in srgb, var(--surface) 10%, #f5f5f5 90%)' }};
-    --pill-text: {{ section.settings.pill_text | default: 'color-mix(in srgb, var(--text) 60%, #666 40%)' }};
-    --glass-text: {{ section.settings.glass_text | default: 'color-mix(in srgb, var(--text) 70%, #333 30%)' }};
-    --glass-bg: {{ section.settings.glass_bg | default: 'rgba(255,255,255,.85)' }};
+    --heading-spacing: {{ block.settings.heading_spacing | default: 48 }}px;
+    --heading-size-min: {{ block.settings.heading_size | default: 32 | minus: 6 }}px;
+    --heading-size-max: {{ block.settings.heading_size | default: 32 }}px;
+    --cards-per-view: {{ block.settings.cards_per_view_desktop | default: 3 }};
+    --cards-per-view-minus-one: {{ block.settings.cards_per_view_desktop | default: 3 | minus: 1 }};
+    --pill-bg: {{ block.settings.pill_bg | default: 'color-mix(in srgb, var(--surface) 10%, #f5f5f5 90%)' }};
+    --pill-text: {{ block.settings.pill_text | default: 'color-mix(in srgb, var(--text) 60%, #666 40%)' }};
+    --glass-text: {{ block.settings.glass_text | default: 'color-mix(in srgb, var(--text) 70%, #333 30%)' }};
+    --glass-bg: {{ block.settings.glass_bg | default: 'rgba(255,255,255,.85)' }};
   "
 >
   <div class="ai-product-carousel__container-{{ ai_gen_id }}">
-    {% if section.settings.heading != blank %}
-      <h2 class="ai-product-carousel__heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-product-carousel__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
     {% endif %}
 
-    {% assign collection_handle = section.settings.product_collection | default: 'all' %}
+    {% assign collection_handle = block.settings.product_collection | default: 'all' %}
     {% assign selected_collection = collections[collection_handle] %}
     {% assign products_to_show = selected_collection.products | limit: 12 %}
 
