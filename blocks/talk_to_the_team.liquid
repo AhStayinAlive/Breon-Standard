@@ -1,0 +1,759 @@
+{% doc %}
+  @prompt
+    Create a professional two-section contact layout with the following structure:
+    
+    Section 1: "TALK TO A SPECIALIST" (centered, bold title)
+    Section 2: "TALK TO THE TEAM" (centered, bold title)
+    
+    Each section contains:
+    - A square placeholder image box labeled "3" on the left side
+    - A vertical list of contact methods on the right side with: Name, Viber, Facebook, Instagram, WhatsApp, Email
+    - For each contact method except Name: rounded rectangular buttons with cyan background and black text saying "Contact us through [Method]"
+    - At the bottom of each section: a large "Message/Call Now" button with cyan background, black border, and black text
+    
+    The layout should be clean, consistent, and professional with proper spacing between the two vertically stacked sections. Make it responsive and visually appealing.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-contact-layout-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-contact-section-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.section_spacing }}px;
+    padding: {{ block.settings.inner_padding }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+    background-color: {{ block.settings.section_background }};
+  }
+
+  .ai-contact-section-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-contact-title-{{ ai_gen_id }} {
+    text-align: center;
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: bold;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 {{ block.settings.title_margin }}px 0;
+  }
+
+  .ai-contact-content-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.content_gap }}px;
+    align-items: flex-start;
+  }
+
+  .ai-contact-image-wrapper-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.image_size }}px;
+    height: {{ block.settings.image_size }}px;
+    background-color: {{ block.settings.placeholder_bg }};
+    border: 2px solid {{ block.settings.placeholder_border }};
+    border-radius: {{ block.settings.image_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-contact-image-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-contact-image-wrapper-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    color: {{ block.settings.placeholder_text_color }};
+  }
+
+  .ai-contact-placeholder-number-{{ ai_gen_id }} {
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: {{ block.settings.placeholder_text_color }};
+  }
+
+  .ai-contact-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.info_gap }}px;
+  }
+
+  .ai-contact-methods-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.method_gap }}px;
+  }
+
+  .ai-contact-method-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-contact-method-label-{{ ai_gen_id }} {
+    font-weight: 600;
+    color: {{ block.settings.label_color }};
+    font-size: {{ block.settings.label_size }}px;
+  }
+
+  .ai-contact-method-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding }}px {{ block.settings.button_padding | times: 1.5 }}px;
+    background-color: {{ block.settings.contact_button_bg }};
+    color: {{ block.settings.contact_button_text }};
+    text-decoration: none;
+    border-radius: {{ block.settings.contact_button_radius }}px;
+    font-size: {{ block.settings.contact_button_size }}px;
+    transition: all 0.3s ease;
+    text-align: center;
+    border: 1px solid {{ block.settings.contact_button_border }};
+  }
+
+  .ai-contact-method-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.contact_button_hover_bg }};
+    color: {{ block.settings.contact_button_hover_text }};
+  }
+
+  .ai-contact-main-button-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.main_button_padding }}px;
+    background-color: {{ block.settings.main_button_bg }};
+    color: {{ block.settings.main_button_text }};
+    text-decoration: none;
+    border-radius: {{ block.settings.main_button_radius }}px;
+    font-size: {{ block.settings.main_button_size }}px;
+    font-weight: 600;
+    text-align: center;
+    border: 2px solid {{ block.settings.main_button_border }};
+    transition: all 0.3s ease;
+    margin-top: {{ block.settings.main_button_margin }}px;
+  }
+
+  .ai-contact-main-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.main_button_hover_bg }};
+    color: {{ block.settings.main_button_hover_text }};
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-contact-content-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .ai-contact-image-wrapper-{{ ai_gen_id }} {
+      margin-bottom: 20px;
+    }
+
+    .ai-contact-info-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}<div class="ai-contact-layout-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-contact-section-{{ ai_gen_id }}">
+    <h2 class="ai-contact-title-{{ ai_gen_id }}">{{ block.settings.section1_title }}</h2>
+    <div class="ai-contact-content-{{ ai_gen_id }}">
+      <div class="ai-contact-image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.section1_image %}
+          <img
+            src="{{ block.settings.section1_image | image_url: width: 300 }}"
+            alt="{{ block.settings.section1_image.alt | escape }}"
+            loading="lazy"
+            width="300"
+            height="300"
+          >
+        {% else %}
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-contact-placeholder-number-{{ ai_gen_id }}">3</div>
+        {% endif %}
+      </div>
+      <div class="ai-contact-info-{{ ai_gen_id }}">
+        <div class="ai-contact-methods-{{ ai_gen_id }}">
+          {% if block.settings.section1_name != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Name</div>
+              <div style="color: {{ block.settings.label_color }}; font-size: {{ block.settings.label_size }}px;">{{ block.settings.section1_name }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section1_viber != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Viber</div><a href="{{ block.settings.section1_viber }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Viber
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section1_facebook != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Facebook</div>
+              <a href="{{ block.settings.section1_facebook }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Facebook
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section1_instagram != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Instagram</div>
+              <a href="{{ block.settings.section1_instagram }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Instagram
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section1_whatsapp != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">WhatsApp</div>
+              <a href="{{ block.settings.section1_whatsapp }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through WhatsApp
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section1_email != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Email</div>
+              <a href="mailto:{{ block.settings.section1_email }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Email
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if block.settings.section1_main_button_text != blank %}
+          <a href="{{ block.settings.section1_main_button_link }}" class="ai-contact-main-button-{{ ai_gen_id }}">
+            {{ block.settings.section1_main_button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-contact-section-{{ ai_gen_id }}">
+    <h2 class="ai-contact-title-{{ ai_gen_id }}">{{ block.settings.section2_title }}</h2>
+    <div class="ai-contact-content-{{ ai_gen_id }}">
+      <div class="ai-contact-image-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.section2_image %}
+          <img
+            src="{{ block.settings.section2_image | image_url: width: 300 }}"
+            alt="{{ block.settings.section2_image.alt | escape }}"
+            loading="lazy"
+            width="300"
+            height="300"
+          >
+        {% else %}
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-contact-placeholder-number-{{ ai_gen_id }}">3</div>
+        {% endif %}
+      </div>
+      <div class="ai-contact-info-{{ ai_gen_id }}">
+        <div class="ai-contact-methods-{{ ai_gen_id }}">
+          {% if block.settings.section2_name != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Name</div>
+              <div style="color: {{ block.settings.label_color }}; font-size: {{ block.settings.label_size }}px;">{{ block.settings.section2_name }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section2_viber != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Viber</div>
+              <a href="{{ block.settings.section2_viber }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Viber
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section2_facebook != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Facebook</div>
+              <a href="{{ block.settings.section2_facebook }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Facebook
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section2_instagram != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Instagram</div>
+              <a href="{{ block.settings.section2_instagram }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Instagram
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section2_whatsapp != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">WhatsApp</div>
+              <a href="{{ block.settings.section2_whatsapp }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through WhatsApp
+              </a>
+            </div>
+          {% endif %}
+
+          {% if block.settings.section2_email != blank %}
+            <div class="ai-contact-method-{{ ai_gen_id }}">
+              <div class="ai-contact-method-label-{{ ai_gen_id }}">Email</div>
+              <a href="mailto:{{ block.settings.section2_email }}" class="ai-contact-method-button-{{ ai_gen_id }}">
+                Contact us through Email
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+        {% if block.settings.section2_main_button_text != blank %}
+          <a href="{{ block.settings.section2_main_button_link }}" class="ai-contact-main-button-{{ ai_gen_id }}">
+            {{ block.settings.section2_main_button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact sections",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section 1"
+    },
+    {
+      "type": "text",
+      "id": "section1_title",
+      "label": "Section 1 title",
+      "default": "TALK TO A SPECIALIST"
+    },
+    {
+      "type": "image_picker",
+      "id": "section1_image",
+      "label": "Section 1 image"
+    },
+    {
+      "type": "text",
+      "id": "section1_name",
+      "label": "Name"
+    },
+    {
+      "type": "url",
+      "id": "section1_viber",
+      "label": "Viber link"
+    },
+    {
+      "type": "url",
+      "id": "section1_facebook",
+      "label": "Facebook link"
+    },
+    {
+      "type": "url",
+      "id": "section1_instagram",
+      "label": "Instagram link"
+    },
+    {
+      "type": "url",
+      "id": "section1_whatsapp",
+      "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "section1_email",
+      "label": "Email address"
+    },
+    {
+      "type": "text",
+      "id": "section1_main_button_text",
+      "label": "Main button text",
+      "default": "Message/Call Now"
+    },
+    {
+      "type": "url",
+      "id": "section1_main_button_link",
+      "label": "Main button link"
+    },
+    {
+      "type": "header",
+      "content": "Section 2"
+    },
+    {
+      "type": "text",
+      "id": "section2_title",
+      "label": "Section 2 title",
+      "default": "TALK TO THE TEAM"
+    },
+    {
+      "type": "image_picker",
+      "id": "section2_image",
+      "label": "Section 2 image"
+    },
+    {
+      "type": "text",
+      "id": "section2_name",
+      "label": "Name"
+    },
+    {
+      "type": "url",
+      "id": "section2_viber",
+      "label": "Viber link"
+    },
+    {
+      "type": "url",
+      "id": "section2_facebook",
+      "label": "Facebook link"
+    },
+    {
+      "type": "url",
+      "id": "section2_instagram",
+      "label": "Instagram link"
+    },
+    {
+      "type": "url",
+      "id": "section2_whatsapp",
+      "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "section2_email",
+      "label": "Email address"
+    },
+    {
+      "type": "text",
+      "id": "section2_main_button_text",
+      "label": "Main button text",
+      "default": "Message/Call Now"
+    },
+    {
+      "type": "url",
+      "id": "section2_main_button_link",
+      "label": "Main button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "contact_button_bg",
+      "label": "Contact button background",
+      "default": "#00bcd4"
+    },
+    {
+      "type": "color",
+      "id": "contact_button_text",
+      "label": "Contact button text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "contact_button_border",
+      "label": "Contact button border",
+      "default": "#00bcd4"
+    },
+    {
+      "type": "color",
+      "id": "contact_button_hover_bg",
+      "label": "Contact button hover background",
+      "default": "#00acc1"
+    },
+    {
+      "type": "color",
+      "id": "contact_button_hover_text",
+      "label": "Contact button hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "main_button_bg",
+      "label": "Main button background",
+      "default": "#00bcd4"
+    },
+    {
+      "type": "color",
+      "id": "main_button_text",
+      "label": "Main button text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "main_button_border",
+      "label": "Main button border",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "main_button_hover_bg",
+      "label": "Main button hover background",
+      "default": "#00acc1"
+    },
+    {
+      "type": "color",
+      "id": "main_button_hover_text",
+      "label": "Main button hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_bg",
+      "label": "Placeholder background",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_border",
+      "label": "Placeholder border",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_text_color",
+      "label": "Placeholder text",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section spacing",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "inner_padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Inner padding",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Content gap",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "info_gap",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Info gap",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "method_gap",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Method gap",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 100,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "label": "Image size",
+      "default": 150
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "title_margin",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Title margin",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Label size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "contact_button_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Contact button size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "main_button_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Main button size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Section border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "contact_button_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Contact button radius",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "main_button_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Main button radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Contact button padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "main_button_padding",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Main button padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "main_button_margin",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Main button margin",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact sections"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}
