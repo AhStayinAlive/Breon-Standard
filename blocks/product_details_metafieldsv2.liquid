@@ -114,19 +114,19 @@
     position: relative;
     overflow: visible;
     margin: 0;
-    padding: 20px 0 60px;
+    padding: 12px 0 40px;
   }
 
   .carousel-track-container-{{ carousel_id }} {
     position: relative;
     overflow: visible;
-    margin: 0 80px;
+    margin: 0 60px;
     border-radius: var(--radius);
   }
 
   .carousel-track-{{ carousel_id }} {
     display: flex;
-    gap: 24px;
+    gap: 16px;
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
     padding: 0 20px;
@@ -135,9 +135,9 @@
   /* LOCKED CARD DESIGN */
   .carousel-card-{{ carousel_id }} {
     flex: 0 0 auto;
-    width: {{ block.settings.card_width | default: 320 }}px;
-    min-width: {{ block.settings.card_width | default: 320 }}px;
-    height: {{ block.settings.card_height | default: 480 }}px;
+    width: {{ block.settings.card_width | default: 280 }}px;
+    min-width: {{ block.settings.card_width | default: 280 }}px;
+    height: {{ block.settings.card_height | default: 380 }}px;
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -148,7 +148,7 @@
     color: inherit;
     display: flex;
     flex-direction: column;
-    cursor: pointer;
+    cursor: default;
     backdrop-filter: blur(var(--lg-blur));
     -webkit-backdrop-filter: blur(var(--lg-blur));
     transform-origin: center;
@@ -156,7 +156,7 @@
   }
 
   .carousel-card-{{ carousel_id }}:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-6px) scale(1.01);
     border-color: rgba(255, 255, 255, 0.3);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
     background: {{ block.settings.card_background | default: '#111111' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
@@ -164,9 +164,9 @@
 
   /* Center card (Card 3) - larger size */
   .carousel-card-{{ carousel_id }}.center-card {
-    width: calc({{ block.settings.card_width | default: 320 }}px * 1.2);
-    height: calc({{ block.settings.card_height | default: 480 }}px * 1.1);
-    transform: scale({{ block.settings.center_card_scale | default: 1.05 }});
+    width: calc({{ block.settings.card_width | default: 280 }}px * 1.05);
+    height: calc({{ block.settings.card_height | default: 380 }}px * 1.05);
+    transform: scale({{ block.settings.center_card_scale | default: 1.02 }});
     z-index: 10;
   }
 
@@ -177,13 +177,13 @@
   .card-media-{{ carousel_id }} {
     position: relative;
     width: 100%;
-    height: 60%;
+    height: 55%;
     background: var(--media-bg);
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 12px;
     border-radius: 12px 12px 0 0;
   }
 
@@ -210,7 +210,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 48px;
+    font-size: 36px;
     font-weight: 700;
     color: var(--muted);
     text-align: center;
@@ -229,16 +229,16 @@
     color: var(--text);
     font-size: 18px;
     font-weight: 600;
-    margin: 0 0 12px;
+    margin: 0 0 8px;
     line-height: 1.3;
     text-align: center;
   }
 
   .card-subtext-{{ carousel_id }} {
     color: var(--muted);
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.4;
-    margin: 0 0 16px;
+    margin: 0 0 8px;
     text-align: center;
     flex-grow: 1;
   }
@@ -671,61 +671,68 @@
   {% liquid
     assign about_meta  = product.metafields.custom.about_the_product
     assign about_type  = about_meta.type | default: ''
-    assign is_list     = about_type == 'list.metaobject_reference'
-    assign is_single   = about_type == 'metaobject_reference'
+    assign cards = '' | split: ''
+    if about_type == 'list.metaobject_reference'
+      assign cards = about_meta.value
+    elsif about_type == 'metaobject_reference'
+      assign single_card = about_meta.value
+      if single_card
+        assign cards = cards | push: single_card
+      endif
+    endif
+    assign about_cards_count = 0
+    if cards
+      for _ in cards
+        assign about_cards_count = about_cards_count | plus: 1
+      endfor
+    endif
   %}
 
   <section class="carousel-section-{{ carousel_id }}">
     <h2 class="section-title-{{ carousel_id }}">{{ block.settings.about_heading | default: 'About the Product' }}</h2>
 
-    {% if is_single or is_list %}
+    {% if about_cards_count > 0 %}
       <div class="horizontal-carousel-{{ carousel_id }}">
         <div class="carousel-track-container-{{ carousel_id }}">
           <div class="carousel-track-{{ carousel_id }}" data-section="about">
 
-            {%- assign items_rendered = 0 -%}
-
-            {%- capture candidates -%}media_files,media,image,icon,file,asset,photo,picture,thumbnail,media_file{%- endcapture -%}
-            {%- assign candidate_handles = candidates | split: ',' -%}
-
-            {%- assign cards = is_single ? about_meta.value | array : about_meta.value -%}
             {%- for feature_card in cards -%}
               {%- liquid
                 assign item_title        = feature_card.feature | default: block.settings.default_feature_text | default: 'Feature'
                 assign item_description  = feature_card.description | default: ''
-                assign item_link         = feature_card.url | default: '#'
-                assign item_button_text  = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
+                assign item_link         = ''
+                assign item_button_text  = ''
 
-                # ---------- UNIVERSAL MEDIA RESOLVER ----------
+                # ---------- UNIVERSAL MEDIA RESOLVER (mirror service logic) ----------
                 assign media_item = nil
-                for h in candidate_handles
-                  assign v = feature_card[h]
-                  if v
-                    # list field?
-                    if h == 'media_files'
-                      if v.value
-                        assign lst = v.value
-                        if lst and lst.size > 0
-                          assign media_item = lst.first
-                          break
-                        endif
-                      elsif v.size and v.size > 0
-                        assign media_item = v.first
-                        break
-                      endif
-                    endif
-                    # single file field (prefer .value when present)
-                    if media_item == nil
-                      if v.value
-                        assign media_item = v.value
-                        break
-                      else
-                        assign media_item = v
-                        break
-                      endif
-                    endif
+
+                comment 'Prefer media_files (list of file_reference)'
+                endcomment
+                if feature_card.media_files
+                  if feature_card.media_files.value
+                    assign _list = feature_card.media_files.value
+                  else
+                    assign _list = feature_card.media_files
                   endif
-                endfor
+                  if _list and _list.size > 0
+                    assign media_item = _list.first
+                  endif
+                endif
+
+                comment 'Fallbacks: media, image, media_file, file'
+                endcomment
+                if media_item == nil and feature_card.media
+                  assign media_item = feature_card.media.value | default: feature_card.media
+                endif
+                if media_item == nil and feature_card.image
+                  assign media_item = feature_card.image.value | default: feature_card.image
+                endif
+                if media_item == nil and feature_card.media_file
+                  assign media_item = feature_card.media_file.value | default: feature_card.media_file
+                endif
+                if media_item == nil and feature_card.file
+                  assign media_item = feature_card.file.value | default: feature_card.file
+                endif
 
                 # ---------- VIDEO DETECTION ----------
                 assign is_video = false
@@ -740,8 +747,9 @@
                 endif
               -%}
 
-              <a href="{{ item_link }}"
+              <div
                 class="carousel-card-{{ carousel_id }}{% if forloop.index == 3 %} center-card{% endif %}"
+                role="group"
                 aria-label="{{ item_title | escape }}">
                 <div class="card-media-{{ carousel_id }}">
                   {% if media_item %}
@@ -755,8 +763,7 @@
                         {% if block.settings.video_hover_only %}data-hover-only="true"{% endif %}></video>
                     {% else %}
                       <img
-                        {% if media_item.url %}src="{{ media_item.url }}"
-                        {% else %}src="{{ media_item | file_url }}"{% endif %}
+                        src="{% if media_item.preview_image %}{{ media_item.preview_image | image_url: width: 400 }}{% elsif media_item.media_type == 'image' %}{{ media_item | image_url: width: 400 }}{% elsif media_item.url %}{{ media_item.url }}{% else %}{{ media_item | file_url }}{% endif %}"
                         alt="{{ media_item.alt | default: item_title | escape }}"
                         loading="lazy" width="400" height="240">
                     {% endif %}
@@ -768,16 +775,13 @@
                 <div class="card-content-{{ carousel_id }}">
                   {% if item_title != blank %}<h3 class="card-title-{{ carousel_id }}">{{ item_title }}</h3>{% endif %}
                   {% if item_description != blank %}<p class="card-subtext-{{ carousel_id }}">{{ item_description | truncate: 100 }}</p>{% endif %}
-                  {% if item_button_text != blank %}<span class="card-button-{{ carousel_id }}">{{ item_button_text }}</span>{% endif %}
                 </div>
-              </a>
+              </div>
             {%- endfor -%}
-
-            {%- assign items_rendered = forloop.length | default: 0 -%}
           </div>
         </div>
 
-        {%- if items_rendered > 1 -%}
+        {%- if about_cards_count > 1 -%}
           <button class="carousel-navigation-{{ carousel_id }} carousel-navigation--prev-{{ carousel_id }}" aria-label="Previous about slide" data-section="about" type="button">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18L9 12L15 6"/></svg>
           </button>
@@ -898,8 +902,8 @@
                 {% liquid
                   assign item_title = service_card.title | default: 'Service'
                   assign item_description = service_card.description | default: ''
-                  assign item_link = service_card.url | default: '#'
-                  assign item_button_text = service_card.button_text | default: 'Learn More'
+                  assign item_link = ''
+                  assign item_button_text = ''
                   
                   comment 'FIXED: Get media from service_card metaobject - prioritize media_files'
                   endcomment
@@ -913,6 +917,8 @@
                       if media_list.size > 0
                         assign media_item = media_list.first
                       endif
+                    elsif service_card.media_files.size and service_card.media_files.size > 0
+                      assign media_item = service_card.media_files.first
                     else
                       assign media_item = service_card.media_files
                     endif
@@ -921,7 +927,7 @@
                   comment 'Fallback to media field'
                   endcomment
                   if media_item == nil and service_card.media
-                    assign media_item = service_card.media
+                    assign media_item = service_card.media.value | default: service_card.media
                   endif
                   
                   assign is_video = false
@@ -934,9 +940,9 @@
                   endif
                 %}
 
-                <a
-                  href="{{ item_link }}"
+                <div
                   class="carousel-card-{{ carousel_id }}{% if forloop.index == 3 %} center-card{% endif %}"
+                  role="group"
                   aria-label="{{ item_title | escape }}"
                 >
                   <div class="card-media-{{ carousel_id }}">
@@ -963,11 +969,7 @@
                         ></video>
                       {% else %}
                         <img
-                          {% if media_item.url %}
-                            src="{{ media_item.url | image_url: width: 400 }}"
-                          {% else %}
-                            src="{{ media_item | image_url: width: 400 }}"
-                          {% endif %}
+                          src="{% if media_item.preview_image %}{{ media_item.preview_image | image_url: width: 400 }}{% elsif media_item.media_type == 'image' %}{{ media_item | image_url: width: 400 }}{% elsif media_item.url %}{{ media_item.url }}{% else %}{{ media_item | file_url }}{% endif %}"
                           alt="{{ media_item.alt | default: item_title | escape }}"
                           loading="lazy"
                           width="400"
@@ -989,12 +991,8 @@
                     {% if item_description != blank %}
                       <p class="card-subtext-{{ carousel_id }}">{{ item_description | truncate: 100 }}</p>
                     {% endif %}
-
-                    {% if item_button_text != blank %}
-                      <span class="card-button-{{ carousel_id }}">{{ item_button_text }}</span>
-                    {% endif %}
                   </div>
-                </a>
+                </div>
               {% endfor %}
             </div>
           </div>
