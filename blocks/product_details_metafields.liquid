@@ -698,50 +698,36 @@
                   assign item_link = feature_card.url | default: '#'
                   assign item_button_text = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
                   
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
+                  comment 'Enhanced media detection for metaobjects - same logic as After Sales Service'
                   endcomment
                   assign media_item = nil
                   
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
+                  comment 'Try media_files.value first (metaobject list) - same as service section'
                   endcomment
-                  assign media_item = nil
-                  
-                  comment 'Debug: Log available fields'
-                  endcomment
-                  comment 'Available fields: {{ feature_card | json }}'
-                  endcomment
-                  
-                  comment 'Try media_files.value first (metaobject list)'
-                  endcomment
-                  if feature_card.media_files.value
+                  if feature_card.media_files and feature_card.media_files.value
                     assign media_list = feature_card.media_files.value
-                    if media_list.size > 0
-                      assign media_item = media_list.first
+                    if media_list and media_list.size > 0
+                      for media in media_list limit: 1
+                        assign media_item = media
+                      endfor
                     endif
                   endif
                   
-                  comment 'Fallback to media field'
+                  comment 'Fallback to direct media field'
                   endcomment
                   if media_item == nil and feature_card.media
                     assign media_item = feature_card.media
                   endif
                   
-                  comment 'Fallback to any other media field'
+                  comment 'Additional fallbacks for different field names'
                   endcomment
                   if media_item == nil and feature_card.media_file
                     assign media_item = feature_card.media_file
                   endif
                   
-                  comment 'Additional fallback for direct file references'
-                  endcomment
                   if media_item == nil and feature_card.file
                     assign media_item = feature_card.file
                   endif
-                  
-                  comment 'Debug: Log final media_item'
-                  endcomment
-                  comment 'Media item: {{ media_item | json }}'
-                  endcomment
                   
                   comment 'Video detection logic'
                   endcomment
@@ -824,7 +810,29 @@
             </div>
           </div>
 
+          {% if about_card_count > 1 %}
+            <button
+              class="carousel-navigation-{{ carousel_id }} carousel-navigation--prev-{{ carousel_id }}"
+              aria-label="Previous about slide"
+              data-section="about"
+              type="button"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18L9 12L15 6"/>
+              </svg>
+            </button>
 
+            <button
+              class="carousel-navigation-{{ carousel_id }} carousel-navigation--next-{{ carousel_id }}"
+              aria-label="Next about slide"
+              data-section="about"
+              type="button"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18L15 12L9 6"/>
+              </svg>
+            </button>
+          {% endif %}
         </div>
       {% else %}
         <div class="empty-state-{{ carousel_id }}">
