@@ -408,18 +408,8 @@ product-carousel-{{ ai_gen_id }} { display:block; isolation:isolate; }
 
                   <div class="ai-product-carousel__button-group-{{ ai_gen_id }}">
                     <button type="button"
-                      class="ai-pc-btn-{{ ai_gen_id }} ai-pc-btn--glass-{{ ai_gen_id }}"
-                      onclick="event.preventDefault(); event.stopPropagation(); 
-                               const form = document.createElement('form');
-                               form.method = 'post';
-                               form.action = '/cart/add';
-                               const input = document.createElement('input');
-                               input.type = 'hidden';
-                               input.name = 'id';
-                               input.value = '{{ product.selected_or_first_available_variant.id }}';
-                               form.appendChild(input);
-                               document.body.appendChild(form);
-                               form.submit();"
+                      class="ai-pc-btn-{{ ai_gen_id }} ai-pc-btn--glass-{{ ai_gen_id }} ai-cart-add-{{ ai_gen_id }}"
+                      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
                       {% unless product.available %}disabled{% endunless %}>
                       {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
                     </button>
@@ -486,6 +476,34 @@ product-carousel-{{ ai_gen_id }} { display:block; isolation:isolate; }
       this.prevBtn = this.querySelector('.ai-product-carousel__navigation--prev-{{ ai_gen_id }}');
       this.nextBtn = this.querySelector('.ai-product-carousel__navigation--next-{{ ai_gen_id }}');
       this.pagination = this.querySelector('.ai-product-carousel__pagination-{{ ai_gen_id }}');
+
+      // Wire AJAX add to cart for carousel buttons
+      this.cartButtons = this.querySelectorAll('.ai-cart-add-{{ ai_gen_id }}');
+      this.cartButtons.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const variantId = btn.dataset.variantId;
+          if (!variantId) return;
+          const originalText = btn.textContent;
+          btn.textContent = 'Adding...';
+          btn.disabled = true;
+          const formData = new FormData();
+          formData.append('id', variantId);
+          formData.append('quantity', '1');
+          fetch('/cart/add.js', { method: 'POST', body: formData })
+            .then((r) => r.json())
+            .then((data) => {
+              btn.textContent = '✓ Added!';
+              document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
+              setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+            })
+            .catch(() => {
+              btn.textContent = 'Error';
+              setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1500);
+            });
+        });
+      });
 
       this.totalCards = this.cards.length;
       if (this.totalCards === 0) return;
