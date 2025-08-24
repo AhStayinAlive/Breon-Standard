@@ -1,1904 +1,1014 @@
 {% comment %}
-  PRODUCT METAFIELD CAROUSEL - ENHANCED:
-  Dynamic card count based on actual metafield content
-  Proper hover effects with visible overflow
-  Media type detection for mixed image/video files
-  Full theme editor control with live preview
-  Smart content matching between text and media arrays
-  UPDATED: Uses metaobjects for About and After Sales sections
-  LOCKED: Card and video card design hardcoded (no editor controls)
-  FIXED: All Theme Editor controls now reflect properly in live preview
+  Broen Product Page - Apple-Inspired Hero Section
+  Monochrome design system with enhanced carousel navigation
+  Enhanced with real variant selection and variant-first media
+  UPDATED: Removed specifications buttons, added liquid glass Add to Cart and Messages blue Buy Now
 {% endcomment %}
 
-{% assign carousel_id = block.id | replace: '_', '' | downcase %}
+{% assign section_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
-  .product-metafield-carousel-{{ carousel_id }} {
-    --page-bg: {{ block.settings.background_color | default: '#000000' }};
-    --card-bg: {{ block.settings.card_background | default: '#111111' }};
-    --media-bg: {{ block.settings.media_background | default: '#1a1a1a' }};
-    --text: {{ block.settings.text_color | default: '#ffffff' }};
-    --muted: {{ block.settings.muted_text_color | default: '#999999' }};
-    --border: {{ block.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }};
-    --focus: {{ block.settings.focus_color | default: '#ffffff' }};
-    --radius: {{ block.settings.border_radius | default: 20 }}px;
-    
-    /* Liquid-glass design tokens */
+  .broen-hero-{{ section_id }} {
+    --page-bg: {% if block.settings.page_background != blank %}{{ block.settings.page_background }}{% else %}#000000{% endif %};
+    --card-bg: {% if block.settings.card_background != blank %}{{ block.settings.card_background }}{% else %}#111111{% endif %};
+    --media-bg: {% if block.settings.media_background != blank %}{{ block.settings.media_background }}{% else %}#1a1a1a{% endif %};
+    --text: {% if block.settings.text_color != blank %}{{ block.settings.text_color }}{% else %}#ffffff{% endif %};
+    --muted: {% if block.settings.muted_text_color != blank %}{{ block.settings.muted_text_color }}{% else %}#999999{% endif %};
+    --border: {% if block.settings.border_color != blank %}{{ block.settings.border_color }}{% else %}rgba(255, 255, 255, 0.1){% endif %};
+    --chip-bg: {% if block.settings.chip_background != blank %}{{ block.settings.chip_background }}{% else %}#222222{% endif %};
+    --chip-text: {% if block.settings.chip_text_color != blank %}{{ block.settings.chip_text_color }}{% else %}#ffffff{% endif %};
+    --focus: {% if block.settings.focus_color != blank %}{{ block.settings.focus_color }}{% else %}#ffffff{% endif %};
+    --dot-active: {% if block.settings.dot_active_color != blank %}{{ block.settings.dot_active_color }}{% else %}#ffffff{% endif %};
+    --dot-inactive: {% if block.settings.dot_inactive_color != blank %}{{ block.settings.dot_inactive_color }}{% else %}rgba(255, 255, 255, 0.3){% endif %};
+    --cta-bg: {% if block.settings.cta_background != blank %}{{ block.settings.cta_background }}{% else %}#ffffff{% endif %};
+    --cta-text: {% if block.settings.cta_text_color != blank %}{{ block.settings.cta_text_color }}{% else %}#000000{% endif %};
+    --cta-hover: {% if block.settings.cta_hover_background != blank %}{{ block.settings.cta_hover_background }}{% else %}#f0f0f0{% endif %};
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.16);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.24);
+    --blur: 20px;
+    --radius: {% if block.settings.border_radius != blank %}{{ block.settings.border_radius }}px{% else %}20px{% endif %};
+    --arrow-color: #cccccc;    /* default neutral grey */
+    --arrow-hover: #ffffff;    /* hover/focus white */
+    /* Apple liquid glass tokens */
     --lg-blur: 18px;
     --lg-saturate: 180%;
     --lg-border: hsla(0,0%,100%,.22);
     --lg-shadow: rgba(0,0,0,.25);
+    --messages-blue: #007AFF;
 
-    /* Theme editor controlled paddings */
-    --pt: {{ block.settings.section_padding_top | default: 80 }}px;
-    --pb: {{ block.settings.section_padding_bottom | default: 80 }}px;
+    /* Mortise chips stay editor-controlled */
+    --mortise-bg: {% if block.settings.mortise_chip_background != blank %}{{ block.settings.mortise_chip_background }}{% else %}var(--chip-bg){% endif %};
+    --mortise-text: {% if block.settings.mortise_chip_text_color != blank %}{{ block.settings.mortise_chip_text_color }}{% else %}var(--chip-text){% endif %};
+  }
 
-    display: block;
-    width: 100%;
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  }
+
+  .broen-hero-{{ section_id }} {
     background: var(--page-bg);
-    background: linear-gradient(180deg, var(--page-bg) 0%, {{ block.settings.background_color | default: '#000000' | color_darken: 5 }} 100%);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
     letter-spacing: -0.01em;
     line-height: 1.5;
+    font-synthesis: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: visible;
-    position: relative;
-    padding-top: var(--pt);
-    padding-bottom: var(--pb);
-  }
-  
-  /* Ensure parent sections allow overflow for hover expansion */
-  .shopify-section:has(.product-metafield-carousel-{{ carousel_id }}) {
-    overflow: visible;
   }
 
-  .product-metafield-carousel-{{ carousel_id }}::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      var(--page-bg) 0%,
-      {{ block.settings.background_color | default: '#000000' | color_darken: 8 | color_modify: 'alpha', 0.98 }} 50%,
-      {{ block.settings.background_color | default: '#000000' | color_darken: 3 | color_modify: 'alpha', 0.95 }} 100%
-    );
-    z-index: 1;
-    pointer-events: none;
+  .shopify-section:has(.broen-hero-{{ section_id }}) { overflow: visible; }
+
+  .broen-hero__container-{{ section_id }} { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  .broen-hero__grid-{{ section_id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
   }
 
-  .carousel-container-{{ carousel_id }} {
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .carousel-section-{{ carousel_id }} {
-    padding: {{ block.settings.section_inner_spacing | default: 40 }}px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .carousel-section-{{ carousel_id }}:last-child {
-    border-bottom: none;
-  }
-
-  .section-title-{{ carousel_id }} {
-    color: var(--text);
-    font-size: clamp({{ block.settings.heading_size | default: 36 | minus: 8 }}px, 4vw, {{ block.settings.heading_size | default: 36 }}px);
-    font-weight: 700;
-    text-align: center;
-    margin: 0 0 {{ block.settings.heading_spacing | default: 60 }}px;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    position: relative;
-  }
-
-  .section-title-{{ carousel_id }}::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--text), transparent);
-    opacity: 0.8;
-  }
-
-  /* HORIZONTAL CAROUSEL STYLES */
-  .horizontal-carousel-{{ carousel_id }} {
-    position: relative;
-    overflow: visible;
-    margin: 0;
-    padding: 20px 0 60px;
-  }
-
-  .carousel-track-container-{{ carousel_id }} {
-    position: relative;
-    overflow: visible;
-    margin: 0 80px;
-    border-radius: var(--radius);
-  }
-
-  .carousel-track-{{ carousel_id }} {
-    display: flex;
-    gap: 24px;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform;
-    padding: 0 20px;
-  }
-
-  /* LOCKED CARD DESIGN */
-  .carousel-card-{{ carousel_id }} {
-    flex: 0 0 auto;
-    width: {{ block.settings.card_width | default: 320 }}px;
-    min-width: {{ block.settings.card_width | default: 320 }}px;
-    height: {{ block.settings.card_height | default: 480 }}px;
+  /* Media */
+  .broen-hero__media-{{ section_id }} {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    overflow: visible;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    backdrop-filter: blur(var(--lg-blur));
-    -webkit-backdrop-filter: blur(var(--lg-blur));
-    transform-origin: center;
-    backface-visibility: hidden;
-  }
-
-  .carousel-card-{{ carousel_id }}:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    background: {{ block.settings.card_background | default: '#111111' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
-  }
-
-  /* Center card (Card 3) - larger size */
-  .carousel-card-{{ carousel_id }}.center-card {
-    width: calc({{ block.settings.card_width | default: 320 }}px * 1.2);
-    height: calc({{ block.settings.card_height | default: 480 }}px * 1.1);
-    transform: scale({{ block.settings.center_card_scale | default: 1.05 }});
-    z-index: 10;
-  }
-
-  .carousel-card-{{ carousel_id }}.center-card:hover {
-    transform: translateY(-8px) scale(calc({{ block.settings.center_card_scale | default: 1.05 }} + 0.02));
-  }
-
-  .card-media-{{ carousel_id }} {
-    position: relative;
-    width: 100%;
-    height: 60%;
-    background: var(--media-bg);
     overflow: hidden;
+    position: relative;
+    z-index: 3;
+    isolation: isolate;
+    backdrop-filter: blur(var(--blur));
+    box-shadow: var(--shadow-md);
+  }
+
+  .broen-hero__carousel-wrapper-{{ section_id }} { position: relative; overflow: hidden; border-radius: var(--radius); }
+  .broen-hero__carousel-{{ section_id }} { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; }
+  .broen-hero__carousel-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .broen-hero__media-item-{{ section_id }} {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    aspect-ratio: 1;
+    position: relative;
+    background: var(--media-bg);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    border-radius: 12px 12px 0 0;
   }
 
-  .card-media-{{ carousel_id }} img,
-  .card-media-{{ carousel_id }} video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  .broen-hero__media-content-{{ section_id }} { width: 100%; height: 100%; object-fit: contain; transition: transform .6s cubic-bezier(.25,.46,.45,.94); }
+  .broen-hero__media-item-{{ section_id }}:hover img.broen-hero__media-content-{{ section_id }} { transform: scale(1.02); }
+
+  .broen-hero__media-{{ section_id }} video.broen-hero__media-content-{{ section_id }} {
+    object-fit: cover; width: 100%; height: 100%; pointer-events: none;
   }
 
-  .carousel-card-{{ carousel_id }}:hover .card-media-{{ carousel_id }} img,
-  .carousel-card-{{ carousel_id }}:hover .card-media-{{ carousel_id }} video {
-    transform: scale(1.05);
-  }
+  .broen-hero__placeholder-{{ section_id }} { font-size: 64px; color: var(--muted); font-weight: 300; opacity: .5; }
 
-  .card-placeholder-{{ carousel_id }} {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    font-weight: 700;
-    color: var(--muted);
-    text-align: center;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Carousel Nav */
+  .broen-hero__nav-btn-{{ section_id }} {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; background: rgba(34,34,34,.9);
+    border: 1px solid var(--border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 50; backdrop-filter: blur(var(--blur));
+    box-shadow: var(--shadow-sm); transition: all .3s cubic-bezier(.25,.46,.45,.94);
+    opacity: 1; pointer-events: auto;
+  }
+  .broen-hero__nav-btn-{{ section_id }}:hover { background: rgba(255,255,255,.1); transform: translateY(-50%) scale(1.05); box-shadow: var(--shadow-md); }
+  .broen-hero__nav-btn-{{ section_id }}:focus { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .broen-hero__nav-btn-{{ section_id }}--prev { left: 20px; }
+  .broen-hero__nav-btn-{{ section_id }}--next { right: 20px; }
+  .broen-hero__nav-btn-{{ section_id }} svg { 
+    color: var(--arrow-color);
+    opacity: .85;
+    transition: color .2s ease, opacity .2s ease;
+  }
+  .broen-hero__nav-btn-{{ section_id }}:hover svg {
+    color: var(--arrow-hover);
+    opacity: 1;
+  }
+  .broen-hero__dots-{{ section_id }} { display: flex; justify-content: center; gap: 8px; padding: 20px; background: var(--card-bg); }
+  .broen-hero__dot-{{ section_id }} { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.2); border: none; cursor: pointer; transition: all .3s ease; opacity: 1; }
+  .broen-hero__dot-{{ section_id }}:hover { background: rgba(255,255,255,.4); }
+  .broen-hero__dot-{{ section_id }}:focus { outline: 2px solid var(--focus); outline-offset: 4px; }
+  .broen-hero__dot-{{ section_id }}.active { background: #ffffff; transform: none; opacity: 1; }
+
+  /* Info card */
+  .broen-hero__info-{{ section_id }} {
+    background: var(--card-bg);
     border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    backdrop-filter: blur(var(--blur));
+    box-shadow: var(--shadow-md);
   }
 
-  .card-content-{{ carousel_id }} {
-    padding: 24px 20px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  .broen-hero__title-{{ section_id }} { color: var(--text); font-size: 32px; font-weight: 700; margin: 0 0 12px 0; letter-spacing: -0.02em; line-height: 1.2; }
+
+  .broen-hero__classification-{{ section_id }} {
+    font-size: 11px; font-weight: 600;
+    color: {% if block.settings.classification_text_color != blank %}{{ block.settings.classification_text_color }}{% else %}#deb887{% endif %};
+    text-transform: uppercase; letter-spacing: 1px; padding: 6px 12px;
+    background: {% if block.settings.classification_background != blank %}{{ block.settings.classification_background }}{% else %}rgba(97,69,36,.4){% endif %};
+    border: 1px solid {% if block.settings.classification_border != blank %}{{ block.settings.classification_border }}{% else %}rgba(97,69,36,.6){% endif %};
+    border-radius: 16px; display: inline-block; width: fit-content; backdrop-filter: blur(10px); margin: 0 0 20px 0;
   }
 
-  .card-title-{{ carousel_id }} {
-    color: var(--text);
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 12px;
-    line-height: 1.3;
-    text-align: center;
-  }
+  .broen-hero__price-{{ section_id }} { font-size: 36px; font-weight: 700; color: var(--text); margin: 0 0 24px 0; letter-spacing: -0.02em; }
 
-  .card-subtext-{{ carousel_id }} {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.4;
-    margin: 0 0 16px;
-    text-align: center;
-    flex-grow: 1;
-  }
+  .broen-hero__section-{{ section_id }} { margin: 24px 0; }
+  .broen-hero__section-label-{{ section_id }} { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: block; }
 
-  /* Glassy UI Button */
-  .card-button-{{ carousel_id }} {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 40px;
-    padding: 12px 18px;
-    border-radius: 9999px;
-    border: 1px solid var(--lg-border);
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    letter-spacing: -0.025em;
+  /* Color swatches */
+  .broen-hero__colors-{{ section_id }} { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; role: radiogroup; }
+  .broen-hero__color-{{ section_id }} {
+    width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border);
+    cursor: pointer; transition: all .4s cubic-bezier(.25,.46,.45,.94); position: relative; background: var(--chip-bg);
+    box-shadow: var(--shadow-sm); role: radio; flex-shrink: 0;
+  }
+  .broen-hero__color-{{ section_id }}:hover:not([aria-disabled="true"]):not(:disabled) { transform: scale(1.08); box-shadow: var(--shadow-md); }
+  .broen-hero__color-{{ section_id }}:focus { outline: 2px solid var(--focus); outline-offset: 4px; }
+  .broen-hero__color-{{ section_id }}.selected { border-color: var(--text); transform: scale(1.12); box-shadow: var(--shadow-lg); aria-checked: true; }
+  .broen-hero__color-{{ section_id }}.selected::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; border: 2px solid var(--text); opacity: .6; }
+  .broen-hero__color-{{ section_id }}:disabled,
+  .broen-hero__color-{{ section_id }}[aria-disabled="true"] { opacity: .4; cursor: not-allowed; filter: grayscale(.5); pointer-events: none; }
+
+  /* Mortise chips */
+  .broen-hero__mortise-grid-{{ section_id }} { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; role: radiogroup; }
+  .broen-hero__mortise-{{ section_id }} {
+    background: var(--chip-bg);
+    color: var(--chip-text);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 12px 20px;
     font-size: 13px;
-    line-height: 1.1;
-    background: linear-gradient(0deg, rgba(255,255,255,.18), rgba(255,255,255,.18));
-    backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur));
-    -webkit-backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur));
-    box-shadow: 0 6px 18px var(--lg-shadow), inset 0 1px 0 rgba(255,255,255,.12);
-    transition: transform .2s, box-shadow .2s, background .2s;
-    text-align: center;
-    margin-top: auto;
+    font-weight: 600;
+    transition: all .3s cubic-bezier(.25,.46,.45,.94);
     cursor: pointer;
+    text-align: center;
+    min-width: 80px;
+    box-shadow: var(--shadow-sm);
+    role: radio;
   }
+  .broen-hero__mortise-{{ section_id }}.has-image { border-radius: 12px; width: 72px; height: 72px; padding: 4px; min-width: 72px; }
+  .broen-hero__mortise-{{ section_id }}:hover:not([aria-disabled="true"]):not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--text); }
+  .broen-hero__mortise-{{ section_id }}.selected { border-color: var(--text); background: var(--text); color: var(--page-bg); aria-checked: true; }
+  .broen-hero__mortise-{{ section_id }}.has-image.selected {
+    background: var(--chip-bg);
+    color: var(--chip-text);
+    border-color: var(--text);
+    border-width: 2px;
+  }
+  .broen-hero__mortise-{{ section_id }}:disabled,
+  .broen-hero__mortise-{{ section_id }}[aria-disabled="true"] { opacity: .4; cursor: not-allowed; filter: grayscale(.5); pointer-events: none; }
 
-  .carousel-card-{{ carousel_id }}:hover .card-button-{{ carousel_id }} {
+  /* Buttons grid */
+  .broen-hero__buttons-{{ section_id }} { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 0 0; }
+
+  /* Add to Cart (liquid glass) */
+  .broen-hero__add-to-cart-{{ section_id }}{
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display", system-ui, sans-serif !important;
+    font-weight: 600; letter-spacing: -0.01em; font-size: 16px !important; line-height: 1;
+    color: var(--cta-text) !important;
+    display: inline-flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; white-space: nowrap;
+    min-height: 48px; padding: 16px 32px !important; border-radius: 100px !important; border: 1px solid var(--lg-border) !important;
+
+    /* layer 1: glass tint; layer 2: your base color */
+    background: linear-gradient(0deg, rgba(255,255,255,.18), rgba(255,255,255,.18)) !important, var(--cta-bg) !important;
+    background-color: var(--cta-bg) !important;
+
+    backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    -webkit-backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur)) !important;
+    box-shadow: 0 6px 18px var(--lg-shadow), inset 0 1px 0 rgba(255,255,255,.12) !important;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .broen-hero__add-to-cart-{{ section_id }}:hover:not(:disabled){
     transform: translateY(-1px);
-    background: linear-gradient(0deg, rgba(255,255,255,.24), rgba(255,255,255,.24));
-    box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14);
+    /* glass + your hover color */
+    background: linear-gradient(0deg, rgba(255,255,255,.24), rgba(255,255,255,.24)) !important, var(--cta-hover) !important;
+    background-color: var(--cta-hover) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.14) !important;
+  }
+  .broen-hero__add-to-cart-{{ section_id }}:active{ transform: translateY(0); box-shadow: 0 4px 12px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.10) !important; }
+  .broen-hero__add-to-cart-{{ section_id }}:focus{ outline: 3px solid rgba(255,255,255,.5); outline-offset: 2px; }
+  .broen-hero__add-to-cart-{{ section_id }}:disabled{ opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* BUY NOW — hard-coded Apple Messages blue (removed editor controls) */
+  .broen-hero__buy-now-{{ section_id }}{
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text","SF Pro Display", system-ui, sans-serif;
+    font-weight: 600; letter-spacing: -0.01em; font-size: 16px; line-height: 1; color: #ffffff;
+    display: inline-flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; white-space: nowrap;
+    min-height: 48px; padding: 16px 32px; border-radius: 100px; border: none;
+
+    background: #007AFF !important;
+    background-color: #007AFF !important;  /* <-- add this */
+    box-shadow: 0 4px 16px rgba(0,122,255,.30);
+    transition: all .2s ease;
+  }
+  .broen-hero__buy-now-{{ section_id }}:hover:not(:disabled){
+    background: #0056CC !important;
+    background-color: #0056CC !important;  /* <-- add this */
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,122,255,.40);
+  }
+  .broen-hero__buy-now-{{ section_id }}:active{
+    background: #004999 !important;
+    background-color: #004999 !important;  /* <-- add this */
+    transform: translateY(0);
+  }
+  .broen-hero__buy-now-{{ section_id }}:focus{ outline: 3px solid rgba(0,122,255,.50); outline-offset: 2px; }
+  .broen-hero__buy-now-{{ section_id }}:disabled{ background: #2a2a2a !important; color: #9a9a9a !important; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Layout breakpoints */
+  @media (min-width: 768px){
+    .broen-hero__container-{{ section_id }}{ padding: 60px 40px; }
+    .broen-hero__grid-{{ section_id }}{ grid-template-columns: 1fr 1fr; gap: 60px; }
+  }
+  @media (max-width: 767px){
+    .broen-hero__buttons-{{ section_id }}{ grid-template-columns: 1fr; gap: 12px; }
   }
 
-  /* LOCKED FEATURED VIDEO CARD STYLES */
-  .featured-video-{{ carousel_id }} {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 500px;
-    padding: 20px 0 60px;
-  }
-
-  .video-card-{{ carousel_id }} {
-    width: 100%;
-    max-width: 600px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
-    overflow: visible;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    backdrop-filter: blur(var(--lg-blur));
-    -webkit-backdrop-filter: blur(var(--lg-blur));
-    position: relative;
-  }
-
-  .video-card-{{ carousel_id }}:hover {
-    transform: translateY(-12px) scale(1.03);
-    box-shadow: 0 24px 72px rgba(0, 0, 0, 0.7);
-  }
-
-  .video-media-{{ carousel_id }} {
-    position: relative;
-    width: 100%;
-    height: 320px;
-    background: var(--media-bg);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    border-radius: var(--radius) var(--radius) 0 0;
-  }
-
-  .video-media-{{ carousel_id }} video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-  }
-
-  .video-placeholder-{{ carousel_id }} {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 72px;
-    font-weight: 700;
-    color: var(--muted);
-    text-align: center;
-    border: 1px solid var(--border);
-  }
-
-  .video-content-{{ carousel_id }} {
-    padding: 32px 24px 24px 24px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    text-align: center;
-  }
-
-  .video-title-{{ carousel_id }} {
-    color: var(--text);
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 16px;
-    line-height: 1.2;
-  }
-
-  .video-subtext-{{ carousel_id }} {
-    color: var(--muted);
-    font-size: 16px;
-    line-height: 1.5;
-    margin: 0 0 20px;
-    flex-grow: 1;
-  }
-
-  /* Download button for manual */
-  .download-button-{{ carousel_id }} {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 14px 24px;
-    border-radius: 9999px;
-    border: 1px solid var(--lg-border);
-    color: #fff;
-    text-decoration: none;
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    font-size: 14px;
-    line-height: 1.1;
-    background: linear-gradient(0deg, rgba(255,255,255,.20), rgba(255,255,255,.20));
-    backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur));
-    -webkit-backdrop-filter: saturate(var(--lg-saturate)) blur(var(--lg-blur));
-    box-shadow: 0 8px 20px var(--lg-shadow), inset 0 1px 0 rgba(255,255,255,.15);
-    transition: transform .2s, box-shadow .2s, background .2s;
-    text-align: center;
-    margin: 0 auto;
-  }
-
-  .download-button-{{ carousel_id }}:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(0deg, rgba(255,255,255,.26), rgba(255,255,255,.26));
-    box-shadow: 0 12px 28px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.18);
-  }
-
-  /* NAVIGATION ARROWS */
-  .carousel-navigation-{{ carousel_id }} {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 56px;
-    height: 56px;
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    color: #ffffff;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    backdrop-filter: blur(var(--lg-blur));
-    -webkit-backdrop-filter: blur(var(--lg-blur));
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
-  }
-
-  .carousel-navigation-{{ carousel_id }}:hover {
-    background: rgba(255, 255, 255, 0.28);
-    transform: translateY(-50%) scale(1.1);
-  }
-
-  .carousel-navigation-{{ carousel_id }}:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  .carousel-navigation-{{ carousel_id }}:focus {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
-  }
-
-  .carousel-navigation--prev-{{ carousel_id }} { left: 20px; }
-  .carousel-navigation--next-{{ carousel_id }} { right: 20px; }
-
-  .carousel-navigation-{{ carousel_id }} svg {
-    width: 22px; height: 22px; stroke-width: 2.5;
-  }
-
-  /* Empty state */
-  .empty-state-{{ carousel_id }} {
-    text-align: center;
-    padding: 80px 20px;
-    color: var(--muted);
-  }
-
-  .empty-state-title-{{ carousel_id }} {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 12px;
-    color: var(--text);
-  }
-
-  .empty-state-text-{{ carousel_id }} {
-    font-size: 15px;
-    opacity: 0.8;
-  }
-
-  /* MOBILE RESPONSIVENESS */
-  @media (max-width: 1200px) {
-    .carousel-container-{{ carousel_id }} { padding: 0 16px; }
-    .carousel-track-container-{{ carousel_id }} { margin: 0 60px; }
-    .carousel-navigation--prev-{{ carousel_id }} { left: 8px; }
-    .carousel-navigation--next-{{ carousel_id }} { right: 8px; }
-  }
-
-  @media (max-width: 768px) {
-    .product-metafield-carousel-{{ carousel_id }} {
-          --pt: {{ block.settings.section_padding_top | default: 80 | times: 0.6 | round }}px;
-    --pb: {{ block.settings.section_padding_bottom | default: 80 | times: 0.6 | round }}px;
-  }
-
-  .carousel-container-{{ carousel_id }} { padding: 0 12px; }
-  .carousel-section-{{ carousel_id }} { padding: {{ block.settings.section_inner_spacing | default: 40 | times: 0.6 | round }}px 0; }
-  .section-title-{{ carousel_id }} { margin-bottom: {{ block.settings.heading_spacing | default: 60 | times: 0.67 | round }}px; }
-
-    .carousel-track-container-{{ carousel_id }} {
-      margin: 0;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-
-    .carousel-track-container-{{ carousel_id }}::-webkit-scrollbar {
-      display: none;
-    }
-
-    .carousel-track-{{ carousel_id }} {
-      gap: 16px;
-      padding: 0 16px;
-    }
-
-    .carousel-card-{{ carousel_id }} {
-      scroll-snap-align: center;
-      width: 280px;
-      min-width: 280px;
-      height: 400px;
-    }
-
-    .carousel-card-{{ carousel_id }}.center-card {
-      width: 300px;
-      height: 420px;
-      transform: none;
-    }
-
-    .carousel-card-{{ carousel_id }}.center-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .carousel-navigation-{{ carousel_id }} {
-      display: none;
-    }
-
-    .video-card-{{ carousel_id }} {
-      margin: 0 16px;
-    }
-
-    .video-media-{{ carousel_id }} {
-      height: 260px;
-      padding: 20px;
-    }
-
-    .video-placeholder-{{ carousel_id }} {
-      font-size: 48px;
-    }
-  }
-
-  /* REDUCED MOTION */
-  @media (prefers-reduced-motion: reduce) {
-    .carousel-card-{{ carousel_id }},
-    .video-card-{{ carousel_id }},
-    .carousel-track-{{ carousel_id }},
-    .card-media-{{ carousel_id }} img,
-    .card-media-{{ carousel_id }} video {
-      transition: none;
-    }
-
-    .carousel-card-{{ carousel_id }}:hover,
-    .video-card-{{ carousel_id }}:hover,
-    .carousel-card-{{ carousel_id }}:hover .card-media-{{ carousel_id }} img,
-    .carousel-card-{{ carousel_id }}:hover .card-media-{{ carousel_id }} video {
-      transform: none;
-    }
-  }
-
-  /* Backdrop filter fallback */
-  @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-    .card-button-{{ carousel_id }},
-    .download-button-{{ carousel_id }} {
-      background: rgba(255,255,255,.14);
-      box-shadow: 0 8px 20px rgba(0,0,0,.25);
-    }
-  }
-
-  /* DEBUG PANEL STYLES */
-  .debug-panel-{{ carousel_id }} {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 400px;
-    max-width: calc(100vw - 40px);
-    max-height: 80vh;
-    background: rgba(0, 0, 0, 0.95);
-    color: #00ff00;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    line-height: 1.3;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    z-index: 999999;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-
-  .debug-panel-{{ carousel_id }} h3 {
-    color: #ffff00;
-    margin: 0 0 10px 0;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #333;
-    font-size: 13px;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry {
-    margin-bottom: 8px;
-    padding: 4px 8px;
-    background: rgba(0, 255, 0, 0.1);
-    border-left: 2px solid #00ff00;
-    border-radius: 3px;
-    word-wrap: break-word;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry.error {
-    background: rgba(255, 0, 0, 0.1);
-    border-left-color: #ff0000;
-    color: #ff6666;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry.warning {
-    background: rgba(255, 255, 0, 0.1);
-    border-left-color: #ffff00;
-    color: #ffff99;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry .timestamp {
-    color: #888;
-    font-size: 10px;
-  }
-
-  .debug-panel-{{ carousel_id }} .close-btn {
-    position: absolute;
-    top: 5px;
-    right: 8px;
-    background: none;
-    border: none;
-    color: #ff6666;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .debug-panel-{{ carousel_id }} .clear-btn {
-    background: #333;
-    border: 1px solid #555;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 10px;
-    cursor: pointer;
-    border-radius: 3px;
-    margin-bottom: 10px;
-  }
-
-  .debug-panel-{{ carousel_id }} .clear-btn:hover {
-    background: #555;
-  }
-
-  .debug-toggle-{{ carousel_id }} {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #00ff00;
-    border: 1px solid #333;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: monospace;
-    font-size: 12px;
-    z-index: 999998;
-  }
-
-  .debug-toggle-{{ carousel_id }}:hover {
-    background: rgba(0, 0, 0, 0.95);
-  }
+  /* Hide arrows for single-slide */
+  .broen-hero__carousel-wrapper-{{ section_id }}.single-slide .broen-hero__nav-btn-{{ section_id }} { display: none; }
 {% endstyle %}
 
-  <product-metafield-carousel-{{ carousel_id }}
-    class="product-metafield-carousel-{{ carousel_id }}"
-    style="--page-bg: {{ block.settings.background_color | default: '#000000' }}; --card-bg: {{ block.settings.card_background | default: '#111111' }}; --media-bg: {{ block.settings.media_background | default: '#1a1a1a' }}; --text: {{ block.settings.text_color | default: '#ffffff' }}; --muted: {{ block.settings.muted_text_color | default: '#999999' }}; --border: {{ block.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }}; --focus: {{ block.settings.focus_color | default: '#ffffff' }}; --radius: {{ block.settings.border_radius | default: 20 }}px; --pt: {{ block.settings.section_padding_top | default: 80 }}px; --pb: {{ block.settings.section_padding_bottom | default: 80 }}px;"
-    data-video-hover-only="{{ block.settings.video_hover_only }}"
-    data-hero-video-hover-only="{{ block.settings.hero_video_hover_only }}"
-    {{ block.shopify_attributes }}
-  >
-  <div class="carousel-container-{{ carousel_id }}">
-    
-    <!-- ABOUT THE PRODUCT SECTION -->
-    {% comment %} Pull from about_the_product metafield which is a list of feature_card metaobjects {% endcomment %}
-    {% liquid
-      assign about_items = nil
-      assign about_card_count = 0
+<section class="broen-hero-{{ section_id }}" {{ section.shopify_attributes }}>
+  <div class="broen-hero__container-{{ section_id }}">
+    <div class="broen-hero__grid-{{ section_id }}">
       
-      if product and product.metafields.custom.about_the_product
-        assign about_items = product.metafields.custom.about_the_product.value
-        
-        comment 'Count items by iterating through MetaobjectListDrop'
-        endcomment
-        if about_items
-          for item in about_items
-            assign about_card_count = about_card_count | plus: 1
-          endfor
-        endif
-      endif
-    %}
-
-    <section class="carousel-section-{{ carousel_id }}">
-      <h2 class="section-title-{{ carousel_id }}">{{ block.settings.about_heading | default: 'About the Product' }}</h2>
-      
-      {% if about_card_count > 0 %}
-        <div class="horizontal-carousel-{{ carousel_id }}">
-          <div class="carousel-track-container-{{ carousel_id }}">
-            <div class="carousel-track-{{ carousel_id }}" data-section="about">
-              {% for feature_card in about_items %}
-                {% liquid
-                  assign item_title = feature_card.feature | default: block.settings.default_feature_text | default: 'Feature'
-                  assign item_description = feature_card.description | default: ''
-                  assign item_link = feature_card.url | default: '#'
-                  assign item_button_text = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
-                  
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
-                  endcomment
-                  assign media_item = nil
-                  
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
-                  endcomment
-                  assign media_item = nil
-                  
-                  comment 'Debug: Log available fields'
-                  endcomment
-                  comment 'Available fields: {{ feature_card | json }}'
-                  endcomment
-                  
-                  comment 'Try media_files.value first (metaobject list)'
-                  endcomment
-                  if feature_card.media_files.value
-                    assign media_list = feature_card.media_files.value
-                    if media_list.size > 0
-                      assign media_item = media_list.first
-                    endif
-                  endif
-                  
-                  comment 'Fallback to media field'
-                  endcomment
-                  if media_item == nil and feature_card.media
-                    assign media_item = feature_card.media
-                  endif
-                  
-                  comment 'Fallback to any other media field'
-                  endcomment
-                  if media_item == nil and feature_card.media_file
-                    assign media_item = feature_card.media_file
-                  endif
-                  
-                  comment 'Additional fallback for direct file references'
-                  endcomment
-                  if media_item == nil and feature_card.file
-                    assign media_item = feature_card.file
-                  endif
-                  
-                  comment 'Debug: Log final media_item'
-                  endcomment
-                  comment 'Media item: {{ media_item | json }}'
-                  endcomment
-                  
-                  comment 'Video detection logic'
-                  endcomment
-                  assign is_video = false
-                  if block.settings.about_media_type == 'video'
-                    assign is_video = true
-                  elsif block.settings.about_media_type == 'auto' and media_item
-                    if media_item.media_type == 'video'
-                      assign is_video = true
-                    elsif media_item.url and media_item.url contains '.mp4'
-                      assign is_video = true
-                    elsif media_item contains '.mp4'
-                      assign is_video = true
-                    endif
-                  endif
-                %}
-
-                <a
-                  href="{{ item_link }}"
-                  class="carousel-card-{{ carousel_id }}{% if forloop.index == 3 %} center-card{% endif %}"
-                  aria-label="{{ item_title | escape }}"
-                >
-                  <div class="card-media-{{ carousel_id }}">
-                    {% if media_item %}
-                      {% if is_video %}
-                        <video
-                          {% if media_item.sources and media_item.sources.size > 1 %}
-                            src="{{ media_item.sources[1].url }}"
-                          {% elsif media_item.sources and media_item.sources.size > 0 %}
-                            src="{{ media_item.sources[0].url }}"
-                          {% elsif media_item.url %}
-                            src="{{ media_item.url }}"
-                          {% else %}
-                            src="{{ media_item | file_url }}"
-                          {% endif %}
-                          poster="{% if media_item.preview_image %}{{ media_item.preview_image | image_url: width: 400 }}{% endif %}"
-                          muted
-                          loop
-                          playsinline
-                          loading="lazy"
-                          width="400"
-                          height="240"
-                          {% if section.settings.video_hover_only %}data-hover-only="true"{% endif %}
-                        ></video>
-                      {% else %}
-                        {% if media_item.media_type == 'image' %}
-                          <img
-                            src="{{ media_item | image_url: width: 400 }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% elsif media_item.preview_image %}
-                          <img
-                            src="{{ media_item.preview_image | image_url: width: 400 }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% elsif media_item.url %}
-                          <img
-                            src="{{ media_item.url }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% else %}
-                          <img
-                            src="{{ media_item | image_url: width: 400 }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% endif %}
-                      {% endif %}
-                    {% else %}
-                      <div class="card-placeholder-{{ carousel_id }}">
-                        {{ forloop.index }}
-                      </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="card-content-{{ carousel_id }}">
-                    {% if item_title != blank %}
-                      <h3 class="card-title-{{ carousel_id }}">{{ item_title }}</h3>
-                    {% endif %}
-
-                    {% if item_description != blank %}
-                      <p class="card-subtext-{{ carousel_id }}">{{ item_description | truncate: 100 }}</p>
-                    {% endif %}
-
-                    {% if item_button_text != blank %}
-                      <span class="card-button-{{ carousel_id }}">{{ item_button_text }}</span>
-                    {% endif %}
-                  </div>
-                </a>
-              {% endfor %}
-            </div>
+      <!-- Media Carousel -->
+      <div class="broen-hero__media-{{ section_id }}">
+        <div class="broen-hero__carousel-wrapper-{{ section_id }}" id="carousel-wrapper-{{ section_id }}">
+          <div class="broen-hero__carousel-{{ section_id }}" id="carousel-{{ section_id }}">
+            <!-- Media items will be dynamically populated by JavaScript -->
           </div>
 
-
+          <!-- Navigation Arrows -->
+          <button 
+            class="broen-hero__nav-btn-{{ section_id }} broen-hero__nav-btn-{{ section_id }}--prev" 
+            id="prev-{{ section_id }}"
+            aria-label="Previous image"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button 
+            class="broen-hero__nav-btn-{{ section_id }} broen-hero__nav-btn-{{ section_id }}--next" 
+            id="next-{{ section_id }}"
+            aria-label="Next image"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
-      {% else %}
-        <div class="empty-state-{{ carousel_id }}">
-          <h3 class="empty-state-title-{{ carousel_id }}">About the Product</h3>
-          <p class="empty-state-text-{{ carousel_id }}">Add feature cards to the "about_the_product" metafield to display here</p>
-        </div>
-      {% endif %}
-    </section>
 
-    <!-- HOW IT WORKS SECTION -->
-    {% comment %} Use hero video and manual metafields - UNCHANGED {% endcomment %}
-    {% liquid
-      assign hero_video = nil
-      assign manual_file = nil
-      
-      if product and product.metafields.custom.hero_video
-        assign hero_video = product.metafields.custom.hero_video.value | default: product.metafields.custom.hero_video
-      endif
-      
-      if product and product.metafields.custom.manual
-        assign manual_file = product.metafields.custom.manual.value | default: product.metafields.custom.manual
-      endif
-    %}
-
-    <section class="carousel-section-{{ carousel_id }}">
-      <h2 class="section-title-{{ carousel_id }}">{{ block.settings.how_it_works_heading | default: 'How It Works' }}</h2 %}
-      
-      <div class="featured-video-{{ carousel_id }}">
-        <div class="video-card-{{ carousel_id }}">
-          <div class="video-media-{{ carousel_id }}">
-            {% if hero_video %}
-              <video
-                {% if hero_video.sources and hero_video.sources.size > 1 %}
-                  src="{{ hero_video.sources[1].url }}"
-                {% elsif hero_video.sources and hero_video.sources.size > 0 %}
-                  src="{{ hero_video.sources[0].url }}"
-                {% elsif hero_video.url %}
-                  src="{{ hero_video.url }}"
-                {% else %}
-                  src="{{ hero_video | file_url }}"
-                {% endif %}
-                poster="{% if hero_video.preview_image %}{{ hero_video.preview_image | image_url: width: 800 }}{% endif %}"
-                muted
-                loop
-                playsinline
-                loading="lazy"
-                width="800"
-                height="450"
-                                          {% if block.settings.hero_video_hover_only %}data-hover-only="true"{% endif %}
-              ></video>
-            {% else %}
-              <div class="video-placeholder-{{ carousel_id }}">
-                3
-                <div style="font-size: 16px; margin-top: 16px; font-weight: 500;">Video</div>
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="video-content-{{ carousel_id }}">
-                      <h3 class="video-title-{{ carousel_id }}">{{ block.settings.video_title | default: 'How It Works' }}</h3>
-          <p class="video-subtext-{{ carousel_id }}">{{ block.settings.video_description | default: 'Watch our step-by-step process in action' }}</p>
-            
-            {% if manual_file %}
-              <a 
-                href="{{ manual_file }}" 
-                class="download-button-{{ carousel_id }}"
-                download
-                target="_blank"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7,10 12,15 17,10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                Download Manual (PDF)
-              </a>
-            {% endif %}
-          </div>
-        </div>
+        <!-- Carousel Dots -->
+        <div class="broen-hero__dots-{{ section_id }}" id="dots-{{ section_id }}"></div>
       </div>
-    </section>
 
-    <!-- AFTER SALES SERVICE SECTION -->
-    {% comment %} Pull from after_sales_service metafield which is a list of service_cards metaobjects {% endcomment %}
-    {% liquid
-      assign service_items = nil
-      assign service_card_count = 0
-      
-      if product and product.metafields.custom.after_sales_service
-        assign service_items = product.metafields.custom.after_sales_service.value
+      <!-- Product Info -->
+      <div class="broen-hero__info-{{ section_id }}">
         
-        comment 'Count items by iterating through MetaobjectListDrop'
-        endcomment
-        if service_items
-          for item in service_items
-            assign service_card_count = service_card_count | plus: 1
-          endfor
-        endif
-      endif
-    %}
-
-    <section class="carousel-section-{{ carousel_id }}">
-      <h2 class="section-title-{{ carousel_id }}">{{ block.settings.after_sales_heading | default: 'After Sales Service' }}</h2 %}
-      
-      {% if service_card_count > 0 %}
-        <div class="horizontal-carousel-{{ carousel_id }}">
-          <div class="carousel-track-container-{{ carousel_id }}">
-            <div class="carousel-track-{{ carousel_id }}" data-section="service">
-              {% for service_card in service_items %}
-                {% liquid
-                  assign item_title = service_card.title | default: 'Service'
-                  assign item_description = service_card.description | default: ''
-                  assign item_link = service_card.url | default: '#'
-                  assign item_button_text = service_card.button_text | default: 'Learn More'
-                  
-                  comment 'Get media from metaobject'
-                  endcomment
-                  assign media_item = nil
-                  assign media_list = service_card.media_files.value
-                  
-                  if media_list
-                    for media in media_list limit: 1
-                      assign media_item = media
-                    endfor
-                  endif
-                  
-                  if media_item == nil
-                    assign media_item = service_card.media
-                  endif
-                  
-                  assign is_video = false
-                  if block.settings.service_media_type == 'video'
-                    assign is_video = true
-                  elsif block.settings.service_media_type == 'auto' and media_item and media_item.media_type == 'video'
-                    assign is_video = true
-                  elsif block.settings.service_media_type == 'auto' and media_item and media_item contains '.mp4'
-                    assign is_video = true
-                  endif
-                %}
-
-                <a
-                  href="{{ item_link }}"
-                  class="carousel-card-{{ carousel_id }}{% if forloop.index == 3 %} center-card{% endif %}"
-                  aria-label="{{ item_title | escape }}"
-                >
-                  <div class="card-media-{{ carousel_id }}">
-                    {% if media_item %}
-                      {% if is_video %}
-                        <video
-                          {% if media_item.sources and media_item.sources.size > 1 %}
-                            src="{{ media_item.sources[1].url }}"
-                          {% elsif media_item.sources and media_item.sources.size > 0 %}
-                            src="{{ media_item.sources[0].url }}"
-                          {% elsif media_item.url %}
-                            src="{{ media_item.url }}"
-                          {% else %}
-                            src="{{ media_item | file_url }}"
-                          {% endif %}
-                          poster="{% if media_item.preview_image %}{{ media_item.preview_image | image_url: width: 400 }}{% endif %}"
-                          muted
-                          loop
-                          playsinline
-                          loading="lazy"
-                          width="400"
-                          height="240"
-                          {% if section.settings.video_hover_only %}data-hover-only="true"{% endif %}
-                        ></video>
-                      {% else %}
-                        {% if media_item.media_type == 'image' %}
-                          <img
-                            src="{{ media_item | image_url: width: 400 }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% elsif media_item.preview_image %}
-                          <img
-                            src="{{ media_item.preview_image | image_url: width: 400 }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% elsif media_item.url %}
-                          <img
-                            src="{{ media_item.url }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% else %}
-                          <img
-                            src="{{ media_item | image_url: width: 400 }}"
-                            alt="{{ media_item.alt | default: item_title | escape }}"
-                            loading="lazy"
-                            width="400"
-                            height="240"
-                          >
-                        {% endif %}
-                      {% endif %}
-                    {% else %}
-                      <div class="card-placeholder-{{ carousel_id }}">
-                        {{ forloop.index }}
-                      </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="card-content-{{ carousel_id }}">
-                    {% if item_title != blank %}
-                      <h3 class="card-title-{{ carousel_id }}">{{ item_title }}</h3>
-                    {% endif %}
-
-                    {% if item_description != blank %}
-                      <p class="card-subtext-{{ carousel_id }}">{{ item_description | truncate: 100 }}</p>
-                    {% endif %}
-
-                    {% if item_button_text != blank %}
-                      <span class="card-button-{{ carousel_id }}">{{ item_button_text }}</span>
-                    {% endif %}
-                  </div>
-                </a>
-              {% endfor %}
-            </div>
-          </div>
-
-          {% if service_card_count > 1 %}
-            <button
-              class="carousel-navigation-{{ carousel_id }} carousel-navigation--prev-{{ carousel_id }}"
-              aria-label="Previous service slide"
-              data-section="service"
-              type="button"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M15 18L9 12L15 6"/>
-              </svg>
-            </button>
-
-            <button
-              class="carousel-navigation-{{ carousel_id }} carousel-navigation--next-{{ carousel_id }}"
-              aria-label="Next service slide"
-              data-section="service"
-              type="button"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18L15 12L9 6"/>
-              </svg>
-            </button>
+        <!-- Header -->
+        <div>
+          <h1 class="broen-hero__title-{{ section_id }}">
+            {{ product.title | default: "Product name" }}
+          </h1>
+          
+          {% assign door_type = product.metafields.custom.door_type.value | default: product.metafields.custom.door_type %}
+          {% if door_type != blank %}
+            <span class="broen-hero__classification-{{ section_id }}">
+              {{ door_type | replace: '-', ' ' | capitalize }}
+            </span>
+          {% else %}
+            <span class="broen-hero__classification-{{ section_id }}">Door Classification</span>
           {% endif %}
         </div>
-      {% else %}
-        <div class="empty-state-{{ carousel_id }}">
-          <h3 class="empty-state-title-{{ carousel_id }}">After Sales Service</h3>
-          <p class="empty-state-text-{{ carousel_id }}">Add service cards to the "after_sales_service" metafield to display here</p>
+
+        <!-- Price -->
+        <div class="broen-hero__price-{{ section_id }}" id="price-{{ section_id }}">
+          {{ product.selected_or_first_available_variant.price | money | default: "Price" }}
         </div>
-      {% endif %}
-    </section>
 
+        <form action="/cart/add" method="post" enctype="multipart/form-data" id="product-form-{{ section_id }}">
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="variant-id-{{ section_id }}">
+
+          <!-- Color Section -->
+          {% comment %} FIXED: Robust color option detection {% endcomment %}
+          {%- assign color_option_index = nil -%}
+          {%- for option in product.options_with_values -%}
+            {%- assign name_lc = option.name | downcase -%}
+            {%- if name_lc contains 'color' or name_lc contains 'colour' -%}
+              {%- assign color_option_index = forloop.index0 -%}{%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {% comment %} FIXED: Proper array building from metafields {% endcomment %}
+          {%- assign color_values = '' | split: '' -%}
+          {%- if color_option_index != nil -%}
+            {%- assign color_values = product.options_with_values[color_option_index].values -%}
+          {%- elsif product.metafields.custom.color_swatches and product.metafields.custom.color_swatches.value -%}
+            {%- for c in product.metafields.custom.color_swatches.value -%}
+              {%- assign color_values = color_values | push: c.name | default: c -%}
+            {%- endfor -%}
+          {%- endif -%}
+
+          {% if color_values.size > 0 %}
+          <div class="broen-hero__section-{{ section_id }}">
+            <label class="broen-hero__section-label-{{ section_id }}">Color</label>
+            <div class="broen-hero__colors-{{ section_id }}" role="radiogroup" aria-label="Color options">
+              {% for color_value in color_values %}
+                {% comment %} Find matching metafield color for styling {% endcomment %}
+                {% assign meta_color = null %}
+                {% assign color_style = 'background-color: ' %}
+                {% assign has_color = false %}
+                
+                {% if product.metafields.custom.color_swatches.value.size > 0 %}
+                  {% for meta in product.metafields.custom.color_swatches.value %}
+                    {% assign meta_name = meta.name | default: meta %}
+                    {% if meta_name == color_value %}
+                      {% assign meta_color = meta %}
+                      {% if meta.hex %}
+                        {% assign color_style = color_style | append: meta.hex | append: ';' %}
+                        {% assign has_color = true %}
+                      {% endif %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                {% comment %} Fallback color mapping for common color names {% endcomment %}
+                {% unless has_color %}
+                  {% assign color_lower = color_value | downcase %}
+                  {% case color_lower %}
+                    {% when 'black' %}
+                      {% assign color_style = color_style | append: '#000000;' %}
+                      {% assign has_color = true %}
+                    {% when 'white' %}
+                      {% assign color_style = color_style | append: '#ffffff;' %}
+                      {% assign has_color = true %}
+                    {% when 'brown' %}
+                      {% assign color_style = color_style | append: '#8B4513;' %}
+                      {% assign has_color = true %}
+                    {% when 'gray' or 'grey' %}
+                      {% assign color_style = color_style | append: '#808080;' %}
+                      {% assign has_color = true %}
+                    {% when 'bronze' %}
+                      {% assign color_style = color_style | append: '#CD7F32;' %}
+                      {% assign has_color = true %}
+                    {% when 'silver' %}
+                      {% assign color_style = color_style | append: '#C0C0C0;' %}
+                      {% assign has_color = true %}
+                    {% when 'gold' %}
+                      {% assign color_style = color_style | append: '#FFD700;' %}
+                      {% assign has_color = true %}
+                    {% else %}
+                      {% assign color_style = color_style | append: '#666666;' %}
+                      {% assign has_color = true %}
+                  {% endcase %}
+                {% endunless %}
+
+                <button
+                  type="button"
+                  class="broen-hero__color-{{ section_id }}{% if color_option_index != nil and color_value == product.selected_or_first_available_variant.options[color_option_index] %} selected{% endif %}"
+                  data-color-value="{{ color_value }}"
+                  aria-label="Color: {{ color_value }}"
+                  role="radio"
+                  tabindex="0"
+                  style="{{ color_style }}"
+                >
+                  {% if meta_color.image %}
+                    <img src="{{ meta_color.image | image_url: width: 48 }}" alt="{{ color_value }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                  {% endif %}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Mortise Section -->
+          {% comment %} FIXED: Robust mortise option detection {% endcomment %}
+          {%- assign mortise_option_index = nil -%}
+          {%- for option in product.options_with_values -%}
+            {%- assign name_lc = option.name | downcase -%}
+            {%- if name_lc contains 'mortise' or name_lc contains 'lock case' or name_lc contains 'locking' -%}
+              {%- assign mortise_option_index = forloop.index0 -%}{%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {% comment %} FIXED: Proper array building from metafields {% endcomment %}
+          {%- assign mortise_values = '' | split: '' -%}
+          {%- if mortise_option_index != nil -%}
+            {%- assign mortise_values = product.options_with_values[mortise_option_index].values -%}
+          {%- elsif product.metafields.custom.mortise_types and product.metafields.custom.mortise_types.value -%}
+            {%- for m in product.metafields.custom.mortise_types.value -%}
+              {%- assign mortise_values = mortise_values | push: m.name | default: m -%}
+            {%- endfor -%}
+          {%- endif -%}
+
+          {% if mortise_values.size > 0 %}
+          <div class="broen-hero__section-{{ section_id }}">
+            <label class="broen-hero__section-label-{{ section_id }}">Mortise (Lock Case)</label>
+            <div class="broen-hero__mortise-grid-{{ section_id }}" role="radiogroup" aria-label="Mortise type options">
+              {% for mortise_value in mortise_values %}
+                {% comment %} Find variant with this mortise to get its image {% endcomment %}
+                {% assign variant_image = null %}
+                {% if mortise_option_index != null %}
+                  {% for variant in product.variants %}
+                    {% if variant.options[mortise_option_index] == mortise_value and variant.featured_media %}
+                      {% assign variant_image = variant.featured_media %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <button
+                  type="button"
+                  class="broen-hero__mortise-{{ section_id }}{% if variant_image %} has-image{% endif %}{% if mortise_option_index != nil and mortise_value == product.selected_or_first_available_variant.options[mortise_option_index] %} selected{% endif %}"
+                  data-mortise-value="{{ mortise_value }}"
+                  aria-label="Mortise: {{ mortise_value }}"
+                  role="radio"
+                  tabindex="0"
+                >
+                  {% if variant_image %}
+                    <img src="{{ variant_image | image_url: width: 72 }}" alt="{{ mortise_value }}" style="width: 100%; height: 60%; object-fit: cover; border-radius: 8px; margin-bottom: 2px;">
+                    <span style="display: block; width: 100%; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ mortise_value }}</span>
+                  {% else %}
+                    {{ mortise_value }}
+                  {% endif %}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Action Buttons -->
+          <div class="broen-hero__buttons-{{ section_id }}">
+            <button
+              type="submit"
+              class="broen-hero__add-to-cart-{{ section_id }}"
+              id="add-to-cart-{{ section_id }}"
+              {% unless product.available %}disabled{% endunless %}
+            >
+              {% if product.available %}
+                Add to Cart
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+
+            <button
+              type="button"
+              class="broen-hero__buy-now-{{ section_id }}"
+              id="buy-now-{{ section_id }}"
+              {% unless product.available %}disabled{% endunless %}
+            >
+              {% if product.available %}
+                Buy Now
+              {% else %}
+                Sold Out
+              {% endif %}
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
   </div>
-</product-metafield-carousel-{{ carousel_id }}>
-
-<!-- DEBUG PANEL -->
-<div class="debug-panel-{{ carousel_id }}" id="debug-panel-{{ carousel_id }}" style="display: none;">
-  <button class="close-btn" onclick="document.getElementById('debug-panel-{{ carousel_id }}').style.display='none'">×</button>
-  <h3>🐛 Carousel {{ carousel_id }} Debug Console</h3>
-  <button class="clear-btn" onclick="document.getElementById('debug-logs-{{ carousel_id }}').innerHTML=''">Clear Logs</button>
-  <div id="debug-logs-{{ carousel_id }}"></div>
-</div>
-
-<button class="debug-toggle-{{ carousel_id }}" onclick="document.getElementById('debug-panel-{{ carousel_id }}').style.display = document.getElementById('debug-panel-{{ carousel_id }}').style.display === 'none' ? 'block' : 'none'">
-  🐛 DEBUG
-</button>
+</section>
 
 <script>
-// DEBUG UTILITY - logs to both console and UI with error handling
-const debugLog = {
-  log: function(message, data = null, type = 'log') {
-    try {
-      // Console logging
-      if (data) {
-        console.log(message, data);
-      } else {
-        console.log(message);
-      }
-
-      // UI logging - check if panel exists
-      const debugPanel = document.getElementById('debug-logs-{{ carousel_id }}');
-      if (debugPanel) {
-        const timestamp = new Date().toLocaleTimeString();
-        const logEntry = document.createElement('div');
-        logEntry.className = `log-entry ${type}`;
-        
-        let logContent = `<span class="timestamp">[${timestamp}]</span> ${message}`;
-        if (data) {
-          logContent += `<br><pre style="margin: 4px 0; font-size: 10px; color: #ccc;">${JSON.stringify(data, null, 2)}</pre>`;
-        }
-        
-        logEntry.innerHTML = logContent;
-        debugPanel.appendChild(logEntry);
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-        
-        // Limit log entries to prevent memory issues
-        if (debugPanel.children.length > 50) {
-          debugPanel.removeChild(debugPanel.firstChild);
-        }
-      } else {
-        console.warn('Debug panel not found, creating fallback');
-        // Fallback: try to create debug panel if it doesn't exist
-        this.createDebugPanel();
-      }
-    } catch (e) {
-      console.error('Debug logging error:', e);
-    }
-  },
-  
-  error: function(message, data = null) {
-    this.log(message, data, 'error');
-  },
-  
-  warn: function(message, data = null) {
-    this.log(message, data, 'warning');
-  },
-
-  createDebugPanel: function() {
-    try {
-      const existingPanel = document.getElementById('debug-panel-{{ carousel_id }}');
-      if (existingPanel) return;
-
-      const panel = document.createElement('div');
-      panel.id = 'debug-panel-{{ carousel_id }}';
-      panel.className = 'debug-panel-{{ carousel_id }}';
-      panel.innerHTML = `
-        <button class="close-btn" onclick="document.getElementById('debug-panel-{{ carousel_id }}').style.display='none'">×</button>
-        <h3>Debug Console - Carousel {{ carousel_id }}</h3>
-        <button class="clear-btn" onclick="document.getElementById('debug-logs-{{ carousel_id }}').innerHTML=''">Clear Logs</button>
-        <div id="debug-logs-{{ carousel_id }}"></div>
-      `;
-      document.body.appendChild(panel);
-      console.log('Debug panel created dynamically');
-    } catch (e) {
-      console.error('Failed to create debug panel:', e);
-    }
-  }
-};
-
-// Immediate test log
-debugLog.log('DEBUG SYSTEM ACTIVE - Testing logging functionality');
-debugLog.log('Page loaded at: ' + new Date().toISOString());
-debugLog.log('Window size: ' + window.innerWidth + 'x' + window.innerHeight);
-
-// Log CSS variables being applied
-debugLog.log('Product Carousel CSS Variables:', {
-          'background_color': '{{ block.settings.background_color | default: "#000000" }}',
-        'card_background': '{{ block.settings.card_background | default: "#111111" }}',
-        'media_background': '{{ block.settings.media_background | default: "#1a1a1a" }}',
-        'text_color': '{{ block.settings.text_color | default: "#ffffff" }}',
-        'muted_text_color': '{{ block.settings.muted_text_color | default: "#999999" }}',
-        'border_color': '{{ block.settings.border_color | default: "#ffffff" }}',
-        'border_color_processed': '{{ block.settings.border_color | default: "#ffffff" | color_modify: "alpha", 0.10 }}',
-        'focus_color': '{{ block.settings.focus_color | default: "#ffffff" }}',
-        'border_radius': '{{ block.settings.border_radius | default: 20 }}px',
-        'section_padding_top': '{{ block.settings.section_padding_top | default: 80 }}px',
-        'section_padding_bottom': '{{ block.settings.section_padding_bottom | default: 80 }}px',
-        'section_inner_spacing': '{{ block.settings.section_inner_spacing | default: 40 }}px',
-        'heading_spacing': '{{ block.settings.heading_spacing | default: 60 }}px',
-        'heading_size': '{{ block.settings.heading_size | default: 36 }}px',
-        'video_hover_only': {{ block.settings.video_hover_only | json }},
-        'hero_video_hover_only': {{ block.settings.hero_video_hover_only | json }}
-});
-
-// Check if we're in Theme Editor
-if (window.Shopify && window.Shopify.designMode) {
-  debugLog.log('THEME EDITOR DETECTED - Design mode is active');
-} else {
-  debugLog.log('Not in Theme Editor mode');
-}
-
-// Check if our carousel element exists
-const carouselElement = document.querySelector('product-metafield-carousel-{{ carousel_id }}');
-debugLog.log('Carousel element check:', {
-  found: !!carouselElement,
-  id: '{{ carousel_id }}',
-  sectionId: '{{ section.id }}'
-});
-
 (function() {
-  debugLog.log('Initializing Product Carousel {{ carousel_id }}');
-  
-  // Guard against re-definition during Theme Editor reloads
-  if (!customElements.get('product-metafield-carousel-{{ carousel_id }}')) {
-    debugLog.log('Defining new custom element product-metafield-carousel-{{ carousel_id }}');
-    
-    customElements.define(
-      'product-metafield-carousel-{{ carousel_id }}',
-      class ProductMetafieldCarousel extends HTMLElement {
-        constructor() {
-          super();
-          this.carousels = {};
-          this.isDesktop = window.innerWidth >= 768;
-          this.initialized = false;
-          this.resizeHandlerAttached = false;
-        }
+  const sectionId = '{{ section_id }}';
+  const section = document.querySelector('.broen-hero-' + sectionId);
 
-        connectedCallback() {
-          if (this.initialized) return;
-          this.initialized = true;
-          requestAnimationFrame(() => {
-            this.initializeCarousels();
-            this.setupEventListeners();
-            this.setupVideoControls();
-            this.logComputedStyles();
-          });
-        }
+  // Product data
+  const variants = {{ product.variants | json }};
+  const colorOptionIndex = {{ color_option_index | json }};
+  const mortiseOptionIndex = {{ mortise_option_index | json }};
+  const colorValues = {{ color_values | json }};
+  const heroVideoUrl = {{ product.metafields.custom.hero_video.value | default: product.metafields.custom.hero_video | json }};
 
-        disconnectedCallback() {
-          this.initialized = false;
-          // remove global listeners if attached
-          if (this.__resizeHandler) {
-            window.removeEventListener('resize', this.__resizeHandler);
-            this.__resizeHandler = null;
-          }
-        }
+  // Build flat media list from product.media (we'll order/filter later)
+  const productMedia = [
+    {% for media in product.media limit: 8 %}
+      {% assign skip_image = false %}
+      {% assign alt_text = media.alt | downcase %}
+      {% if alt_text contains 'feature' or alt_text contains 'spec' or alt_text contains 'unlock' or alt_text contains 'way' or alt_text contains 'method' %}
+        {% assign skip_image = true %}
+      {% endif %}
+      {% unless skip_image %}
+      {
+        id: {{ media.id | json }},
+        type: {{ media.media_type | json }},
+        src: {{ media | image_url: width: 1200 | json }},
+        alt: {{ media.alt | default: product.title | escape | json }},
+        {% if media.media_type == 'video' %}
+        videoSrc: {{ media.sources[0].url | json }},
+        mimeType: {{ media.sources[0].mime_type | json }},
+        poster: {% if media.preview_image %}{{ media.preview_image | image_url: width: 800 | json }}{% else %}null{% endif %}
+        {% endif %}
+      },
+      {% endunless %}
+    {% endfor %}
+  ];
 
-      logComputedStyles() {
-        const element = this;
-        const computedStyles = window.getComputedStyle(element);
-        debugLog.log('Computed CSS properties for {{ carousel_id }}:', {
-          '--page-bg': computedStyles.getPropertyValue('--page-bg'),
-          '--card-bg': computedStyles.getPropertyValue('--card-bg'),
-          '--media-bg': computedStyles.getPropertyValue('--media-bg'),
-          '--text': computedStyles.getPropertyValue('--text'),
-          '--muted': computedStyles.getPropertyValue('--muted'),
-          '--border': computedStyles.getPropertyValue('--border'),
-          '--focus': computedStyles.getPropertyValue('--focus'),
-          '--radius': computedStyles.getPropertyValue('--radius'),
-          '--pt': computedStyles.getPropertyValue('--pt'),
-          '--pb': computedStyles.getPropertyValue('--pb'),
-          'paddingTop': computedStyles.paddingTop,
-          'paddingBottom': computedStyles.paddingBottom,
-          'color': computedStyles.color,
-          'background': computedStyles.background
-        });
+  // DOM
+  const carousel = document.getElementById(`carousel-${sectionId}`);
+  const carouselWrapper = document.getElementById(`carousel-wrapper-${sectionId}`);
+  const dotsContainer = document.getElementById(`dots-${sectionId}`);
+  const prevBtn = document.getElementById(`prev-${sectionId}`);
+  const nextBtn = document.getElementById(`next-${sectionId}`);
+  const variantIdInput = document.getElementById(`variant-id-${sectionId}`);
+  const priceElement = document.getElementById(`price-${sectionId}`);
+  const addToCartButton = document.getElementById(`add-to-cart-${sectionId}`);
+  const buyNowButton = document.getElementById(`buy-now-${sectionId}`);
+
+  // State
+  let currentSlide = 0;
+  let totalSlides = 0;
+  let currentVariant = {{ product.selected_or_first_available_variant | json }};
+  let selectedColor = null;
+  let selectedMortise = null;
+
+  // ---- helpers --------------------------------------------------------------
+
+  function getOtherVariantMediaIds(currentVariantId){
+    const ids = new Set();
+    (variants || []).forEach(v => {
+      if (v && v.featured_media && v.featured_media.id && v.id !== currentVariantId) {
+        ids.add(v.featured_media.id);
       }
+    });
+    return ids;
+  }
 
-      initializeCarousels() {
-        debugLog.log('InitializeCarousels starting for {{ carousel_id }}');
-        const carouselSections = ['about', 'service'];
-        
-        carouselSections.forEach(section => {
-          debugLog.log(`Processing section: ${section}`);
-          const track = this.querySelector(`[data-section="${section}"]`);
-          const container = track?.parentElement;
-          const prevBtn = this.querySelector(`[data-section="${section}"].carousel-navigation--prev-{{ carousel_id }}`);
-          const nextBtn = this.querySelector(`[data-section="${section}"].carousel-navigation--next-{{ carousel_id }}`);
+  function createMediaSlide(media) {
+    const slide = document.createElement('div');
+    slide.className = `broen-hero__media-item-${sectionId}`;
+    slide.dataset.mediaId = media.id;
 
-          debugLog.log(`Section ${section} elements:`, {
-            track: !!track,
-            container: !!container,
-            prevBtn: !!prevBtn,
-            nextBtn: !!nextBtn
-          });
+    if (media.type === 'video') {
+      const video = document.createElement('video');
+      video.className = `broen-hero__media-content-${sectionId}`;
+      video.muted = true; video.loop = true; video.playsInline = true;
+      video.setAttribute('playsinline',''); video.autoplay = true; video.setAttribute('autoplay','');
+      video.preload = 'metadata';
+      if (media.poster) video.poster = media.poster;
 
-          if (track && container) {
-            const cards = track.children;
-            const totalCards = cards.length;
-            
-            debugLog.log(`Section ${section} cards count: ${totalCards}`);
-            
-            // Compute carousel dimensions and visibility
-            const dimensions = this.computeCarouselDimensions(track, container);
-            debugLog.log(`Section ${section} dimensions:`, dimensions);
-            
-            this.carousels[section] = {
-              track,
-              container,
-              prevBtn,
-              nextBtn,
-              currentSlide: 0,
-              totalCards,
-              ...dimensions,
-              isTransitioning: false
-            };
+      const source = document.createElement('source');
+      source.src = media.videoSrc; source.type = media.mimeType;
+      video.appendChild(source);
 
-            this.updateCarouselPosition(section, 0);
-            this.updateNavigationState(section);
-            
-            debugLog.log(`Section ${section} carousel initialized:`, this.carousels[section]);
-          } else {
-            debugLog.warn(`Section ${section} missing required elements`);
-          }
-        });
-      }
-
-      computeCarouselDimensions(track, container) {
-        const cards = track.children;
-        if (cards.length === 0) {
-          return { cardWidth: 320, gap: 24, visibleCount: 1, totalSlides: 1 };
-        }
-
-        const firstCard = cards[0];
-        const cardWidth = firstCard.offsetWidth || 320;
-        
-        // Get gap from CSS or default
-        const computedTrackStyle = window.getComputedStyle(track);
-        const gap = parseFloat(computedTrackStyle.columnGap || computedTrackStyle.gap) || 24;
-        
-        // Use actual container width without arbitrary subtraction
-        const containerWidth = container.clientWidth;
-        const visibleCount = Math.max(1, Math.floor(containerWidth / (cardWidth + gap)));
-        const totalSlides = Math.max(1, cards.length - visibleCount + 1);
-
-        return { cardWidth, gap, visibleCount, totalSlides };
-      }
-
-      setupEventListeners() {
-        debugLog.log('SetupEventListeners starting for {{ carousel_id }}');
-        
-        // Navigation buttons - only attach once
-        const navigationButtons = this.querySelectorAll('.carousel-navigation-{{ carousel_id }}');
-        debugLog.log(`Found ${navigationButtons.length} navigation buttons`);
-        
-        navigationButtons.forEach((btn, index) => {
-          if (!btn.dataset.listenerAttached) {
-            btn.dataset.listenerAttached = 'true';
-            debugLog.log(`Attaching click listener to navigation button ${index}`);
-            
-            btn.addEventListener('click', (e) => {
-              e.preventDefault();
-              const section = btn.dataset.section;
-              const isNext = btn.classList.contains('carousel-navigation--next-{{ carousel_id }}');
-              
-              debugLog.log(`Navigation button clicked:`, {
-                section,
-                isNext,
-                buttonIndex: index
-              });
-              
-              if (isNext) {
-                this.nextSlide(section);
-              } else {
-                this.prevSlide(section);
-              }
-            });
-          }
-        });
-
-        // Touch support for mobile
-        Object.keys(this.carousels).forEach(section => {
-          debugLog.log(`Setting up touch support for section: ${section}`);
-          this.setupTouchSupport(section);
-        });
-
-        // Resize handler with debouncing
-        let resizeTimeout;
-        const handleResize = () => {
-          debugLog.log('Window resize detected');
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(() => {
-            const wasDesktop = this.isDesktop;
-            this.isDesktop = window.innerWidth >= 768;
-            
-            debugLog.log(`Resize processed - was desktop: ${wasDesktop}, is desktop: ${this.isDesktop}`);
-            
-            // Recompute carousel dimensions on resize
-            Object.keys(this.carousels).forEach(section => {
-              const carousel = this.carousels[section];
-              if (carousel && carousel.track && carousel.container) {
-                const newDimensions = this.computeCarouselDimensions(carousel.track, carousel.container);
-                Object.assign(carousel, newDimensions);
-                
-                // Clamp current slide to valid range after recomputation
-                carousel.currentSlide = Math.max(0, Math.min(carousel.currentSlide, carousel.totalSlides - 1));
-                
-                debugLog.log(`Section ${section} dimensions after resize:`, newDimensions);
-                this.updateCarouselPosition(section, carousel.currentSlide);
-              }
-            });
-          }, 250);
-        };
-
-        if (!this.resizeHandlerAttached) {
-          this.resizeHandlerAttached = true;
-          this.__resizeHandler = handleResize;
-          window.addEventListener('resize', this.__resizeHandler);
-        }
-      }
-
-      setupVideoControls() {
-        debugLog.log('SetupVideoControls starting for {{ carousel_id }}');
-        
-        // Get current settings from data attributes (updated via Theme Editor)
-        const heroVideoHoverOnly = this.dataset.heroVideoHoverOnly === 'true';
-        const carouselVideoHoverOnly = this.dataset.videoHoverOnly === 'true';
-        
-        // Handle featured video
-        const videoCard = this.querySelector('.video-card-{{ carousel_id }}');
-        const featuredVideo = videoCard?.querySelector('video');
-        
-        debugLog.log('Featured video elements:', {
-          videoCard: !!videoCard,
-          featuredVideo: !!featuredVideo,
-          heroVideoHoverOnly,
-          hasHoverOnlyAttr: featuredVideo?.hasAttribute('data-hover-only')
-        });
-        
-        if (featuredVideo && videoCard) {
-          // Remove existing listeners
-          const oldEnterHandler = videoCard._mouseEnterHandler;
-          const oldLeaveHandler = videoCard._mouseLeaveHandler;
-          if (oldEnterHandler) videoCard.removeEventListener('mouseenter', oldEnterHandler);
-          if (oldLeaveHandler) videoCard.removeEventListener('mouseleave', oldLeaveHandler);
-          
-          const isHoverOnly = heroVideoHoverOnly || featuredVideo.hasAttribute('data-hover-only');
-          
-          debugLog.log(`Featured video hover-only: ${isHoverOnly}`);
-          
-          if (isHoverOnly) {
-            featuredVideo.pause();
-            debugLog.log('Featured video paused, adding hover listeners');
-            
-            const enterHandler = () => {
-              debugLog.log('Featured video mouseenter - playing');
-              featuredVideo.play().catch(e => debugLog.error('Featured video play error:', e));
-            };
-            const leaveHandler = () => {
-              debugLog.log('Featured video mouseleave - pausing and resetting');
-              featuredVideo.pause();
-              featuredVideo.currentTime = 0;
-            };
-            
-            videoCard.addEventListener('mouseenter', enterHandler);
-            videoCard.addEventListener('mouseleave', leaveHandler);
-            videoCard._mouseEnterHandler = enterHandler;
-            videoCard._mouseLeaveHandler = leaveHandler;
-          }
-        }
-
-        // Handle carousel videos
-        const carouselCards = this.querySelectorAll('.carousel-card-{{ carousel_id }}');
-        debugLog.log(`Found ${carouselCards.length} carousel cards`);
-        
-        carouselCards.forEach((card, index) => {
-          const video = card.querySelector('video');
-          if (video) {
-            // Remove existing listeners
-            const oldEnterHandler = card._mouseEnterHandler;
-            const oldLeaveHandler = card._mouseLeaveHandler;
-            if (oldEnterHandler) card.removeEventListener('mouseenter', oldEnterHandler);
-            if (oldLeaveHandler) card.removeEventListener('mouseleave', oldLeaveHandler);
-            
-            const isHoverOnly = carouselVideoHoverOnly || video.hasAttribute('data-hover-only');
-            
-            debugLog.log(`Card ${index} has video:`, {
-              hasVideo: true,
-              isHoverOnly,
-              carouselVideoHoverOnly,
-              hasHoverOnlyAttr: video.hasAttribute('data-hover-only')
-            });
-            
-            if (isHoverOnly) {
-              video.pause();
-              debugLog.log(`Card ${index} video paused, adding hover listeners`);
-              
-              const enterHandler = () => {
-                debugLog.log(`Card ${index} video mouseenter - playing`);
-                video.play().catch(e => debugLog.error(`Card ${index} video play error:`, e));
-              };
-              const leaveHandler = () => {
-                debugLog.log(`Card ${index} video mouseleave - pausing and resetting`);
-                video.pause();
-                video.currentTime = 0;
-              };
-              
-              card.addEventListener('mouseenter', enterHandler);
-              card.addEventListener('mouseleave', leaveHandler);
-              card._mouseEnterHandler = enterHandler;
-              card._mouseLeaveHandler = leaveHandler;
-            }
-          }
-        });
-      }
-
-      setupTouchSupport(section) {
-        const container = this.carousels[section].container;
-        if (container.dataset.touchAttached) return;
-        container.dataset.touchAttached = 'true';
-        
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
-
-        container.addEventListener('touchstart', (e) => {
-          startX = e.touches[0].clientX;
-          isDragging = true;
-        }, { passive: true });
-
-        container.addEventListener('touchmove', (e) => {
-          if (!isDragging) return;
-          currentX = e.touches[0].clientX;
-        }, { passive: true });
-
-        container.addEventListener('touchend', () => {
-          if (!isDragging) return;
-          isDragging = false;
-
-          const diff = startX - currentX;
-          const threshold = 50;
-
-          if (Math.abs(diff) > threshold) {
-            if (diff > 0) {
-              this.nextSlide(section);
-            } else {
-              this.prevSlide(section);
-            }
-          }
-        }, { passive: true });
-      }
-
-      updateNavigationState(section) {
-        const carousel = this.carousels[section];
-        if (!carousel) {
-          debugLog.warn(`UpdateNavigationState: No carousel found for section ${section}`);
-          return;
-        }
-
-        // Use totalSlides for disable logic, not totalCards
-        const shouldDisable = carousel.totalSlides <= 1;
-        const prevDisabled = carousel.currentSlide <= 0 || shouldDisable;
-        const nextDisabled = carousel.currentSlide >= carousel.totalSlides - 1 || shouldDisable;
-        
-        debugLog.log(`UpdateNavigationState for ${section}:`, {
-          totalCards: carousel.totalCards,
-          visibleCount: carousel.visibleCount,
-          currentSlide: carousel.currentSlide,
-          totalSlides: carousel.totalSlides,
-          shouldDisable,
-          prevDisabled,
-          nextDisabled
-        });
-        
-        if (carousel.prevBtn) {
-          carousel.prevBtn.disabled = prevDisabled;
-          debugLog.log(`Section ${section} prev button disabled: ${prevDisabled}`);
-        }
-        if (carousel.nextBtn) {
-          carousel.nextBtn.disabled = nextDisabled;
-          debugLog.log(`Section ${section} next button disabled: ${nextDisabled}`);
-        }
-      }
-
-      updateCarouselPosition(section, slideIndex) {
-        const carousel = this.carousels[section];
-        if (!carousel || carousel.isTransitioning) {
-          debugLog.warn(`UpdateCarouselPosition: Cannot update ${section} - carousel missing or transitioning`);
-          return;
-        }
-
-        // Clamp slideIndex to valid range using totalSlides
-        const newSlide = Math.max(0, Math.min(slideIndex, carousel.totalSlides - 1));
-        const slideChanged = newSlide !== carousel.currentSlide;
-        carousel.currentSlide = newSlide;
-        carousel.isTransitioning = true;
-
-        debugLog.log(`UpdateCarouselPosition for ${section}:`, {
-          requestedSlide: slideIndex,
-          actualSlide: newSlide,
-          slideChanged,
-          isDesktop: this.isDesktop,
-          totalCards: carousel.totalCards,
-          visibleCount: carousel.visibleCount,
-          totalSlides: carousel.totalSlides
-        });
-
-        if (this.isDesktop && carousel.totalCards > carousel.visibleCount) {
-          const offset = carousel.currentSlide * (carousel.cardWidth + carousel.gap);
-          
-          debugLog.log(`Setting transform for ${section}:`, {
-            cardWidth: carousel.cardWidth,
-            gap: carousel.gap,
-            offset,
-            transform: `translateX(-${offset}px)`
-          });
-          
-          carousel.track.style.transform = `translateX(-${offset}px)`;
-        } else if (!this.isDesktop) {
-          // On mobile, reset transform since we use scroll-snap
-          carousel.track.style.transform = '';
-        }
-
-        this.updateNavigationState(section);
-
-        setTimeout(() => {
-          carousel.isTransitioning = false;
-          debugLog.log(`Section ${section} transition complete`);
-        }, 600);
-      }
-
-      nextSlide(section) {
-        const carousel = this.carousels[section];
-        debugLog.log(`NextSlide called for ${section}:`, {
-          hasCarousel: !!carousel,
-          currentSlide: carousel?.currentSlide,
-          totalSlides: carousel?.totalSlides,
-          canNext: carousel && carousel.currentSlide < carousel.totalSlides - 1
-        });
-        
-        if (carousel && carousel.currentSlide < carousel.totalSlides - 1) {
-          this.updateCarouselPosition(section, carousel.currentSlide + 1);
-        }
-      }
-
-      prevSlide(section) {
-        const carousel = this.carousels[section];
-        debugLog.log(`PrevSlide called for ${section}:`, {
-          hasCarousel: !!carousel,
-          currentSlide: carousel?.currentSlide,
-          canPrev: carousel && carousel.currentSlide > 0
-        });
-        
-        if (carousel && carousel.currentSlide > 0) {
-          this.updateCarouselPosition(section, carousel.currentSlide - 1);
-        }
-      }
-      // keep the rest of the methods exactly as they exist in the file:
-      // initializeCarousels, computeCarouselDimensions, setupEventListeners,
-      // setupVideoControls, setupTouchSupport, updateNavigationState, updateCarouselPosition,
-      // nextSlide, prevSlide, logComputedStyles
+      slide.appendChild(video);
+    } else {
+      const img = document.createElement('img');
+      img.className = `broen-hero__media-content-${sectionId}`;
+      img.src = media.src; img.alt = media.alt || ''; img.loading = 'lazy';
+      slide.appendChild(img);
     }
-  );
+    return slide;
   }
 
-  // Theme Editor changes re-initialize the section
-  if (window.Shopify && window.Shopify.designMode) {
-    document.addEventListener('shopify:section:load', (e) => {
-      if (e.detail.sectionId === '{{ section.id }}') {
-        // New DOM for this section has just been injected; the custom element
-        // class is already registered, so its connectedCallback will run.
-        debugLog.log('shopify:section:load -> reinit {{ carousel_id }}');
-      }
-    });
+  function shouldIncludeMedia(media, otherVariantMediaIds) {
+    // videos handled separately as the hero video
+    if (media.type === 'video') return false;
 
-    document.addEventListener('shopify:section:unload', (e) => {
-      if (e.detail.sectionId === '{{ section.id }}') {
-        const el = document.querySelector('product-metafield-carousel-{{ carousel_id }}');
-        // call cleanup if present
-        el?.disconnectedCallback?.();
-        debugLog.log('shopify:section:unload -> cleanup {{ carousel_id }}');
+    // exclude featured images of other variants
+    if (otherVariantMediaIds.has(media.id)) {
+      if (!currentVariant || !currentVariant.featured_media || media.id !== currentVariant.featured_media.id) {
+        return false;
       }
-    });
+    }
 
-    // Optional: when selecting/deselecting the section in the editor, re-run video bindings
-    document.addEventListener('shopify:section:select', (e) => {
-      if (e.detail.sectionId === '{{ section.id }}') {
-        document.querySelector('product-metafield-carousel-{{ carousel_id }}')?.setupVideoControls?.();
-      }
+    // color-aware filtering
+    const alt = (media.alt || '').toLowerCase();
+    const sel = (selectedColor || '').toLowerCase();
+
+    if (Array.isArray(colorValues) && colorValues.length > 0) {
+      const mentionsAnyColor = colorValues.some(cv => alt.includes(String(cv).toLowerCase()));
+      if (mentionsAnyColor) return sel ? alt.includes(sel) : false;
+    }
+    return true;
+  }
+
+  function setupCarouselNavigation() {
+    if (!carousel || !dotsContainer) return;
+
+    // hide if single slide
+    if (totalSlides < 2) {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+      dotsContainer.style.display = 'none';
+      return;
+    }
+
+    if (prevBtn) prevBtn.style.display = 'flex';
+    if (nextBtn) nextBtn.style.display = 'flex';
+    dotsContainer.style.display = 'flex';
+
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.className = `broen-hero__dot-${sectionId}` + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1} of ${totalSlides}`);
+      dot.onclick = () => goToSlide(i);
+      dotsContainer.appendChild(dot);
+    }
+  }
+
+  function goToSlide(index) {
+    if (!carousel) return;
+    if (index < 0) index = totalSlides - 1;
+    if (index >= totalSlides) index = 0;
+
+    currentSlide = index;
+
+    const items = carousel.querySelectorAll(`.broen-hero__media-item-${sectionId}`);
+    if (items[index]) {
+      carousel.scrollTo({ left: items[index].offsetLeft, behavior: 'smooth' });
+      document.querySelectorAll(`.broen-hero__dot-${sectionId}`).forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      manageVideoPlayback();
+    }
+  }
+
+  function manageVideoPlayback() {
+    if (!carousel) return;
+    const items = carousel.querySelectorAll(`.broen-hero__media-item-${sectionId}`);
+    items.forEach((item, idx) => {
+      const video = item.querySelector(`video.broen-hero__media-content-${sectionId}`);
+      if (!video) return;
+      if (idx === currentSlide) { try { video.play().catch(()=>{});} catch(e){} }
+      else { try { video.pause(); video.currentTime = 0; } catch(e){} }
     });
   }
+
+  function findVariant(colorValue, mortiseValue) {
+    return variants.find(variant => {
+      const colorMatch = colorOptionIndex === null || variant.options[colorOptionIndex] === colorValue;
+      const mortiseMatch = mortiseOptionIndex === null || variant.options[mortiseOptionIndex] === mortiseValue;
+      return colorMatch && mortiseMatch;
+    });
+  }
+
+  function rebuildCarousel() {
+    if (!carousel) return;
+
+    const otherVariantMediaIds = getOtherVariantMediaIds(currentVariant ? currentVariant.id : null);
+
+    carousel.innerHTML = '';
+    const slides = [];
+    const used = new Set();
+
+    // 1) selected variant image first
+    if (currentVariant && currentVariant.featured_media && currentVariant.featured_media.id) {
+      const featured = productMedia.find(m => m.id === currentVariant.featured_media.id);
+      if (featured) {
+        slides.push(createMediaSlide(featured));
+        used.add(featured.id);
+      }
+    }
+
+    // 2) hero video (if any)
+    if (heroVideoUrl && !used.has('hero-video')) {
+      slides.push(createMediaSlide({
+        id: 'hero-video',
+        type: 'video',
+        videoSrc: heroVideoUrl,
+        mimeType: 'video/mp4',
+        poster: null,
+        alt: 'Hero Video'
+      }));
+      used.add('hero-video');
+    }
+
+    // 3) rest of product images (filtered)
+    productMedia.forEach(m => {
+      if (m.type === 'video') return;
+      if (!shouldIncludeMedia(m, otherVariantMediaIds)) return;
+      if (!used.has(m.id)) {
+        slides.push(createMediaSlide(m));
+        used.add(m.id);
+      }
+    });
+
+    if (slides.length === 0) {
+      const ph = document.createElement('div');
+      ph.className = `broen-hero__media-item-${sectionId}`;
+      ph.innerHTML = `<div class="broen-hero__placeholder-${sectionId}">1</div>`;
+      slides.push(ph);
+    }
+
+    slides.forEach(s => carousel.appendChild(s));
+    totalSlides = slides.length;
+    currentSlide = 0;
+    carousel.scrollTo({ left: 0, behavior: 'auto' });
+
+    setupCarouselNavigation();
+    if (carouselWrapper) {
+      carouselWrapper.classList.toggle('single-slide', totalSlides < 2);
+    }
+    manageVideoPlayback();
+  }
+
+  function updateVariantSelection(newVariant) {
+    if (!newVariant) return;
+
+    currentVariant = newVariant;
+
+    if (variantIdInput) variantIdInput.value = newVariant.id;
+
+    // PHP currency for your store UI
+    if (priceElement) {
+      const formatter = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
+      priceElement.textContent = formatter.format(newVariant.price / 100);
+    }
+
+    if (addToCartButton) {
+      addToCartButton.disabled = !newVariant.available;
+      addToCartButton.textContent = newVariant.available ? 'Add to Cart' : 'Sold Out';
+    }
+    if (buyNowButton) {
+      buyNowButton.disabled = !newVariant.available;
+      buyNowButton.textContent = newVariant.available ? 'Buy Now' : 'Sold Out';
+    }
+
+    const url = new URL(window.location);
+    url.searchParams.set('variant', newVariant.id);
+    history.replaceState(null, '', url);
+
+    rebuildCarousel();
+
+    if (dotsContainer) {
+      const dots = dotsContainer.querySelectorAll(`.broen-hero__dot-${sectionId}`);
+      dots.forEach((d, i) => d.classList.toggle('active', i === 0));
+    }
+
+    if (section) {
+      try { section.dispatchEvent(new CustomEvent('variant:change', { detail: { variant: newVariant } })); }
+      catch(e){ console.log(e); }
+    }
+  }
+
+  function initColorSelection() {
+    const colorContainer = document.querySelector(`.broen-hero__colors-${sectionId}`);
+    if (!colorContainer) return;
+
+    // initial state from current variant
+    if (currentVariant && colorOptionIndex !== null && currentVariant.options[colorOptionIndex]) {
+      selectedColor = currentVariant.options[colorOptionIndex];
+    }
+
+    const btns = colorContainer.querySelectorAll(`.broen-hero__color-${sectionId}`);
+    btns.forEach(btn => {
+      const val = btn.dataset.colorValue;
+      const isSel = val === selectedColor;
+      btn.classList.toggle('selected', isSel);
+      btn.setAttribute('aria-checked', isSel ? 'true' : 'false');
+    });
+
+    colorContainer.addEventListener('click', (e) => {
+      const colorBtn = e.target.closest(`.broen-hero__color-${sectionId}`);
+      if (!colorBtn || colorBtn.disabled || colorBtn.getAttribute('aria-disabled') === 'true') return;
+      e.preventDefault();
+
+      btns.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-checked','false'); });
+      colorBtn.classList.add('selected'); colorBtn.setAttribute('aria-checked','true');
+
+      selectedColor = colorBtn.dataset.colorValue;
+      const newVariant = findVariant(selectedColor, selectedMortise);
+      if (newVariant) updateVariantSelection(newVariant);
+    });
+
+    colorContainer.addEventListener('keydown', (e) => {
+      const colors = Array.from(btns);
+      const idx = colors.indexOf(e.target);
+      let ni = idx;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); ni = idx > 0 ? idx - 1 : colors.length - 1; }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); ni = idx < colors.length - 1 ? idx + 1 : 0; }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.target.click(); return; }
+      colors[ni]?.focus();
+    });
+  }
+
+  function initMortiseSelection() {
+    const mortiseContainer = document.querySelector(`.broen-hero__mortise-grid-${sectionId}`);
+    if (!mortiseContainer) return;
+
+    // initial state from current variant
+    if (currentVariant && mortiseOptionIndex !== null && currentVariant.options[mortiseOptionIndex]) {
+      selectedMortise = currentVariant.options[mortiseOptionIndex];
+    }
+
+    const btns = mortiseContainer.querySelectorAll(`.broen-hero__mortise-${sectionId}`);
+    btns.forEach(btn => {
+      const val = btn.dataset.mortiseValue;
+      const isSel = val === selectedMortise;
+      btn.classList.toggle('selected', isSel);
+      btn.setAttribute('aria-checked', isSel ? 'true' : 'false');
+    });
+
+    mortiseContainer.addEventListener('click', (e) => {
+      const mortiseBtn = e.target.closest(`.broen-hero__mortise-${sectionId}`);
+      if (!mortiseBtn || mortiseBtn.disabled || mortiseBtn.getAttribute('aria-disabled') === 'true') return;
+      e.preventDefault();
+
+      btns.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-checked','false'); });
+      mortiseBtn.classList.add('selected'); mortiseBtn.setAttribute('aria-checked','true');
+
+      selectedMortise = mortiseBtn.dataset.mortiseValue;
+      const newVariant = findVariant(selectedColor, selectedMortise);
+      if (newVariant) updateVariantSelection(newVariant);
+    });
+
+    mortiseContainer.addEventListener('keydown', (e) => {
+      const ms = Array.from(btns);
+      const idx = ms.indexOf(e.target);
+      let ni = idx;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); ni = idx > 0 ? idx - 1 : ms.length - 1; }
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); ni = idx < ms.length - 1 ? idx + 1 : 0; }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.target.click(); return; }
+      ms[ni]?.focus();
+    });
+  }
+
+  function initCarouselControls() {
+    if (prevBtn) prevBtn.onclick = (e) => { e.preventDefault(); goToSlide(currentSlide - 1); };
+    if (nextBtn) nextBtn.onclick = (e) => { e.preventDefault(); goToSlide(currentSlide + 1); };
+
+    if (carousel) {
+      carousel.addEventListener('scroll', () => {
+        const items = carousel.querySelectorAll(`.broen-hero__media-item-${sectionId}`);
+        if (!items.length) return;
+        const w = items[0].offsetWidth;
+        const newIdx = Math.round(carousel.scrollLeft / w);
+        if (newIdx !== currentSlide && newIdx >= 0 && newIdx < totalSlides) {
+          currentSlide = newIdx;
+          document.querySelectorAll(`.broen-hero__dot-${sectionId}`).forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentSlide);
+          });
+          manageVideoPlayback();
+        }
+      }, { passive: true });
+
+      let startX = 0, dragging = false;
+      carousel.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; dragging = true; }, { passive: true });
+      carousel.addEventListener('touchend', (e) => {
+        if (!dragging) return; dragging = false;
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) goToSlide(currentSlide + (diff > 0 ? 1 : -1));
+      }, { passive: true });
+
+      carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); goToSlide(currentSlide + 1); }
+      });
+    }
+  }
+
+  function initButtons() {
+    const form = document.getElementById(`product-form-${sectionId}`);
+
+    if (form && addToCartButton) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const original = addToCartButton.textContent;
+
+        addToCartButton.textContent = 'Adding...';
+        addToCartButton.disabled = true;
+
+        fetch('/cart/add.js', { method: 'POST', body: formData })
+          .then(r => r.json())
+          .then(data => {
+            addToCartButton.textContent = 'Added!';
+            document.dispatchEvent(new CustomEvent('cart:item-added', { detail: { variant: data } }));
+            setTimeout(() => { addToCartButton.textContent = original; addToCartButton.disabled = false; }, 2000);
+          })
+          .catch(() => {
+            addToCartButton.textContent = 'Error - Try again';
+            setTimeout(() => { addToCartButton.textContent = original; addToCartButton.disabled = false; }, 2000);
+          });
+      });
+    }
+
+    if (buyNowButton) {
+      buyNowButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!currentVariant || !currentVariant.available) return;
+
+        const original = this.textContent;
+        this.textContent = 'Processing...';
+        this.disabled = true;
+
+        const fd = new FormData();
+        fd.append('id', currentVariant.id);
+        fd.append('quantity', '1');
+
+        fetch('/cart/add.js', { method: 'POST', body: fd })
+          .then(r => r.json())
+          .then(() => { window.location.href = '/checkout'; })
+          .catch(() => {
+            this.textContent = 'Error - Try again';
+            setTimeout(() => { this.textContent = original; this.disabled = false; }, 2000);
+          });
+      });
+    }
+  }
+
+  function initializeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const variantId = urlParams.get('variant');
+    if (variantId) {
+      const variant = variants.find(v => String(v.id) === String(variantId));
+      if (variant) {
+        currentVariant = variant;
+        if (colorOptionIndex !== null) selectedColor = variant.options[colorOptionIndex];
+        if (mortiseOptionIndex !== null) selectedMortise = variant.options[mortiseOptionIndex];
+      }
+    } else {
+      if (currentVariant) {
+        if (colorOptionIndex !== null) selectedColor = currentVariant.options[colorOptionIndex];
+        if (mortiseOptionIndex !== null) selectedMortise = currentVariant.options[mortiseOptionIndex];
+      }
+    }
+  }
+
+  function init() {
+    initializeFromURL();
+    rebuildCarousel();
+    initColorSelection();
+    initMortiseSelection();
+    initCarouselControls();
+    initButtons();
+    manageVideoPlayback();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
 })();
 </script>
 
 {% schema %}
 {
-  "name": "Product Carousel",
+  "name": "Broen Product Page",
   "settings": [
     {
       "type": "header",
-      "content": "⚠️ Important Setup Notes"
-    },
-    {
-      "type": "paragraph",
-      "content": "This component now uses metaobjects for About and After Sales sections:"
-    },
-    {
-      "type": "paragraph",
-      "content": "• About the Product: Uses 'about_the_product' metafield → 'feature_card' references"
-    },
-    {
-      "type": "paragraph",
-      "content": "• After Sales Service: Uses 'after_sales_service' metafield → 'service_cards' references"
-    },
-    {
-      "type": "paragraph",
-      "content": "• How It Works: Still uses direct metafields ('hero_video' + 'manual')"
-    },
-    {
-      "type": "header",
-      "content": "Section Headings"
-    },
-    {
-      "type": "text",
-      "id": "about_heading",
-      "label": "About the Product heading",
-      "default": "About the Product",
-      "info": "Content from 'about_the_product' metaobject"
-    },
-    {
-      "type": "text",
-      "id": "how_it_works_heading",
-      "label": "How It Works heading",
-      "default": "How It Works"
-    },
-    {
-      "type": "text",
-      "id": "after_sales_heading",
-      "label": "After Sales Service heading",
-      "default": "After Sales Service",
-      "info": "Content from 'after_sales_service' metaobject"
-    },
-    {
-      "type": "header",
-      "content": "Media Type Controls"
-    },
-    {
-      "type": "select",
-      "id": "about_media_type",
-      "label": "About section media type",
-      "options": [
-        {
-          "value": "auto",
-          "label": "Auto detect (recommended)"
-        },
-        {
-          "value": "image",
-          "label": "Force as images"
-        },
-        {
-          "value": "video",
-          "label": "Force as videos"
-        }
-      ],
-      "default": "auto",
-      "info": "Auto detect will use the actual file type from metaobjects"
-    },
-    {
-      "type": "select",
-      "id": "service_media_type",
-      "label": "Service section media type",
-      "options": [
-        {
-          "value": "auto",
-          "label": "Auto detect (recommended)"
-        },
-        {
-          "value": "image",
-          "label": "Force as images"
-        },
-        {
-          "value": "video",
-          "label": "Force as videos"
-        }
-      ],
-      "default": "auto",
-      "info": "Auto detect will use the actual file type from metaobjects"
-    },
-    {
-      "type": "header",
-      "content": "Video Section"
-    },
-    {
-      "type": "text",
-      "id": "video_title",
-      "label": "Video card title",
-      "default": "How It Works"
-    },
-    {
-      "type": "textarea",
-      "id": "video_description",
-      "label": "Video card description",
-      "default": "Watch our step-by-step process in action"
-    },
-    {
-      "type": "checkbox",
-      "id": "hero_video_hover_only",
-      "label": "Hero video - play on hover only",
-      "default": true,
-      "info": "When enabled, video pauses and only plays when hovered"
-    },
-    {
-      "type": "checkbox",
-      "id": "video_hover_only",
-      "label": "Carousel videos - play on hover only",
-      "default": true,
-      "info": "When enabled, carousel videos pause and only play when hovered"
-    },
-    {
-      "type": "header",
-      "content": "Layout & Spacing"
-    },
-    {
-      "type": "range",
-      "id": "section_padding_top",
-      "min": 40,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Section top padding",
-      "default": 80
-    },
-    {
-      "type": "range",
-      "id": "section_padding_bottom",
-      "min": 40,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Section bottom padding",
-      "default": 80
-    },
-    {
-      "type": "range",
-      "id": "section_inner_spacing",
-      "min": 20,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Between sections spacing",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "heading_spacing",
-      "min": 20,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Heading bottom spacing",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "heading_size",
-      "min": 24,
-      "max": 48,
-      "step": 2,
-      "unit": "px",
-      "label": "Heading size",
-      "default": 36
-    },
-    {
-      "type": "header",
-      "content": "Colors & Design"
+      "content": "Core Colors"
     },
     {
       "type": "color",
-      "id": "background_color",
-      "label": "Section background",
+      "id": "page_background",
+      "label": "Page background",
       "default": "#000000"
     },
     {
@@ -1927,8 +1037,42 @@ debugLog.log('Carousel element check:', {
     },
     {
       "type": "color",
+      "id": "classification_text_color",
+      "label": "Classification pill text",
+      "default": "#deb887"
+    },
+    {
+      "type": "color",
+      "id": "classification_background",
+      "label": "Classification pill background",
+      "default": "rgba(97,69,36,0.4)"
+    },
+    {
+      "type": "color",
+      "id": "classification_border",
+      "label": "Classification pill border",
+      "default": "rgba(97,69,36,0.6)"
+    },
+    {
+      "type": "color",
       "id": "border_color",
       "label": "Border color",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Interactive Elements"
+    },
+    {
+      "type": "color",
+      "id": "chip_background",
+      "label": "Chip background",
+      "default": "#222222"
+    },
+    {
+      "type": "color",
+      "id": "chip_text_color",
+      "label": "Chip text",
       "default": "#ffffff"
     },
     {
@@ -1938,101 +1082,58 @@ debugLog.log('Carousel element check:', {
       "default": "#ffffff"
     },
     {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active carousel dot",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "dot_inactive_color",
+      "label": "Inactive carousel dot",
+      "default": "rgba(255, 255, 255, 0.3)"
+    },
+
+    {
+      "type": "header",
+      "content": "Call-to-Action"
+    },
+    {
+      "type": "color",
+      "id": "cta_background",
+      "label": "Add to cart background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Add to cart text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_background",
+      "label": "Add to cart hover",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
       "type": "range",
       "id": "border_radius",
+      "label": "Border radius",
       "min": 8,
       "max": 32,
       "step": 2,
-      "unit": "px",
-      "label": "Border radius",
-      "default": 20
-    },
-    {
-      "type": "header",
-      "content": "Card Content Controls"
-    },
-    {
-      "type": "text",
-      "id": "default_button_text",
-      "label": "Default button text",
-      "default": "Learn More"
-    },
-    {
-      "type": "text",
-      "id": "default_feature_text",
-      "label": "Default feature text",
-      "default": "Feature"
-    },
-    {
-      "type": "range",
-      "id": "card_width",
-      "min": 280,
-      "max": 400,
-      "step": 8,
-      "unit": "px",
-      "label": "Card width",
-      "default": 320
-    },
-    {
-      "type": "range",
-      "id": "card_height",
-      "min": 400,
-      "max": 600,
-      "step": 20,
-      "unit": "px",
-      "label": "Card height",
-      "default": 480
-    },
-    {
-      "type": "range",
-      "id": "center_card_scale",
-      "min": 1.0,
-      "max": 1.2,
-      "step": 0.1,
-      "label": "Center card scale factor",
-      "default": 1.1
-    },
-    {
-      "type": "header",
-      "content": "Required Metafields & Metaobjects"
-    },
-    {
-      "type": "paragraph",
-      "content": "This component automatically pulls content from your product's metafields and metaobjects:"
-    },
-    {
-      "type": "paragraph",
-      "content": "Metafields with Metaobject Lists:"
-    },
-    {
-      "type": "paragraph",
-      "content": "• 'about_the_product' → list of 'feature_card' metaobjects"
-    },
-    {
-      "type": "paragraph",
-      "content": "• 'after_sales_service' → list of 'service_cards' metaobjects"
-    },
-    {
-      "type": "paragraph",
-      "content": "Direct Metafields:"
-    },
-    {
-      "type": "paragraph",
-      "content": "• 'hero_video' (video file) + 'manual' (PDF file)"
-    },
-    {
-      "type": "paragraph",
-      "content": "Media files can contain JPG, PNG, or MP4 files. Video detection is automatic."
-    },
-    {
-      "type": "paragraph",
-      "content": "Card and video card designs are now locked for consistency."
+      "default": 20,
+      "unit": "px"
     }
   ],
   "presets": [
-    { 
-      "name": "Product Carousel",
-      "category": "Product"
+    {
+      "name": "Broen Product Page"
     }
   ]
 }
