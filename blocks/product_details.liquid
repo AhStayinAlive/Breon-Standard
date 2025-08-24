@@ -34,7 +34,11 @@
     --lg-saturate: 180%;
     --lg-border: hsla(0,0%,100%,.22);
     --lg-shadow: rgba(0,0,0,.25);
-    --messages-blue: #007AFF;
+    --messages-blue: {{ block.settings.buy_now_bg | default: '#007AFF' }};
+    --buy-now-text: {{ block.settings.buy_now_text | default: '#ffffff' }};
+    --mortise-bg: {{ block.settings.mortise_bg | default: '#222222' }};
+    --mortise-text: {{ block.settings.mortise_text | default: '#ffffff' }};
+    --mortise-border: {{ block.settings.mortise_border | default: 'rgba(255,255,255,0.15)' }};
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -349,13 +353,14 @@
   }
 
   .broen-hero__mortise-{{ section_id }} {
-    background: var(--chip-bg);
-    color: var(--chip-text);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 12px 20px;
-    font-size: 13px;
+    background: var(--mortise-bg);
+    color: var(--mortise-text);
+    border: 1px solid var(--mortise-border);
+    border-radius: 9999px;
+    padding: 10px 14px;
+    font-size: 14px;
     font-weight: 600;
+    letter-spacing: -0.01em;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: pointer;
     text-align: center;
@@ -467,7 +472,7 @@
     letter-spacing: -0.01em;
     font-size: 16px;
     line-height: 1;
-    color: #ffffff;
+    color: var(--buy-now-text);
 
     display: inline-flex;
     align-items: center;
@@ -481,24 +486,24 @@
     border: none;
 
     background: var(--messages-blue);
-    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--messages-blue) 30%, transparent);
 
     transition: all 0.2s ease;
   }
 
   .broen-hero__buy-now-{{ section_id }}:hover:not(:disabled) {
-    background: #0056CC;
+    background: {{ block.settings.buy_now_hover_bg | default: '#0056CC' }};
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--messages-blue) 40%, transparent);
   }
 
   .broen-hero__buy-now-{{ section_id }}:active {
     transform: translateY(0);
-    background: #004999;
+    background: {{ block.settings.buy_now_active_bg | default: '#004999' }};
   }
 
   .broen-hero__buy-now-{{ section_id }}:focus {
-    outline: 3px solid rgba(0, 122, 255, 0.5);
+    outline: 3px solid color-mix(in srgb, var(--messages-blue) 50%, transparent);
     outline-offset: 2px;
   }
 
@@ -1546,6 +1551,56 @@
       "id": "cta_hover_background",
       "label": "Add to cart hover",
       "default": "#f0f0f0"
+    },
+    {
+      "type": "header",
+      "content": "Buy Now Button"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_bg",
+      "label": "Buy Now background",
+      "default": "#007AFF"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_text",
+      "label": "Buy Now text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_hover_bg",
+      "label": "Buy Now hover background",
+      "default": "#0056CC"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_active_bg",
+      "label": "Buy Now active background",
+      "default": "#004999"
+    },
+    {
+      "type": "header",
+      "content": "Mortise Button"
+    },
+    {
+      "type": "color",
+      "id": "mortise_bg",
+      "label": "Mortise background",
+      "default": "#222222"
+    },
+    {
+      "type": "color",
+      "id": "mortise_text",
+      "label": "Mortise text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "mortise_border",
+      "label": "Mortise border",
+      "default": "rgba(255,255,255,0.15)"
     },
     {
       "type": "header",
