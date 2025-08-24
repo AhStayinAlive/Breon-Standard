@@ -5,29 +5,29 @@
   UPDATED: Removed specifications buttons, added liquid glass Add to Cart and Messages blue Buy Now
 {% endcomment %}
 
-{% assign section_id = section.id | replace: '_', '' | downcase %}
+{% assign section_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
   .broen-hero-{{ section_id }} {
-    --page-bg: {% if section.settings.page_background != blank %}{{ section.settings.page_background }}{% else %}#000000{% endif %};
-    --card-bg: {% if section.settings.card_background != blank %}{{ section.settings.card_background }}{% else %}#111111{% endif %};
-    --media-bg: {% if section.settings.media_background != blank %}{{ section.settings.media_background }}{% else %}#1a1a1a{% endif %};
-    --text: {% if section.settings.text_color != blank %}{{ section.settings.text_color }}{% else %}#ffffff{% endif %};
-    --muted: {% if section.settings.muted_text_color != blank %}{{ section.settings.muted_text_color }}{% else %}#999999{% endif %};
-    --border: {% if section.settings.border_color != blank %}{{ section.settings.border_color }}{% else %}rgba(255, 255, 255, 0.1){% endif %};
-    --chip-bg: {% if section.settings.chip_background != blank %}{{ section.settings.chip_background }}{% else %}#222222{% endif %};
-    --chip-text: {% if section.settings.chip_text_color != blank %}{{ section.settings.chip_text_color }}{% else %}#ffffff{% endif %};
-    --focus: {% if section.settings.focus_color != blank %}{{ section.settings.focus_color }}{% else %}#ffffff{% endif %};
-    --dot-active: {% if section.settings.dot_active_color != blank %}{{ section.settings.dot_active_color }}{% else %}#ffffff{% endif %};
-    --dot-inactive: {% if section.settings.dot_inactive_color != blank %}{{ section.settings.dot_inactive_color }}{% else %}rgba(255, 255, 255, 0.3){% endif %};
-    --cta-bg: {% if section.settings.cta_background != blank %}{{ section.settings.cta_background }}{% else %}#ffffff{% endif %};
-    --cta-text: {% if section.settings.cta_text_color != blank %}{{ section.settings.cta_text_color }}{% else %}#000000{% endif %};
-    --cta-hover: {% if section.settings.cta_hover_background != blank %}{{ section.settings.cta_hover_background }}{% else %}#f0f0f0{% endif %};
+    --page-bg: {% if block.settings.page_background != blank %}{{ block.settings.page_background }}{% else %}#000000{% endif %};
+    --card-bg: {% if block.settings.card_background != blank %}{{ block.settings.card_background }}{% else %}#111111{% endif %};
+    --media-bg: {% if block.settings.media_background != blank %}{{ block.settings.media_background }}{% else %}#1a1a1a{% endif %};
+    --text: {% if block.settings.text_color != blank %}{{ block.settings.text_color }}{% else %}#ffffff{% endif %};
+    --muted: {% if block.settings.muted_text_color != blank %}{{ block.settings.muted_text_color }}{% else %}#999999{% endif %};
+    --border: {% if block.settings.border_color != blank %}{{ block.settings.border_color }}{% else %}rgba(255, 255, 255, 0.1){% endif %};
+    --chip-bg: {% if block.settings.chip_background != blank %}{{ block.settings.chip_background }}{% else %}#222222{% endif %};
+    --chip-text: {% if block.settings.chip_text_color != blank %}{{ block.settings.chip_text_color }}{% else %}#ffffff{% endif %};
+    --focus: {% if block.settings.focus_color != blank %}{{ block.settings.focus_color }}{% else %}#ffffff{% endif %};
+    --dot-active: {% if block.settings.dot_active_color != blank %}{{ block.settings.dot_active_color }}{% else %}#ffffff{% endif %};
+    --dot-inactive: {% if block.settings.dot_inactive_color != blank %}{{ block.settings.dot_inactive_color }}{% else %}rgba(255, 255, 255, 0.3){% endif %};
+    --cta-bg: {% if block.settings.cta_background != blank %}{{ block.settings.cta_background }}{% else %}#ffffff{% endif %};
+    --cta-text: {% if block.settings.cta_text_color != blank %}{{ block.settings.cta_text_color }}{% else %}#000000{% endif %};
+    --cta-hover: {% if block.settings.cta_hover_background != blank %}{{ block.settings.cta_hover_background }}{% else %}#f0f0f0{% endif %};
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.16);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.24);
     --blur: 20px;
-    --radius: {% if section.settings.border_radius != blank %}{{ section.settings.border_radius }}px{% else %}20px{% endif %};
+    --radius: {% if block.settings.border_radius != blank %}{{ block.settings.border_radius }}px{% else %}20px{% endif %};
     
     /* Apple liquid glass tokens */
     --lg-blur: 18px;
@@ -56,6 +56,12 @@
     font-synthesis: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: visible;
+  }
+  
+  /* Ensure parent sections allow overflow for hover expansion */
+  .shopify-section:has(.broen-hero-{{ section_id }}) {
+    overflow: visible;
   }
 
   .broen-hero__container-{{ section_id }} {
@@ -242,12 +248,12 @@
   .broen-hero__classification-{{ section_id }} {
     font-size: 11px;
     font-weight: 600;
-    color: {% if section.settings.classification_text_color != blank %}{{ section.settings.classification_text_color }}{% else %}#deb887{% endif %};
+    color: {% if block.settings.classification_text_color != blank %}{{ block.settings.classification_text_color }}{% else %}#deb887{% endif %};
     text-transform: uppercase;
     letter-spacing: 1px;
     padding: 6px 12px;
-    background: {% if section.settings.classification_background != blank %}{{ section.settings.classification_background }}{% else %}rgba(97,69,36,.4){% endif %};
-    border: 1px solid {% if section.settings.classification_border != blank %}{{ section.settings.classification_border }}{% else %}rgba(97,69,36,.6){% endif %};
+    background: {% if block.settings.classification_background != blank %}{{ block.settings.classification_background }}{% else %}rgba(97,69,36,.4){% endif %};
+    border: 1px solid {% if block.settings.classification_border != blank %}{{ block.settings.classification_border }}{% else %}rgba(97,69,36,.6){% endif %};
     border-radius: 16px;
     display: inline-block;
     width: fit-content;

@@ -5,6 +5,13 @@
 {{ 'component-list-payment.css' | asset_url | stylesheet_tag }}
 {{ 'component-list-social.css' | asset_url | stylesheet_tag }}
 
+{%- liquid
+  assign is_product_or_collection_page = false
+  if template contains 'product' or template contains 'collection'
+    assign is_product_or_collection_page = true
+  endif
+-%}
+
 {%- style -%}
   .footer {
     margin-top: {{ section.settings.margin_top | times: 0.75 | round: 0 }}px;
@@ -14,6 +21,98 @@
     padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
+
+  {%- unless is_product_or_collection_page -%}
+  /* Default footer: black background, white text */
+  .footer.footer--default-black {
+    background-color: black !important;
+    color: white !important;
+  }
+  
+  .footer--default-black * {
+    color: white !important;
+  }
+  
+  .footer--default-black .link {
+    color: white !important;
+  }
+  
+  .footer--default-black .field__input {
+    color: white !important;
+    border-color: white !important;
+    background-color: transparent !important;
+  }
+  
+  .footer--default-black .field__label {
+    color: white !important;
+  }
+  
+  .footer--default-black .newsletter-form__button {
+    color: white !important;
+  }
+  
+  .footer--default-black .icon {
+    fill: white !important;
+  }
+  
+  /* Make brand logos bigger */
+  .footer .footer-block__image-wrapper {
+    max-width: min(100%, 250px) !important;
+  }
+  
+  /* Keep social media icons normal size */
+  .footer .footer__list-social .icon,
+  .footer .list-social .icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  {%- endunless -%}
+
+  {%- if is_product_or_collection_page -%}
+  /* Product/Collection pages: white background, black text */
+  .footer.footer--product-collection-override {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .footer--product-collection-override * {
+    color: black !important;
+  }
+  
+  .footer--product-collection-override .link {
+    color: black !important;
+  }
+  
+  .footer--product-collection-override .field__input {
+    color: black !important;
+    border-color: black !important;
+    background-color: transparent !important;
+  }
+  
+  .footer--product-collection-override .field__label {
+    color: black !important;
+  }
+  
+  .footer--product-collection-override .newsletter-form__button {
+    color: black !important;
+  }
+  
+  .footer--product-collection-override .icon {
+    fill: black !important;
+  }
+  
+  /* Make brand logos bigger on product/collection pages too */
+  .footer--product-collection-override .footer-block__image-wrapper {
+    max-width: min(100%, 250px) !important;
+  }
+  
+  /* Keep social media icons normal size on product/collection pages */
+  .footer--product-collection-override .footer__list-social .icon,
+  .footer--product-collection-override .list-social .icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  {%- endif -%}
 
   @media screen and (min-width: 750px) {
     .footer {
@@ -27,7 +126,7 @@
   }
 {%- endstyle -%}
 
-<footer class="footer color-{{ section.settings.color_scheme }} gradient section-{{ section.id }}-padding">
+<footer class="footer {% if is_product_or_collection_page %}footer--product-collection-override{% else %}footer--default-black{% endif %} section-{{ section.id }}-padding">
   {%- liquid
     assign has_social_icons = true
     if settings.social_facebook_link == blank and settings.social_instagram_link == blank and settings.social_youtube_link == blank and settings.social_tiktok_link == blank and settings.social_twitter_link == blank and settings.social_pinterest_link == blank and settings.social_snapchat_link == blank and settings.social_tumblr_link == blank and settings.social_vimeo_link == blank
@@ -103,23 +202,26 @@
                     {%- endif -%}
                   {%- when 'brand_information' -%}
                     <div class="footer-block__brand-info">
-                      {%- if settings.brand_image != blank -%}
-                        {%- assign brand_image_height = settings.brand_image_width
-                          | divided_by: settings.brand_image.aspect_ratio
-                        -%}
+                      {%- liquid
+                        if is_product_or_collection_page
+                          assign display_brand_image = 'Black_Transparent_Large_c26c6606-38fb-4241-8855-a3a58117218a.png' | file_url
+                        else
+                          assign display_brand_image = 'Broen_1.png' | file_url
+                        endif
+                        assign brand_image_width = settings.brand_image_width | default: 300
+                      -%}
+                      
+                      {%- if display_brand_image != blank -%}
                         <div
                           class="footer-block__image-wrapper"
-                          style="max-width: min(100%, {{ settings.brand_image_width }}px);"
+                          style="max-width: min(100%, {{ brand_image_width }}px);"
                         >
-                          {{
-                            settings.brand_image
-                            | image_url: width: 1100
-                            | image_tag:
-                              loading: 'lazy',
-                              widths: '50, 100, 150, 200, 300, 400, 550, 800, 1100',
-                              height: brand_image_height,
-                              width: settings.brand_image_width
-                          }}
+                          <img
+                            src="{{ display_brand_image }}"
+                            alt="{{ shop.name | escape }}"
+                            loading="lazy"
+                            style="max-width: 100%; height: auto;"
+                          >
                         </div>
                       {%- endif -%}
                       {%- if settings.brand_headline != blank -%}

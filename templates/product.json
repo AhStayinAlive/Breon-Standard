@@ -13,25 +13,25 @@
       "type": "_blocks",
       "blocks": {
         "ai_gen_block_b5016f8_eg6g6c": {
-          "type": "ai_gen_block_b5016f8",
+          "type": "product_details",
           "settings": {
             "page_background": "#ffffff",
-            "card_background": "#161b22",
-            "media_background": "#4d658b",
-            "text_color": "#cecece",
-            "muted_text_color": "#a8b0bb",
+            "card_background": "#ffffff",
+            "media_background": "#ffffff",
+            "text_color": "#000000",
+            "muted_text_color": "#000000",
             "classification_text_color": "#deb887",
             "classification_background": "#61452466",
             "classification_border": "#61452499",
-            "border_color": "#cecece",
-            "chip_background": "#2095dd",
-            "chip_text_color": "#ffffff",
+            "border_color": "#000000",
+            "chip_background": "#0171e3",
+            "chip_text_color": "#000000",
             "focus_color": "#4a9eff",
-            "dot_active_color": "#cecece",
+            "dot_active_color": "#000000",
             "dot_inactive_color": "#a8b0bb66",
-            "cta_background": "#ffffff",
-            "cta_text_color": "#0e1116",
-            "cta_hover_background": "#f0f0f0",
+            "cta_background": "#850033",
+            "cta_text_color": "#e32402",
+            "cta_hover_background": "#2095dd",
             "border_radius": 20
           },
           "blocks": {}
@@ -56,7 +56,7 @@
           "blocks": {}
         },
         "ai_gen_block_0063dc4_cPVxaf": {
-          "type": "ai_gen_block_0063dc4",
+          "type": "product_details_metafields",
           "settings": {
             "about_heading": "About the Product",
             "how_it_works_heading": "How It Works",
@@ -72,14 +72,19 @@
             "section_inner_spacing": 64,
             "heading_spacing": 80,
             "heading_size": 46,
-            "background_color": "#0171e3",
-            "card_background": "#f4a0c1",
-            "media_background": "#bf7b95",
-            "text_color": "#333333",
+            "background_color": "#ffffff",
+            "card_background": "#ffffff",
+            "media_background": "#ffffff",
+            "text_color": "#000000",
             "muted_text_color": "#999999",
             "border_color": "#ffffff1a",
             "focus_color": "#ffffff",
-            "border_radius": 20
+            "border_radius": 20,
+            "default_button_text": "Learn More",
+            "default_feature_text": "Feature",
+            "card_width": 320,
+            "card_height": 480,
+            "center_card_scale": 1.1
           },
           "blocks": {}
         }

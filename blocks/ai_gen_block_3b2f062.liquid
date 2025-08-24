@@ -6,14 +6,14 @@
   - More Apple-inspired design
 {% endcomment %}
 
-{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
   .ai-product-carousel-{{ ai_gen_id }} {
-    background: {{ section.settings.background_color | default: '#000000' }};
-    background: linear-gradient(180deg, {{ section.settings.background_color | default: '#000000' }} 0%, {{ section.settings.background_color | default: '#000000' | color_darken: 5 }} 100%);
-    padding-top: {{ section.settings.section_padding_top | default: 80 }}px;
-    padding-bottom: {{ section.settings.section_padding | default: 60 }}px;
+    background: {{ block.settings.background_color | default: '#000000' }};
+    background: linear-gradient(180deg, {{ block.settings.background_color | default: '#000000' }} 0%, {{ block.settings.background_color | default: '#000000' | color_darken: 5 }} 100%);
+    padding-top: {{ block.settings.section_padding_top | default: 80 }}px;
+    padding-bottom: {{ block.settings.section_padding | default: 60 }}px;
     overflow: hidden;
     width: 100%;
     position: relative;
@@ -24,9 +24,9 @@
     position: absolute; inset: 0;
     background: linear-gradient(
       135deg,
-      {{ section.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.95 }} 0%,
-      {{ section.settings.background_color | default: '#000000' | color_darken: 8 | color_modify: 'alpha', 0.98 }} 50%,
-      {{ section.settings.background_color | default: '#000000' | color_darken: 3 | color_modify: 'alpha', 0.95 }} 100%
+      {{ block.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.95 }} 0%,
+      {{ block.settings.background_color | default: '#000000' | color_darken: 8 | color_modify: 'alpha', 0.98 }} 50%,
+      {{ block.settings.background_color | default: '#000000' | color_darken: 3 | color_modify: 'alpha', 0.95 }} 100%
     );
     z-index: 1;
   }
@@ -40,11 +40,11 @@
   }
 
   .ai-product-carousel__heading-{{ ai_gen_id }} {
-    color: {{ section.settings.heading_color | default: '#ffffff' }};
-    font-size: clamp({{ section.settings.heading_size | default: 32 | minus: 8 }}px, 5vw, {{ section.settings.heading_size | default: 32 }}px);
+    color: {{ block.settings.heading_color | default: '#ffffff' }};
+    font-size: clamp({{ block.settings.heading_size | default: 32 | minus: 8 }}px, 5vw, {{ block.settings.heading_size | default: 32 }}px);
     font-weight: 700;
     text-align: center;
-    margin: 0 0 {{ section.settings.heading_spacing | default: 48 }}px;
+    margin: 0 0 {{ block.settings.heading_spacing | default: 48 }}px;
     letter-spacing: -0.02em;
     line-height: 1.1;
     position: relative;
@@ -53,7 +53,7 @@
     content: '';
     position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
     width: 80px; height: 2px;
-    background: linear-gradient(90deg, transparent, {{ section.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.8 }}, transparent);
+    background: linear-gradient(90deg, transparent, {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.8 }}, transparent);
   }
 
   .ai-product-carousel__wrapper-{{ ai_gen_id }} {
@@ -65,7 +65,7 @@
 
   .ai-product-carousel__track-container-{{ ai_gen_id }} {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     margin: 0 80px;
     border-radius: 20px;
   }
@@ -80,14 +80,14 @@
 
   .ai-product-carousel__card-{{ ai_gen_id }} {
     flex: 0 0 auto;
-    width: calc((100% - ({{ section.settings.cards_per_view_desktop | default: 3 | minus: 1 }} * 20px)) / {{ section.settings.cards_per_view_desktop | default: 3 }});
+    width: calc((100% - ({{ block.settings.cards_per_view_desktop | default: 3 | minus: 1 }} * 20px)) / {{ block.settings.cards_per_view_desktop | default: 3 }});
     min-width: 280px;
     height: 580px;
-    background: {{ section.settings.card_background | default: '#3d3d3d' | color_modify: 'alpha', 0.95 }};
-    border: 1px solid {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 20 | color_modify: 'alpha', 0.1 }};
-    border-radius: {{ section.settings.card_border_radius | default: 16 }}px;
-    box-shadow: 0 8px 32px {{ section.settings.card_background | default: '#000000' | color_modify: 'alpha', 0.4 }};
-    overflow: visible;
+    background: {{ block.settings.card_background | default: '#3d3d3d' | color_modify: 'alpha', 0.95 }};
+    border: 1px solid {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 20 | color_modify: 'alpha', 0.1 }};
+    border-radius: {{ block.settings.card_border_radius | default: 16 }}px;
+    box-shadow: 0 8px 32px {{ block.settings.card_background | default: '#000000' | color_modify: 'alpha', 0.4 }};
+    overflow: hidden;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
     color: inherit;
@@ -100,34 +100,18 @@
     position: relative;
   }
 
-  .ai-product-carousel__card-inner-{{ ai_gen_id }} {
-    height: 100%;
-    border-radius: inherit;
-    overflow: hidden;
-    transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.28s, height 0.28s;
-    background: inherit;
-    border: inherit;
-    box-shadow: inherit;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .ai-product-carousel__card-{{ ai_gen_id }}.is-expanded .ai-product-carousel__card-inner-{{ ai_gen_id }} {
-    height: calc(100% + 60px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-  }
-
   .ai-product-carousel__card-{{ ai_gen_id }}:hover {
-    transform: translateY(-6px);
-    border-color: {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 40 | color_modify: 'alpha', 0.3 }};
-    background: {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
+    transform: translateY(-6px) scale(1.015);
+    border-color: {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 40 | color_modify: 'alpha', 0.3 }};
+    box-shadow: 0 20px 60px {{ block.settings.card_background | default: '#000000' | color_modify: 'alpha', 0.6 }};
+    background: {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
   }
 
   .ai-product-carousel__card-media-{{ ai_gen_id }} {
     position: relative;
     width: 100%;
     height: 320px;
-    background: linear-gradient(135deg, {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 10 }} 0%, {{ section.settings.card_background | default: '#3d3d3d' | color_darken: 5 }} 100%);
+    background: linear-gradient(135deg, {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 10 }} 0%, {{ block.settings.card_background | default: '#3d3d3d' | color_darken: 5 }} 100%);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -149,21 +133,21 @@
   .ai-product-carousel__card-placeholder-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 15 }} 0%, {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 5 }} 100%);
+    background: linear-gradient(135deg, {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 15 }} 0%, {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 5 }} 100%);
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 500;
-    color: {{ section.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.6 }};
+    color: {{ block.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.6 }};
     text-align: center;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    border: 1px solid {{ section.settings.card_background | default: '#3d3d3d' | color_lighten: 20 | color_modify: 'alpha', 0.1 }};
+    border: 1px solid {{ block.settings.card_background | default: '#3d3d3d' | color_lighten: 20 | color_modify: 'alpha', 0.1 }};
   }
   .ai-product-carousel__card-{{ ai_gen_id }}:hover .ai-product-carousel__card-placeholder-{{ ai_gen_id }} {
     transform: scale(1.05);
   }
   .ai-product-carousel__card-placeholder-{{ ai_gen_id }} svg {
     width: 48px; height: 48px; opacity: 0.4;
-    fill: {{ section.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.5 }};
+    fill: {{ block.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.5 }};
   }
 
   .ai-product-carousel__card-content-{{ ai_gen_id }} {
@@ -175,7 +159,7 @@
   }
 
   .ai-product-carousel__product-name-{{ ai_gen_id }} {
-    color: {{ section.settings.card_text_color | default: '#ffffff' }};
+    color: {{ block.settings.card_text_color | default: '#ffffff' }};
     font-size: 20px; 
     font-weight: 700;
     margin: 0 0 16px 0;
@@ -204,7 +188,7 @@
   }
 
   .ai-product-carousel__price-{{ ai_gen_id }} {
-    color: {{ section.settings.card_text_color | default: '#ffffff' }};
+    color: {{ block.settings.card_text_color | default: '#ffffff' }};
     font-size: 24px; 
     font-weight: 700;
     margin: 0 0 20px 0;
@@ -213,51 +197,66 @@
 
   .ai-product-carousel__button-group-{{ ai_gen_id }} {
     display: flex; 
+    flex-direction: row;
     gap: 12px; 
     margin-top: auto;
-    flex-wrap: nowrap;
   }
 
-  /* NEW shared CTA */
-  .ai-pc-cta-{{ ai_gen_id }} {
-    flex: 1;
-    display: inline-flex;
-    align-items: center;
+  /* Liquid-glass pill (ATC) */
+  .ai-pc-glass-btn-{{ ai_gen_id }}{
+    display: inline-flex; 
+    align-items: center; 
     justify-content: center;
-    min-height: 48px;
+    flex: 1;
+    min-height: 44px; 
     padding: 12px 16px;
     border-radius: 100px;
-    font: 600 13px/1.1 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
-    text-decoration: none;
-    text-align: center;
-    gap: 0.5ch;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
-    border: 1px solid hsla(0, 0%, 100%, 0.22);
-    color: #fff;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18));
+    border: 1px solid hsla(0,0%,100%,.22);
+    color: #fff; 
+    font-weight: 600; 
+    font-size: 13px;
+    background: linear-gradient(0deg,rgba(255,255,255,.18),rgba(255,255,255,.18));
     backdrop-filter: saturate(180%) blur(18px);
     -webkit-backdrop-filter: saturate(180%) blur(18px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 12px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.12);
+    text-decoration: none; 
+    text-align: center;
+    transition: all .2s; 
+    cursor: pointer;
   }
-  
-  .ai-pc-cta--primary-{{ ai_gen_id }} {
-    /* Add to cart - same as base */
+  .ai-pc-glass-btn-{{ ai_gen_id }}:hover{
+    transform: translateY(-1px);
+    background: linear-gradient(0deg,rgba(255,255,255,.24),rgba(255,255,255,.24));
+    box-shadow: 0 6px 16px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.14);
   }
-  
-  .ai-pc-cta--secondary-{{ ai_gen_id }} {
+  .ai-pc-glass-btn-{{ ai_gen_id }}[disabled]{ 
+    opacity: .5; 
+    cursor: not-allowed; 
+  }
+
+  /* Buy Now: Apple iMessage Blue */
+  .ai-product-carousel__buy-now-btn-{{ ai_gen_id }} {
+    flex: 1;
+    min-height: 44px;
     background: #007aff;
-    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 100px;
+    font-size: 13px; 
+    font-weight: 700;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    text-decoration: none; 
+    text-align: center;
+    transition: all 0.2s ease;
     box-shadow: 0 4px 12px rgba(0, 122, 255, 0.35);
   }
-  
-  .ai-pc-cta-{{ ai_gen_id }}:hover {
+  .ai-product-carousel__buy-now-btn-{{ ai_gen_id }}:hover {
+    background: #0a66ff;
     transform: translateY(-1px);
-  }
-  
-  .ai-pc-cta-{{ ai_gen_id }}[disabled] {
-    opacity: 0.5;
-    cursor: not-allowed;
+    box-shadow: 0 6px 16px rgba(0, 122, 255, 0.45);
   }
 
   /* See All Products Link */
@@ -268,7 +267,7 @@
     font-weight: 500;
     text-decoration: none;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
     transition: all 0.2s ease;
     letter-spacing: 0.3px;
   }
@@ -285,10 +284,10 @@
     transform: translateY(-50%);
     width: 50px; 
     height: 50px;
-    background: {{ section.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.9 }};
-    border: 2px solid {{ section.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.2 }};
+    background: {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.9 }};
+    border: 2px solid {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.2 }};
     border-radius: 50%;
-    color: {{ section.settings.background_color | default: '#000000' }};
+    color: {{ block.settings.background_color | default: '#000000' }};
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex; 
@@ -297,13 +296,13 @@
     z-index: 200;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px {{ section.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.3 }};
+    box-shadow: 0 4px 20px {{ block.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.3 }};
   }
   .ai-product-carousel__navigation-{{ ai_gen_id }}:hover {
-    background: {{ section.settings.heading_color | default: '#ffffff' }};
-    border-color: {{ section.settings.heading_color | default: '#ffffff' }};
+    background: {{ block.settings.heading_color | default: '#ffffff' }};
+    border-color: {{ block.settings.heading_color | default: '#ffffff' }};
     transform: translateY(-50%) scale(1.08);
-    box-shadow: 0 6px 24px {{ section.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.4 }};
+    box-shadow: 0 6px 24px {{ block.settings.background_color | default: '#000000' | color_modify: 'alpha', 0.4 }};
   }
   .ai-product-carousel__navigation-{{ ai_gen_id }}:active { 
     transform: translateY(-50%) scale(0.96); 
@@ -335,7 +334,7 @@
     width: 8px; 
     height: 8px; 
     border-radius: 50%;
-    background-color: {{ section.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.25 }};
+    background-color: {{ block.settings.heading_color | default: '#ffffff' | color_modify: 'alpha', 0.25 }};
     border: none; 
     cursor: pointer; 
     transition: all .3s; 
@@ -343,36 +342,7 @@
     outline: none;
   }
   .ai-product-carousel__dot-{{ ai_gen_id }}.active { 
-    background-color: {{ section.settings.heading_color | default: '#ffffff' }}; 
-  }
-
-  .ai-product-carousel__empty-state-{{ ai_gen_id }} {
-    text-align: center;
-    padding: 60px 20px;
-  }
-
-  .ai-product-carousel__empty-title-{{ ai_gen_id }} {
-    color: {{ section.settings.heading_color | default: '#ffffff' }};
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 16px 0;
-  }
-
-  .ai-product-carousel__empty-text-{{ ai_gen_id }} {
-    color: {{ section.settings.card_text_color | default: '#ffffff' | color_modify: 'alpha', 0.7 }};
-    font-size: 16px;
-    margin: 0;
-  }
-
-  .ai-product-carousel__debug-{{ ai_gen_id }} {
-    background: #333;
-    color: #fff;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-    font-family: monospace;
-    font-size: 14px;
-    line-height: 1.5;
+    background-color: {{ block.settings.heading_color | default: '#ffffff' }}; 
   }
 
   /* Responsive tweaks */
@@ -396,14 +366,14 @@
 
   @media (max-width: 768px){
     .ai-product-carousel-{{ ai_gen_id }}{
-      padding-top: {{ section.settings.section_padding_top | default: 80 | times: 0.6 | round }}px;
-      padding-bottom: {{ section.settings.section_padding | default: 60 | times: 0.6 | round }}px;
+      padding-top: {{ block.settings.section_padding_top | default: 80 | times: 0.6 | round }}px;
+      padding-bottom: {{ block.settings.section_padding | default: 60 | times: 0.6 | round }}px;
     }
     .ai-product-carousel__container-{{ ai_gen_id }} { 
       padding: 0 12px; 
     }
     .ai-product-carousel__heading-{{ ai_gen_id }} { 
-      margin-bottom: {{ section.settings.heading_spacing | default: 48 | times: 0.67 | round }}px; 
+      margin-bottom: {{ block.settings.heading_spacing | default: 48 | times: 0.67 | round }}px; 
     }
     .ai-product-carousel__wrapper-{{ ai_gen_id }} { 
       padding: 16px 0 28px 0; 
@@ -465,15 +435,17 @@
       margin-bottom: 18px;
     }
     .ai-product-carousel__button-group-{{ ai_gen_id }} {
+      flex-direction: column;
       gap: 10px;
     }
-    .ai-pc-cta-{{ ai_gen_id }} {
-      min-height: 44px;
-      padding: 10px 14px;
+    .ai-pc-glass-btn-{{ ai_gen_id }},
+    .ai-product-carousel__buy-now-btn-{{ ai_gen_id }} {
+      width: 100%;
+      flex: none;
     }
 
     .ai-product-carousel__navigation-{{ ai_gen_id }} { 
-      display: flex; 
+      display: none; 
     }
     .ai-product-carousel__pagination-{{ ai_gen_id }} { 
       gap: 6px; 
@@ -526,46 +498,18 @@
 
 <product-carousel-{{ ai_gen_id }}
   class="ai-product-carousel-{{ ai_gen_id }}"
-  data-cards-per-view="{{ section.settings.cards_per_view_desktop | default: 3 }}"
-  data-auto-play="{{ section.settings.enable_autoplay }}"
-  data-auto-play-speed="{{ section.settings.autoplay_speed | default: 5000 }}"
+  {{ block.shopify_attributes }}
+  data-cards-per-view="{{ block.settings.cards_per_view_desktop | default: 3 }}"
+  data-auto-play="{{ block.settings.enable_autoplay }}"
+  data-auto-play-speed="{{ block.settings.autoplay_speed | default: 5000 }}"
 >
   <div class="ai-product-carousel__container-{{ ai_gen_id }}">
-    {% if section.settings.heading != blank %}
-      <h2 class="ai-product-carousel__heading-{{ ai_gen_id }}">{{ section.settings.heading }}</h2>
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-product-carousel__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
     {% endif %}
 
-    <!-- DEBUG INFO -->
-    <div class="ai-product-carousel__debug-{{ ai_gen_id }}">
-      <strong>DEBUG INFO:</strong><br>
-      Collection Handle: "{{ section.settings.product_collection | default: 'NOT SET' }}"<br>
-      {% if section.settings.product_collection != blank %}
-        {% assign debug_collection = collections[section.settings.product_collection] %}
-        {% if debug_collection %}
-          Collection Exists: YES<br>
-          Collection Title: "{{ debug_collection.title }}"<br>
-          Total Products in Collection: {{ debug_collection.products.size }}<br>
-          {% assign debug_products = debug_collection.products | limit: 3 %}
-          First 3 Product Names:<br>
-          {% for product in debug_products %}
-            - {{ product.title }}<br>
-          {% endfor %}
-        {% else %}
-          Collection Exists: NO<br>
-          Collection Object: NULL/BLANK<br>
-        {% endif %}
-      {% else %}
-        Collection Handle: BLANK<br>
-      {% endif %}
-      Available Collections (first 5): 
-      {% for collection in collections limit: 5 %}
-        "{{ collection.handle }}"{% unless forloop.last %}, {% endunless %}
-      {% endfor %}
-    </div>
-
-    {% assign collection_handle = section.settings.product_collection | default: 'all' %}
-    {% assign selected_collection = collections[collection_handle] %}
-    {% assign products_to_show = selected_collection.products | limit: 8 %}
+    {% assign collection_handle = block.settings.product_collection %}
+    {% assign products_to_show = collections[collection_handle].products | limit: 8 %}
 
     {% if products_to_show.size > 0 %}
       <div class="ai-product-carousel__wrapper-{{ ai_gen_id }}">
@@ -573,59 +517,57 @@
           <div class="ai-product-carousel__track-{{ ai_gen_id }}" role="region" aria-label="Product carousel">
             {% for product in products_to_show %}
               <div class="ai-product-carousel__card-{{ ai_gen_id }}" data-product-id="{{ product.id }}">
-                <div class="ai-product-carousel__card-inner-{{ ai_gen_id }}">
-                  <div class="ai-product-carousel__card-media-{{ ai_gen_id }}">
-                    {% if product.featured_image %}
-                      <img
-                        src="{{ product.featured_image | image_url: width: 600 }}"
-                        alt="{{ product.featured_image.alt | default: product.title | escape }}"
-                        loading="lazy"
-                        width="600"
-                        height="400"
-                      >
-                    {% else %}
-                      <div class="ai-product-carousel__card-placeholder-{{ ai_gen_id }}">
-                        {{ 'product-1' | placeholder_svg_tag }}
-                      </div>
+                <div class="ai-product-carousel__card-media-{{ ai_gen_id }}">
+                  {% if product.featured_image %}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 600 }}"
+                      alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                      loading="lazy"
+                      width="600"
+                      height="400"
+                    >
+                  {% else %}
+                    <div class="ai-product-carousel__card-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="ai-product-carousel__card-content-{{ ai_gen_id }}">
+                  {% assign door_classification = product.metafields.custom.door_type.value | default: product.metafields.custom.door_classification.value %}
+                  {% if door_classification != blank %}
+                    <span class="ai-product-carousel__door-classification-{{ ai_gen_id }}">
+                      {{ door_classification | replace: '-', ' ' | upcase }}
+                    </span>
+                  {% else %}
+                    <span class="ai-product-carousel__door-classification-{{ ai_gen_id }}">
+                      DOOR CLASSIFICATION
+                    </span>
+                  {% endif %}
+
+                  <h3 class="ai-product-carousel__product-name-{{ ai_gen_id }}">{{ product.title }}</h3>
+
+                  <div class="ai-product-carousel__price-{{ ai_gen_id }}">
+                    {% if product.compare_at_price > product.price %}
+                      <span style="text-decoration: line-through; opacity: 0.7; font-size: 14px;">{{ product.compare_at_price | money }}</span>
                     {% endif %}
+                    {{ product.price | money }}
                   </div>
 
-                  <div class="ai-product-carousel__card-content-{{ ai_gen_id }}">
-                    {% assign door_classification = product.metafields.custom.door_type.value | default: product.metafields.custom.door_classification.value %}
-                    {% if door_classification != blank %}
-                      <span class="ai-product-carousel__door-classification-{{ ai_gen_id }}">
-                        {{ door_classification | replace: '-', ' ' | upcase }}
-                      </span>
-                    {% else %}
-                      <span class="ai-product-carousel__door-classification-{{ ai_gen_id }}">
-                        DOOR CLASSIFICATION
-                      </span>
-                    {% endif %}
+                  <div class="ai-product-carousel__button-group-{{ ai_gen_id }}">
+                    <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-form">
+                      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                      <button
+                        type="submit"
+                        name="add"
+                        class="ai-pc-glass-btn-{{ ai_gen_id }}"
+                        {% unless product.available %}disabled{% endunless %}
+                      >
+                        {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+                      </button>
+                    </form>
 
-                    <h3 class="ai-product-carousel__product-name-{{ ai_gen_id }}">{{ product.title }}</h3>
-
-                    <div class="ai-product-carousel__price-{{ ai_gen_id }}">
-                      {% if product.compare_at_price > product.price %}
-                        <span style="text-decoration: line-through; opacity: 0.7; font-size: 14px;">{{ product.compare_at_price | money }}</span>
-                      {% endif %}
-                      {{ product.price | money }}
-                    </div>
-
-                    <div class="ai-product-carousel__button-group-{{ ai_gen_id }}">
-                      <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-form">
-                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                        <button
-                          type="submit"
-                          name="add"
-                          class="ai-pc-cta-{{ ai_gen_id }} ai-pc-cta--primary-{{ ai_gen_id }}"
-                          {% unless product.available %}disabled{% endunless %}
-                        >
-                          {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
-                        </button>
-                      </form>
-
-                      <a href="{{ product.url }}" class="ai-pc-cta-{{ ai_gen_id }} ai-pc-cta--secondary-{{ ai_gen_id }}">Buy Now</a>
-                    </div>
+                    <a href="{{ product.url }}" class="ai-product-carousel__buy-now-btn-{{ ai_gen_id }}">Buy Now</a>
                     
                     <a href="{{ collections[collection_handle].url | default: '/collections/all' }}" class="ai-product-carousel__see-all-{{ ai_gen_id }}">
                       See all products
@@ -662,13 +604,7 @@
     {% else %}
       <div class="ai-product-carousel__empty-state-{{ ai_gen_id }}">
         <h3 class="ai-product-carousel__empty-title-{{ ai_gen_id }}">No products found</h3>
-        <p class="ai-product-carousel__empty-text-{{ ai_gen_id }}">
-          {% if collection_handle == blank %}
-            Please select a collection in the theme editor
-          {% else %}
-            Collection "{{ collection_handle }}" {% if selected_collection %}has no products{% else %}not found{% endif %}
-          {% endif %}
-        </p>
+        <p class="ai-product-carousel__empty-text-{{ ai_gen_id }}">Please select a collection in the theme editor</p>
       </div>
     {% endif %}
   </div>
@@ -679,17 +615,15 @@
   class ProductCarousel{{ ai_gen_id }} extends HTMLElement {
     constructor() {
       super();
-      this.index = 0;
+      this.currentSlide = 0;
       this.isDesktop = window.innerWidth >= 768;
-      this.gap = 20;
-      this.gapMobile = 16;
       this.cardsPerView = this.isDesktop ? (parseInt(this.dataset.cardsPerView) || 3) : 1;
       this.isTransitioning = false;
       this.totalCards = 0;
-      this.maxIndex = 0;
       this.autoPlayEnabled = this.dataset.autoPlay === 'true' || this.dataset.autoPlay === '1';
       this.autoPlaySpeed = parseInt(this.dataset.autoPlaySpeed) || 5000;
       this.autoPlayInterval = null;
+      this.totalSlides = 0;
     }
 
     connectedCallback() {
@@ -700,64 +634,34 @@
       this.nextBtn = this.querySelector('.ai-product-carousel__navigation--next-{{ ai_gen_id }}');
       this.pagination = this.querySelector('.ai-product-carousel__pagination-{{ ai_gen_id }}');
 
-      console.log('ProductCarousel connected - Total cards found:', this.cards.length);
-
       this.totalCards = this.cards.length;
       if (this.totalCards === 0) return;
 
-      this.maxIndex = Math.max(0, this.totalCards - this.cardsPerView);
+      this.calculateSlides();
       this.setupPagination();
       this.setupEventListeners();
       this.setupTouchSupport();
       this.setupKeyboardNavigation();
-      this.setupCardExpansion();
       this.updateNavigation();
       this.setupAutoPlay();
 
-      setTimeout(() => this.goToIndex(0), 100);
+      setTimeout(() => this.goToSlide(0), 100);
+    }
+
+    calculateSlides() {
+      this.totalSlides = Math.ceil(this.totalCards / this.cardsPerView);
     }
 
     setupPagination() {
       this.pagination.innerHTML = '';
-      const totalDots = Math.ceil(this.totalCards / this.cardsPerView);
-      for (let i = 0; i < totalDots; i++) {
+      for (let i = 0; i < this.totalSlides; i++) {
         const dot = document.createElement('button');
-        dot.className = 'ai-product-carousel__dot-{{ ai_gen_id }}' + (i === 0 ? ' active' : '');
-        dot.setAttribute('aria-label', 'Go to page ' + (i + 1));
+        dot.className = `ai-product-carousel__dot-{{ ai_gen_id }}${i === 0 ? ' active' : ''}`;
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
         dot.setAttribute('role', 'tab');
-        dot.addEventListener('click', () => this.goToIndex(i * this.cardsPerView));
+        dot.addEventListener('click', () => this.goToSlide(i));
         this.pagination.appendChild(dot);
       }
-      console.log('Pagination setup - Total dots:', totalDots);
-    }
-
-    setupCardExpansion() {
-      this.cards.forEach(card => {
-        const inner = card.querySelector('.ai-product-carousel__card-inner-{{ ai_gen_id }}');
-        if (!inner) return;
-        
-        const expand = () => card.classList.add('is-expanded');
-        const collapse = () => card.classList.remove('is-expanded');
-
-        card.addEventListener('mouseenter', expand);
-        card.addEventListener('mouseleave', collapse);
-        card.addEventListener('focusin', expand);
-        card.addEventListener('focusout', collapse);
-
-        // Mobile tap to expand briefly
-        card.addEventListener('touchstart', () => {
-          expand();
-          clearTimeout(card._t);
-          card._t = setTimeout(collapse, 1200);
-        }, { passive: true });
-
-        // ESC key to collapse
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            collapse();
-          }
-        });
-      });
     }
 
     setupEventListeners() {
@@ -768,7 +672,7 @@
         form.addEventListener('submit', (e) => { e.stopPropagation(); });
       });
 
-      this.querySelectorAll('.ai-pc-cta--secondary-{{ ai_gen_id }}').forEach(link => {
+      this.querySelectorAll('.ai-product-carousel__buy-now-btn-{{ ai_gen_id }}').forEach(link => {
         link.addEventListener('click', (e) => { e.stopPropagation(); });
       });
 
@@ -781,12 +685,12 @@
           const newCardsPerView = this.isDesktop ? (parseInt(this.dataset.cardsPerView) || 3) : 1;
 
           if (wasDesktop !== this.isDesktop || newCardsPerView !== this.cardsPerView) {
-            this.isDesktop = wasDesktop;
             this.cardsPerView = newCardsPerView;
-            this.maxIndex = Math.max(0, this.totalCards - this.cardsPerView);
-            this.goToIndex(Math.min(this.index, this.maxIndex));
+            this.currentSlide = 0;
+            this.calculateSlides();
             this.setupPagination();
             this.updateNavigation();
+            this.goToSlide(0);
           }
         }, 250);
       });
@@ -837,7 +741,6 @@
       this.addEventListener('mouseenter', () => this.pauseAutoPlay());
       this.addEventListener('mouseleave', () => this.resumeAutoPlay());
       this.resumeAutoPlay();
-      console.log('Autoplay enabled:', this.autoPlayEnabled, 'Speed:', this.autoPlaySpeed);
     }
 
     pauseAutoPlay() {
@@ -850,52 +753,48 @@
       this.autoPlayInterval = setInterval(() => { this.nextSlide(); }, this.autoPlaySpeed);
     }
 
-    goToIndex(i) {
+    goToSlide(index) {
       if (this.isTransitioning || this.totalCards === 0) return;
-      this.index = Math.max(0, Math.min(i, this.maxIndex));
+      this.currentSlide = Math.max(0, Math.min(index, this.totalSlides - 1));
       this.isTransitioning = true;
 
-      console.log('Going to index:', this.index, 'of', this.maxIndex);
-
-      const cardW = this.cards[0].offsetWidth;
-      const gap = this.isDesktop ? this.gap : this.gapMobile;
-      const offset = this.index * (cardW + gap);
-
       if (this.isDesktop) {
-        this.track.style.transform = `translateX(-${offset}px)`;
-        console.log('Desktop transform applied:', offset);
+        const firstCard = this.cards[0];
+        if (firstCard) {
+          const cardWidth = firstCard.offsetWidth;
+          const gap = 20;
+          const cardIndex = this.currentSlide * this.cardsPerView;
+          const offset = cardIndex * (cardWidth + gap);
+          this.track.style.transform = `translateX(-${offset}px)`;
+        }
       } else {
+        const cardWidth = this.cards[0].offsetWidth;
+        const gap = 16;
+        const offset = this.currentSlide * (cardWidth + gap);
         this.trackContainer.scrollTo({ left: offset, behavior: 'smooth' });
-        console.log('Mobile scroll applied:', offset);
       }
 
       setTimeout(() => { this.isTransitioning = false; }, 600);
       this.updateNavigation();
     }
 
-    prevSlide() { this.goToIndex(this.index - 1); }
-    nextSlide() { this.goToIndex(this.index + 1); }
+    prevSlide() { this.goToSlide(Math.max(0, this.currentSlide - 1)); }
+    nextSlide() { this.goToSlide(Math.min(this.totalSlides - 1, this.currentSlide + 1)); }
 
     updateNavigation() {
-      if (this.prevBtn) this.prevBtn.disabled = this.index <= 0;
-      if (this.nextBtn) this.nextBtn.disabled = this.index >= this.maxIndex;
+      if (this.prevBtn) this.prevBtn.disabled = this.currentSlide <= 0;
+      if (this.nextBtn) this.nextBtn.disabled = this.currentSlide >= this.totalSlides - 1;
 
       this.querySelectorAll('.ai-product-carousel__dot-{{ ai_gen_id }}').forEach((dot, index) => {
-        const isActive = Math.floor(this.index / this.cardsPerView) === index;
-        dot.classList.toggle('active', isActive);
-        dot.setAttribute('aria-selected', isActive);
+        dot.classList.toggle('active', index === this.currentSlide);
+        dot.setAttribute('aria-selected', index === this.currentSlide);
       });
     }
 
     disconnectedCallback() { this.pauseAutoPlay(); }
   }
 
-  if (!customElements.get('product-carousel-{{ ai_gen_id }}')) {
-    customElements.define('product-carousel-{{ ai_gen_id }}', ProductCarousel{{ ai_gen_id }});
-    console.log('ProductCarousel custom element defined');
-  } else {
-    console.log('ProductCarousel custom element already exists');
-  }
+  customElements.define('product-carousel-{{ ai_gen_id }}', ProductCarousel{{ ai_gen_id }});
 })();
 </script>
 

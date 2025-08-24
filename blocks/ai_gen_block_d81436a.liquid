@@ -1,3 +1,12 @@
+{% comment %}
+  AI HEADER — parity with Dawn header + scoped styles
+  - Identical settings/schema to original header
+  - Keeps Dawn structure/hooks so sticky behavior + menus work
+  - All visual tweaks scoped via .ai-header-{{id}} wrapper
+{% endcomment %}
+
+{% assign ai_id = section.id | replace: '_', '' | downcase %}
+
 <link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
@@ -19,83 +28,67 @@
 {%- endif -%}
 
 <style>
+  /* === Unchanged Dawn base rules (kept for parity) === */
   header-drawer {
     justify-self: start;
     margin-left: -1.2rem;
   }
-
   {%- if section.settings.sticky_header_type == 'reduce-logo-size' -%}
     .scrolled-past-header .header__heading-logo-wrapper { width: 75%; }
   {%- endif -%}
-
   {%- if section.settings.menu_type_desktop != "drawer" -%}
     @media screen and (min-width: 990px) {
       header-drawer { display: none; }
     }
   {%- endif -%}
-
   .menu-drawer-container { display: flex; }
-
   .list-menu { list-style: none; padding: 0; margin: 0; }
-
   .list-menu--inline { display: inline-flex; flex-wrap: wrap; }
-
   summary.list-menu__item { padding-right: 2.7rem; }
-
-  .list-menu__item {
-    display: flex;
-    align-items: center;
-    line-height: calc(1 + 0.3 / var(--font-body-scale));
-  }
-
+  .list-menu__item { display: flex; align-items: center; line-height: calc(1 + 0.3 / var(--font-body-scale)); }
   .list-menu__item--link {
     text-decoration: none;
     padding-bottom: 1rem;
     padding-top: 1rem;
     line-height: calc(1 + 0.8 / var(--font-body-scale));
   }
-
   @media screen and (min-width: 750px) {
     .list-menu__item--link { padding-bottom: 0.5rem; padding-top: 0.5rem; }
   }
 </style>
 
 {%- style -%}
-  /* spacing tokens */
-  .header {
+  /* === AI-scoped wrapper so styles don't leak === */
+  .ai-header-{{ ai_id }} .header {
     padding: {{ section.settings.padding_top | times: 0.5 | round: 0 }}px 3rem {{ section.settings.padding_bottom | times: 0.5 | round: 0 }}px 3rem;
   }
 
-  /* pin the whole section; script still manages state classes */
-  .section-header {
-    position: sticky; /* Safari z-index fix note in Dawn */
+  .ai-header-{{ ai_id }} .section-header {
+    position: sticky;
     top: 0;
     z-index: 100;
     margin-bottom: {{ section.settings.margin_bottom | times: 0.75 | round: 0 }}px;
   }
-
   @media screen and (min-width: 750px) {
-    .section-header { margin-bottom: {{ section.settings.margin_bottom }}px; }
+    .ai-header-{{ ai_id }} .section-header { margin-bottom: {{ section.settings.margin_bottom }}px; }
   }
-
   @media screen and (min-width: 990px) {
-    .header {
+    .ai-header-{{ ai_id }} .header {
       padding-top: {{ section.settings.padding_top }}px;
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
 
-  /* ---- FROSTED / GLASS HEADER ---- */
-  .header-wrapper {
-    /* glass tokens (aligned with your collection glass UI) */
+  /* ---- FROSTED / GLASS HEADER (scoped) ---- */
+  .ai-header-{{ ai_id }} .header-wrapper {
     --hdr-blur: 20px;
     --hdr-saturate: 180%;
-    --hdr-bg: hsla(0,0%,100%,.08);       /* neutral translucent film */
+    --hdr-bg: hsla(0,0%,100%,.08);
     --hdr-bg-scrolled: hsla(0,0%,100%,.12);
     --hdr-border: hsla(0,0%,100%,.24);
 
     background: var(--hdr-bg) !important;
-    background-image: none !important;   /* neutralize Dawn gradient */
+    background-image: none !important;
     backdrop-filter: saturate(var(--hdr-saturate)) blur(var(--hdr-blur));
     -webkit-backdrop-filter: saturate(var(--hdr-saturate)) blur(var(--hdr-blur));
     border-bottom: 1px solid var(--hdr-border);
@@ -103,28 +96,24 @@
     will-change: backdrop-filter, background-color;
   }
 
-  /* slightly increase opacity once past the hero */
-  .scrolled-past-header .header-wrapper {
+  .ai-header-{{ ai_id }} .scrolled-past-header .header-wrapper {
     background: var(--hdr-bg-scrolled) !important;
     border-bottom-color: hsla(0,0%,100%,.26);
     box-shadow: 0 10px 24px rgba(0,0,0,.16);
   }
 
-  /* keep Dawn's optional divider compatible with glass */
-  .header-wrapper--border-bottom { border-bottom-color: var(--hdr-border); }
+  .ai-header-{{ ai_id }} .header-wrapper--border-bottom { border-bottom-color: var(--hdr-border); }
 
-  /* blur fallback */
   @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-    .header-wrapper {
+    .ai-header-{{ ai_id }} .header-wrapper {
       background: rgba(255,255,255,.88) !important;
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
   }
 
-  /* accessibility: reduce transparency if requested */
   @media (prefers-reduced-transparency: reduce) {
-    .header-wrapper {
+    .ai-header-{{ ai_id }} .header-wrapper {
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
       background: rgba(255,255,255,.9) !important;
@@ -144,19 +133,18 @@
   <symbol id="icon-search" viewbox="0 0 18 19" fill="none">
     <path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/>
   </symbol>
-
   <symbol id="icon-reset" class="icon icon-close"  fill="none" viewBox="0 0 18 18" stroke="currentColor">
     <circle r="8.5" cy="9" cx="9" stroke-opacity="0.2"/>
     <path d="M6.82972 6.82915L1.17193 1.17097" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 5)"/>
     <path d="M1.22896 6.88502L6.77288 1.11523" stroke-linecap="round" stroke-linejoin="round" transform="translate(5 5)"/>
   </symbol>
-
   <symbol id="icon-close" class="icon icon-close" fill="none" viewBox="0 0 18 17">
     <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/>
   </symbol>
 </svg>
 
 {%- liquid
+  assign has_app_block = false
   for block in section.blocks
     if block.type == '@app'
       assign has_app_block = true
@@ -164,153 +152,157 @@
   endfor
 -%}
 
-<{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
-  {%- liquid
-    assign social_links = false
-    assign localization_forms = false
-
-    if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
-      assign social_links = true
-    endif
-
-    if localization.available_countries.size > 1 and section.settings.enable_country_selector or section.settings.enable_language_selector and localization.available_languages.size > 1
-      assign localization_forms = true
-    endif
-  -%}
-  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
+<div class="ai-header-{{ ai_id }}">
+  <{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}div{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}">
     {%- liquid
-      if section.settings.menu != blank
-        render 'header-drawer'
+      assign social_links = false
+      assign localization_forms = false
+
+      if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_instagram_link != blank or settings.social_youtube_link != blank or settings.social_vimeo_link != blank or settings.social_tiktok_link != blank or settings.social_tumblr_link != blank or settings.social_snapchat_link != blank
+        assign social_links = true
+      endif
+
+      if localization.available_countries.size > 1 and section.settings.enable_country_selector or section.settings.enable_language_selector and localization.available_languages.size > 1
+        assign localization_forms = true
       endif
     -%}
 
-    {%- if section.settings.logo_position != 'middle-center' -%}
-      {%- if request.page_type == 'index' -%}<h1 class="header__heading">{%- endif -%}
-        <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-          {%- if settings.logo != blank -%}
-            <div class="header__heading-logo-wrapper">
-              {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-              {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-              {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
-              {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-              {{ settings.logo | image_url: width: 600 | image_tag:
-                class: 'header__heading-logo motion-reduce',
-                widths: widths,
-                height: logo_height,
-                width: settings.logo_width,
-                alt: logo_alt,
-                sizes: sizes,
-                preload: true
-              }}
-            </div>
-          {%- else -%}
-            <span class="h2">{{ shop.name }}</span>
-          {%- endif -%}
-        </a>
-      {%- if request.page_type == 'index' -%}</h1>{%- endif -%}
-    {%- endif -%}
-
-    {%- liquid
-      if section.settings.menu != blank
-        if section.settings.menu_type_desktop == 'dropdown'
-          render 'header-dropdown-menu'
-        elsif section.settings.menu_type_desktop != 'drawer'
-          render 'header-mega-menu'
+    <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if has_app_block %} header--has-app{% endif %}{% if social_links %} header--has-social{% endif %}{% if localization_forms %} header--has-localizations{% endif %}">
+      {%- liquid
+        if section.settings.menu != blank
+          render 'header-drawer'
         endif
-      endif
-    %}
+      -%}
 
-    {%- if section.settings.logo_position == 'middle-center' -%}
-      {%- if request.page_type == 'index' -%}<h1 class="header__heading">{%- endif -%}
-        <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
-          {%- if settings.logo != blank -%}
-            <div class="header__heading-logo-wrapper">
-              {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
-              {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
-              {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
-              {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
-              {{ settings.logo | image_url: width: 600 | image_tag:
-                class: 'header__heading-logo',
-                widths: widths,
-                height: logo_height,
-                width: settings.logo_width,
-                alt: logo_alt,
-                sizes: sizes,
-                preload: true
-              }}
+      {%- if section.settings.logo_position != 'middle-center' -%}
+        {%- if request.page_type == 'index' -%}<h1 class="header__heading">{%- endif -%}
+          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+            {%- if settings.logo != blank -%}
+              <div class="header__heading-logo-wrapper">
+                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                {% capture sizes %}(max-width: {{ settings.logo_width | times: 2 }}px) 50vw, {{ settings.logo_width }}px{% endcapture %}
+                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {{ settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo motion-reduce',
+                  widths: widths,
+                  height: logo_height,
+                  width: settings.logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+                }}
+              </div>
+            {%- else -%}
+              <span class="h2">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+        {%- if request.page_type == 'index' -%}</h1>{%- endif -%}
+      {%- endif -%}
+
+      {%- liquid
+        if section.settings.menu != blank
+          if section.settings.menu_type_desktop == 'dropdown'
+            render 'header-dropdown-menu'
+          elsif section.settings.menu_type_desktop != 'drawer'
+            render 'header-mega-menu'
+          endif
+        endif
+      %}
+
+      {%- if section.settings.logo_position == 'middle-center' -%}
+        {%- if request.page_type == 'index' -%}<h1 class="header__heading">{%- endif -%}
+          <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+            {%- if settings.logo != blank -%}
+              <div class="header__heading-logo-wrapper">
+                {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+                {%- assign logo_height = settings.logo_width | divided_by: settings.logo.aspect_ratio -%}
+                {% capture sizes %}(min-width: 750px) {{ settings.logo_width }}px, 50vw{% endcapture %}
+                {% capture widths %}{{ settings.logo_width }}, {{ settings.logo_width | times: 1.5 | round }}, {{ settings.logo_width | times: 2 }}{% endcapture %}
+                {{ settings.logo | image_url: width: 600 | image_tag:
+                  class: 'header__heading-logo',
+                  widths: widths,
+                  height: logo_height,
+                  width: settings.logo_width,
+                  alt: logo_alt,
+                  sizes: sizes,
+                  preload: true
+                }}
+              </div>
+            {%- else -%}
+              <span class="h2">{{ shop.name }}</span>
+            {%- endif -%}
+          </a>
+        {%- if request.page_type == 'index' -%}</h1>{%- endif -%}
+      {%- endif -%}
+
+      <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
+        <div class="desktop-localization-wrapper">
+          {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+            <localization-form class="small-hide medium-hide" data-prevent-hide>
+              {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
+                <div>
+                  <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
+                  {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
+                </div>
+              {%- endform -%}
+            </localization-form>
+          {% endif %}
+
+          {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+            <localization-form class="small-hide medium-hide" data-prevent-hide>
+              {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
+                <div>
+                  <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
+                  {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+                </div>
+              {%- endform -%}
+            </localization-form>
+          {%- endif -%}
+        </div>
+
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              {% render block %}
+          {%- endcase -%}
+        {%- endfor -%}
+
+        <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
+          {%- liquid
+            if cart == empty
+              render 'icon-cart-empty'
+            else
+              render 'icon-cart'
+            endif
+          -%}
+          <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+          {%- if cart != empty -%}
+            <div class="cart-count-bubble">
+              {%- if cart.item_count < 100 -%}
+                <span aria-hidden="true">{{ cart.item_count }}</span>
+              {%- endif -%}
+              <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
             </div>
-          {%- else -%}
-            <span class="h2">{{ shop.name }}</span>
           {%- endif -%}
         </a>
-      {%- if request.page_type == 'index' -%}</h1>{%- endif -%}
-    {%- endif -%}
-
-    <div class="header__icons{% if section.settings.enable_country_selector or section.settings.enable_language_selector %} header__icons--localization header-localization{% endif %}">
-      <div class="desktop-localization-wrapper">
-        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
-            {%- form 'localization', id: 'HeaderCountryForm', class: 'localization-form' -%}
-              <div>
-                <h2 class="visually-hidden" id="HeaderCountryLabel">{{ 'localization.country_label' | t }}</h2>
-                {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
-              </div>
-            {%- endform -%}
-          </localization-form>
-        {% endif %}
-
-        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
-          <localization-form class="small-hide medium-hide" data-prevent-hide>
-            {%- form 'localization', id: 'HeaderLanguageForm', class: 'localization-form' -%}
-              <div>
-                <h2 class="visually-hidden" id="HeaderLanguageLabel">{{ 'localization.language_label' | t }}</h2>
-                {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
-              </div>
-            {%- endform -%}
-          </localization-form>
-        {%- endif -%}
       </div>
-
-      {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when '@app' -%}
-            {% render block %}
-        {%- endcase -%}
-      {%- endfor -%}
-
-      <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble">
-        {%- liquid
-          if cart == empty
-            render 'icon-cart-empty'
-          else
-            render 'icon-cart'
-          endif
-        -%}
-        <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
-        {%- if cart != empty -%}
-          <div class="cart-count-bubble">
-            {%- if cart.item_count < 100 -%}
-              <span aria-hidden="true">{{ cart.item_count }}</span>
-            {%- endif -%}
-            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
-          </div>
-        {%- endif -%}
-      </a>
-    </div>
-  </header>
-</{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>
+    </header>
+  </{% if section.settings.sticky_header_type != 'none' %}sticky-header{% else %}div{% endif %}>
+</div>
 
 {%- if settings.cart_type == "notification" -%}
   {%- render 'cart-notification', color_scheme: section.settings.color_scheme, desktop_menu_type: section.settings.menu_type_desktop -%}
 {%- endif -%}
 
-
 {% javascript %}
+  /* Scoped version of Dawn's StickyHeader — but still compatible */
   class StickyHeader extends HTMLElement {
     constructor() { super(); }
 
     connectedCallback() {
-      this.header = document.querySelector('.section-header');
+      const root = this.closest('.shopify-section') || document;
+      this.header = root.querySelector('.section-header') || document.querySelector('.section-header');
       this.headerIsAlwaysSticky =
         this.getAttribute('data-sticky-type') === 'always' ||
         this.getAttribute('data-sticky-type') === 'reduce-logo-size';
@@ -337,6 +329,7 @@
     }
 
     setHeaderHeight() {
+      if (!this.header) return;
       document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
     }
 
@@ -346,15 +339,16 @@
     }
 
     createObserver() {
+      if (!this.header) return;
       let observer = new IntersectionObserver((entries, observer) => {
         this.headerBounds = entries[0].intersectionRect;
         observer.disconnect();
       });
-
       observer.observe(this.header);
     }
 
     onScroll() {
+      if (!this.header) return;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       if (this.predictiveSearch && this.predictiveSearch.isOpen) return;
 
@@ -380,34 +374,35 @@
     }
 
     hide() {
-      if (this.headerIsAlwaysSticky) return;
+      if (this.headerIsAlwaysSticky || !this.header) return;
       this.header.classList.add('shopify-section-header-hidden', 'shopify-section-header-sticky');
       this.closeMenuDisclosure();
       this.closeSearchModal();
     }
 
     reveal() {
-      if (this.headerIsAlwaysSticky) return;
+      if (this.headerIsAlwaysSticky || !this.header) return;
       this.header.classList.add('shopify-section-header-sticky', 'animate');
       this.header.classList.remove('shopify-section-header-hidden');
     }
 
     reset() {
-      if (this.headerIsAlwaysSticky) return;
+      if (this.headerIsAlwaysSticky || !this.header) return;
       this.header.classList.remove('shopify-section-header-hidden', 'shopify-section-header-sticky', 'animate');
     }
 
     closeMenuDisclosure() {
+      if (!this.header) return;
       this.disclosures = this.disclosures || this.header.querySelectorAll('header-menu');
       this.disclosures.forEach(disclosure => disclosure.close());
     }
 
     closeSearchModal() {
+      if (!this.header) return;
       this.searchModal = this.searchModal || this.header.querySelector('details-modal');
-      this.searchModal.close(false);
+      this.searchModal && this.searchModal.close(false);
     }
   }
-
   customElements.define('sticky-header', StickyHeader);
 {% endjavascript %}
 
@@ -453,9 +448,8 @@
 
 {% schema %}
 {
-  "name": "t:sections.header.name",
+  "name": "AI Header (parity)",
   "class": "section-header",
-  "max_blocks": 3,
   "settings": [
     { "type": "select", "id": "logo_position",
       "options": [
@@ -512,6 +506,13 @@
     { "type": "range", "id": "padding_top", "min": 0, "max": 36, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 20 },
     { "type": "range", "id": "padding_bottom", "min": 0, "max": 36, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 20 }
   ],
-  "blocks": [{ "type": "@app" }]
+  "blocks": [
+    { "type": "@app" }
+  ],
+  "presets": [
+    { "name": "AI Header (parity)" }
+  ]
 }
 {% endschema %}
+
+

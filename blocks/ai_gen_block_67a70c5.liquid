@@ -1,0 +1,371 @@
+{%- comment -%}
+AI Header — Dawn compatible
+- Token-based colors (rgb(var(--color-...))) so color schemes react live
+- Sticky wrapper uses Dawn's <sticky-header> and StickyHeader class
+- Menu rendering uses Dawn snippets and `menu_type_desktop`
+- Logo capture actually rendered
+- No invalid schema fields
+{%- endcomment -%}
+
+{%- assign ai_gen_id = section.id | replace: '_' , '' | downcase -%}
+
+{%- comment %} Dawn CSS assets {% endcomment -%}
+<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-menu-drawer.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-cart-notification.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- if settings.predictive_search_enabled -%}
+  <link rel="stylesheet" href="{{ 'component-price.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+{%- if section.settings.menu_type_desktop == 'mega' -%}
+  <link rel="stylesheet" href="{{ 'component-mega-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+{%- endif -%}
+
+{%- if settings.cart_type == "drawer" -%}
+  {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+  {{ 'component-cart.css' | asset_url | stylesheet_tag }}
+  {{ 'component-totals.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- style -%}
+/* ===== Scoped styles ===== */
+.ai-header-{{ ai_gen_id }}{
+  position:relative;
+  z-index:1000;
+  width:100%;
+  background: color-mix(in srgb, rgb(var(--color-background)) {{ section.settings.background_opacity }}%, transparent);
+  backdrop-filter: blur({{ section.settings.blur_intensity }}px) saturate({{ section.settings.saturation }}%);
+  -webkit-backdrop-filter: blur({{ section.settings.blur_intensity }}px) saturate({{ section.settings.saturation }}%);
+  border-bottom: {% if section.settings.show_separator %}1px solid rgba(var(--color-foreground), .10){% else %}none{% endif %};
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  margin-bottom: {{ section.settings.bottom_margin }}px;
+  transition: all .3s ease;
+}
+
+.ai-header__row-{{ ai_gen_id }}{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  min-height:60px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.ai-header__left-{{ ai_gen_id }},
+.ai-header__center-{{ ai_gen_id }},
+.ai-header__right-{{ ai_gen_id }}{ display:flex; align-items:center; }
+.ai-header__left-{{ ai_gen_id }}{ gap:20px; flex:1 1 0; }
+.ai-header__center-{{ ai_gen_id }}{ justify-content:center; flex:1 1 0; }
+.ai-header__right-{{ ai_gen_id }}{ gap:16px; justify-content:flex-end; flex:1 1 0; }
+
+.ai-header-logo-{{ ai_gen_id }}{ display:flex; align-items:center; text-decoration:none; color:rgb(var(--color-foreground)); }
+.ai-header-logo-{{ ai_gen_id }} img{ max-width: {{ section.settings.logo_width }}px; height:auto; transition: all .3s ease; }
+.ai-header-logo-{{ ai_gen_id }} .logo-text{ font-size:24px; font-weight:700; }
+
+.ai-header-nav-{{ ai_gen_id }}{ display:none; }
+.ai-header-nav-{{ ai_gen_id }} ul{ list-style:none; margin:0; padding:0; display:flex; gap:30px; }
+.ai-header-nav-{{ ai_gen_id }} a{ text-decoration:none; color:rgb(var(--color-foreground)); transition:color .2s ease; }
+.ai-header-nav-{{ ai_gen_id }} a:hover{ color: rgb(var(--color-accent)); }
+
+.ai-header-icon-{{ ai_gen_id }}{ width:44px; height:44px; display:grid; place-items:center; color:rgb(var(--color-foreground)); text-decoration:none; }
+.ai-header-icon-{{ ai_gen_id }}:hover{ color: rgb(var(--color-accent)); }
+.ai-header-icon-{{ ai_gen_id }} svg{ width:20px; height:20px; }
+
+.ai-header-menu-toggle-{{ ai_gen_id }}{ background:none; border:0; color:rgb(var(--color-foreground)); padding:0; }
+
+@supports not (backdrop-filter: blur(10px)){
+  .ai-header-{{ ai_gen_id }}{ background: rgb(var(--color-background)); }
+}
+
+/* Desktop positions */
+@media (min-width: 750px){
+  .ai-header-nav-{{ ai_gen_id }}{ display:block; }
+  .ai-header-menu-toggle-{{ ai_gen_id }}{ display:none; }
+
+  {% if section.settings.desktop_logo_position == 'top-left' %}
+    .ai-header__row-{{ ai_gen_id }}{ align-items:flex-start; padding-top:20px; flex-direction:column; gap:16px; }
+    .ai-header__left-{{ ai_gen_id }}{ order:1; align-self:flex-start; }
+    .ai-header__center-{{ ai_gen_id }}{ order:2; align-self:flex-start; justify-content:flex-start; width:100%; }
+    .ai-header__right-{{ ai_gen_id }}{ order:3; align-self:flex-end; }
+  {% elsif section.settings.desktop_logo_position == 'top-center' %}
+    .ai-header__row-{{ ai_gen_id }}{ flex-direction:column; gap:16px; align-items:center; }
+    .ai-header__center-{{ ai_gen_id }}{ order:1; }
+    .ai-header__left-{{ ai_gen_id }}{ order:2; justify-content:center; }
+    .ai-header__right-{{ ai_gen_id }}{ order:2; position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); }
+  {% elsif section.settings.desktop_logo_position == 'middle-left' %}
+    .ai-header__left-{{ ai_gen_id }}{ order:1; }
+    .ai-header__center-{{ ai_gen_id }}{ order:2; justify-content:flex-start; }
+    .ai-header__right-{{ ai_gen_id }}{ order:3; }
+  {% elsif section.settings.desktop_logo_position == 'middle-center' %}
+    .ai-header__left-{{ ai_gen_id }}{ order:1; justify-content:flex-start; }
+    .ai-header__center-{{ ai_gen_id }}{ order:2; }
+    .ai-header__right-{{ ai_gen_id }}{ order:3; }
+  {% endif %}
+}
+
+/* Mobile layout */
+@media (max-width: 749px){
+  .ai-header-logo-{{ ai_gen_id }} img{ max-width: {{ section.settings.logo_width | times: 0.8 }}px; }
+  {% if section.settings.mobile_logo_position == 'center' %}
+    .ai-header__left-{{ ai_gen_id }}{ order:1; flex:0 0 auto; }
+    .ai-header__center-{{ ai_gen_id }}{ order:2; flex:1 1 auto; justify-content:center; }
+    .ai-header__right-{{ ai_gen_id }}{ order:3; flex:0 0 auto; }
+  {% else %}
+    .ai-header__left-{{ ai_gen_id }}{ order:1; gap:15px; }
+    .ai-header__center-{{ ai_gen_id }}{ display:none; }
+    .ai-header__right-{{ ai_gen_id }}{ order:2; }
+  {% endif %}
+}
+{%- endstyle -%}
+
+{%- comment %} Logo snippet — safe {% endcomment -%}
+{%- assign desired_logo_width = section.settings.logo_width -%}
+{%- assign logo_alt_custom = section.settings.logo_alt_text | default: shop.name | escape -%}
+{%- assign logo_alt_theme  = settings.logo.alt | default: shop.name | escape -%}
+{%- assign logo_src_2x = desired_logo_width | times: 2 -%}
+
+{% capture logo_snippet %}
+  {% if section.settings.custom_logo != blank %}
+    {{ section.settings.custom_logo
+      | image_url: width: logo_src_2x
+      | image_tag:
+        class: 'header__heading-logo motion-reduce',
+        alt: logo_alt_custom,
+        loading: 'lazy' }}
+  {% elsif settings.logo %}
+    {{ settings.logo
+      | image_url: width: logo_src_2x
+      | image_tag:
+        class: 'header__heading-logo motion-reduce',
+        alt: logo_alt_theme,
+        loading: 'lazy' }}
+  {% else %}
+    <span class="logo-text">{{ shop.name }}</span>
+  {% endif %}
+{% endcapture %}
+{% assign ai_header_logo = logo_snippet %}
+
+<{% if section.settings.sticky_header != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header }}"{% else %}div{% endif %} class="section-header color-{{ section.settings.color_scheme }}">
+  <header class="ai-header-{{ ai_gen_id }} page-width" {{ section.shopify_attributes }}>
+    <div class="ai-header__row-{{ ai_gen_id }}">
+      <!-- Left -->
+      <div class="ai-header__left-{{ ai_gen_id }}">
+        {% if section.settings.mobile_logo_position == 'left' %}
+          <a href="{{ routes.root_url }}" class="ai-header-logo-{{ ai_gen_id }}">{{ ai_header_logo }}</a>
+        {% endif %}
+
+        <button class="ai-header-menu-toggle-{{ ai_gen_id }}" aria-label="Open menu" aria-expanded="false" aria-controls="ai-header-drawer-{{ ai_gen_id }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+
+        {% if section.settings.desktop_logo_position contains 'left' %}
+          <a href="{{ routes.root_url }}" class="ai-header-logo-{{ ai_gen_id }}">{{ ai_header_logo }}</a>
+        {% endif %}
+
+        {% if section.settings.menu != blank %}
+          {% if section.settings.desktop_logo_position == 'middle-left' or section.settings.desktop_logo_position == 'top-left' %}
+            <nav class="ai-header-nav-{{ ai_gen_id }}">
+              <ul>
+                {% for link in section.settings.menu.links %}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </nav>
+          {% endif %}
+        {% endif %}
+
+      </div>
+
+      <!-- Center -->
+      <div class="ai-header__center-{{ ai_gen_id }}">
+        {% if section.settings.desktop_logo_position contains 'center' or section.settings.mobile_logo_position == 'center' %}
+          <a href="{{ routes.root_url }}" class="ai-header-logo-{{ ai_gen_id }}">{{ ai_header_logo }}</a>
+        {% endif %}
+
+        {% if section.settings.menu != blank and section.settings.desktop_logo_position == 'top-center' %}
+          <nav class="ai-header-nav-{{ ai_gen_id }}">
+            <ul>
+              {% for link in section.settings.menu.links %}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {% endfor %}
+            </ul>
+          </nav>
+        {% endif %}
+      </div>
+
+      <!-- Right -->
+      <div class="ai-header__right-{{ ai_gen_id }}">
+        {% if section.settings.enable_country_selector or section.settings.enable_language_selector %}
+          <div class="ai-header-localization-{{ ai_gen_id }}">
+            {% if section.settings.enable_country_selector and localization.available_countries.size > 1 %}
+              <localization-form>
+                {%- form 'localization', id: 'HeaderCountryFormAI', class: 'localization-form' -%}
+                  {%- render 'country-localization', localPosition: 'HeaderCountry' -%}
+                {%- endform -%}
+              </localization-form>
+            {% endif %}
+            {% if section.settings.enable_language_selector and localization.available_languages.size > 1 %}
+              <localization-form>
+                {%- form 'localization', id: 'HeaderLanguageFormAI', class: 'localization-form' -%}
+                  {%- render 'language-localization', localPosition: 'HeaderLanguage' -%}
+                {%- endform -%}
+              </localization-form>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <a href="{{ routes.account_url }}" class="ai-header-icon-{{ ai_gen_id }}" aria-label="Account">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+
+        <a href="{{ routes.cart_url }}" class="ai-header-icon-{{ ai_gen_id }}" aria-label="Cart ({{ cart.item_count }})" id="cart-icon-bubble">
+          {%- if cart == empty -%}{% render 'icon-cart-empty' %}{%- else -%}{% render 'icon-cart' %}{%- endif -%}
+          {%- if cart.item_count > 0 -%}
+            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+
+    {%- if section.settings.menu != blank -%}
+      {%- if section.settings.menu_type_desktop == 'drawer' -%}
+        {% render 'header-drawer' %}
+      {%- elsif section.settings.menu_type_desktop == 'dropdown' -%}
+        {% render 'header-dropdown-menu' %}
+      {%- else -%}
+        {% render 'header-mega-menu' %}
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when '@app' -%}{% render block %}
+      {%- endcase -%}
+    {%- endfor -%}
+  </header>
+</{% if section.settings.sticky_header != 'none' %}sticky-header{% else %}div{% endif %}>
+
+<script src="{{ 'details-disclosure.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
+{%- if settings.cart_type == "drawer" -%}
+  <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+{%- javascript -%}
+class StickyHeader extends HTMLElement {
+  constructor(){ super(); }
+  connectedCallback(){
+    this.header = document.querySelector('.section-header');
+    this.headerIsAlwaysSticky =
+      this.getAttribute('data-sticky-type') === 'always' ||
+      this.getAttribute('data-sticky-type') === 'reduce-logo-size';
+    this.headerBounds = {};
+    this.setHeaderHeight();
+    window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
+    if (this.headerIsAlwaysSticky) this.header.classList.add('shopify-section-header-sticky');
+    this.currentScrollTop = 0; this.preventReveal = false;
+    this.onScrollHandler = this.onScroll.bind(this);
+    this.hideHeaderOnScrollUp = () => this.preventReveal = true;
+    this.addEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp);
+    window.addEventListener('scroll', this.onScrollHandler, false);
+    this.createObserver();
+  }
+  setHeaderHeight(){ document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`); }
+  disconnectedCallback(){ this.removeEventListener('preventHeaderReveal', this.hideHeaderOnScrollUp); window.removeEventListener('scroll', this.onScrollHandler); }
+  createObserver(){ let o=new IntersectionObserver((e,obs)=>{ this.headerBounds=e[0].intersectionRect; obs.disconnect(); }); o.observe(this.header); }
+  onScroll(){
+    const y = window.pageYOffset || document.documentElement.scrollTop;
+    if (y > this.currentScrollTop && y > this.headerBounds.bottom){
+      this.header.classList.add('scrolled-past-header');
+      if(!this.headerIsAlwaysSticky){ this.header.classList.add('shopify-section-header-hidden','shopify-section-header-sticky'); }
+    } else if (y < this.currentScrollTop && y > this.headerBounds.bottom){
+      this.header.classList.add('scrolled-past-header');
+      if(!this.headerIsAlwaysSticky){ this.header.classList.add('shopify-section-header-sticky','animate'); this.header.classList.remove('shopify-section-header-hidden'); }
+    } else if (y <= this.headerBounds.top){
+      this.header.classList.remove('scrolled-past-header');
+      if(!this.headerIsAlwaysSticky){ this.header.classList.remove('shopify-section-header-hidden','shopify-section-header-sticky','animate'); }
+    }
+    this.currentScrollTop = y;
+  }
+}
+customElements.define('sticky-header', StickyHeader);
+{%- endjavascript -%}
+
+{% schema %}
+{
+  "name": "AI Header",
+  "tag": "section",
+  "class": "section-header",
+  "settings": [
+    { "type": "header", "content": "Glass effect" },
+    { "type": "range", "id": "blur_intensity", "min": 0, "max": 20, "step": 1, "unit": "px", "label": "Blur intensity", "default": 10 },
+    { "type": "range", "id": "saturation", "min": 50, "max": 200, "step": 10, "unit": "%", "label": "Saturation", "default": 150 },
+    { "type": "range", "id": "background_opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "label": "Background opacity", "default": 80 },
+
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "custom_logo", "label": "Custom logo" },
+    { "type": "range", "id": "logo_width", "min": 40, "max": 320, "step": 10, "unit": "px", "label": "Logo width", "default": 120 },
+    { "type": "text", "id": "logo_alt_text", "label": "Logo alt text" },
+
+    { "type": "select", "id": "desktop_logo_position", "label": "Desktop logo position",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "middle-left", "label": "Middle left" },
+        { "value": "middle-center", "label": "Middle center" }
+      ],
+      "default": "middle-left"
+    },
+    { "type": "select", "id": "mobile_logo_position", "label": "Mobile logo position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "center"
+    },
+
+    { "type": "header", "content": "Navigation" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "select", "id": "menu_type_desktop", "label": "Menu type",
+      "options": [
+        { "value": "dropdown", "label": "Dropdown" },
+        { "value": "mega", "label": "Mega menu" },
+        { "value": "drawer", "label": "Drawer" }
+      ],
+      "default": "dropdown"
+    },
+
+    { "type": "header", "content": "Header behavior" },
+    { "type": "select", "id": "sticky_header", "label": "Sticky header",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "on-scroll-up", "label": "On scroll up" },
+        { "value": "always", "label": "Always" },
+        { "value": "reduce-logo-size", "label": "Reduce logo size" }
+      ],
+      "default": "on-scroll-up"
+    },
+    { "type": "checkbox", "id": "show_separator", "label": "Show separator line", "default": true },
+
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 36, "step": 4, "unit": "px", "label": "Padding top", "default": 12 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 36, "step": 4, "unit": "px", "label": "Padding bottom", "default": 12 },
+    { "type": "range", "id": "bottom_margin", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom margin", "default": 0 }
+  ],
+  "blocks": [
+    { "type": "@app" }
+  ],
+  "presets": [
+    { "name": "AI Header" }
+  ]
+}
+{% endschema %}

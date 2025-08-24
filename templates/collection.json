@@ -68,7 +68,7 @@
           "blocks": {}
         },
         "ai_gen_block_c46f6bc_kfdg7F": {
-          "type": "ai_gen_block_c46f6bc",
+          "type": "collection",
           "settings": {
             "title": "Different Smart Locks Built for Different Doors",
             "subtitle": "What kind of door do you have?",
@@ -183,19 +183,19 @@
             "heading": "Our Clients",
             "background_color": "#ffffff",
             "heading_color": "#000000",
-            "card_background": "#cecece",
+            "card_background": "#ffffff",
             "card_text_color": "#000000",
             "card_subtext_color": "#000000",
-            "location_color": "#eff0f5",
+            "location_color": "#ffffff",
             "door_type_bg": "#000000",
             "button_text_color": "#000000",
-            "testimonial_overlay_color": "#eff0f5",
+            "testimonial_overlay_color": "#ffffff",
             "testimonial_button_bg": "#ffffff",
             "location_badge_color": "#ffffff",
             "location_badge_bg": "#000000",
             "door_type_badge_bg": "#151414",
             "client_info_overlay_bg": "#eff0f5",
-            "cards_per_view_desktop": 5,
+            "cards_per_view_desktop": 3,
             "section_padding_top": 100,
             "section_padding": 80,
             "heading_spacing": 80,
@@ -320,7 +320,7 @@
       "type": "_blocks",
       "blocks": {
         "ai_gen_block_858069b_KHJPAz": {
-          "type": "ai_gen_block_858069b",
+          "type": "FAQ",
           "name": "FAQ Section",
           "settings": {
             "heading": "Frequently Asked Questions",
