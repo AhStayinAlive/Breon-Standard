@@ -671,8 +671,13 @@
   {% liquid
     assign about_meta  = product.metafields.custom.about_the_product
     assign about_type  = about_meta.type | default: ''
-    assign is_list     = about_type == 'list.metaobject_reference'
-    assign is_single   = about_type == 'metaobject_reference'
+    assign is_list = false
+    assign is_single = false
+    if about_type == 'list.metaobject_reference'
+      assign is_list = true
+    elsif about_type == 'metaobject_reference'
+      assign is_single = true
+    endif
     assign cards = '' | split: ''
     if is_list
       assign cards = about_meta.value
