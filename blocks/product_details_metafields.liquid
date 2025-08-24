@@ -552,108 +552,7 @@
     }
   }
 
-  /* DEBUG PANEL STYLES */
-  .debug-panel-{{ carousel_id }} {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 400px;
-    max-width: calc(100vw - 40px);
-    max-height: 80vh;
-    background: rgba(0, 0, 0, 0.95);
-    color: #00ff00;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    line-height: 1.3;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    z-index: 999999;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
 
-  .debug-panel-{{ carousel_id }} h3 {
-    color: #ffff00;
-    margin: 0 0 10px 0;
-    padding-bottom: 5px;
-    border-bottom: 1px solid #333;
-    font-size: 13px;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry {
-    margin-bottom: 8px;
-    padding: 4px 8px;
-    background: rgba(0, 255, 0, 0.1);
-    border-left: 2px solid #00ff00;
-    border-radius: 3px;
-    word-wrap: break-word;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry.error {
-    background: rgba(255, 0, 0, 0.1);
-    border-left-color: #ff0000;
-    color: #ff6666;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry.warning {
-    background: rgba(255, 255, 0, 0.1);
-    border-left-color: #ffff00;
-    color: #ffff99;
-  }
-
-  .debug-panel-{{ carousel_id }} .log-entry .timestamp {
-    color: #888;
-    font-size: 10px;
-  }
-
-  .debug-panel-{{ carousel_id }} .close-btn {
-    position: absolute;
-    top: 5px;
-    right: 8px;
-    background: none;
-    border: none;
-    color: #ff6666;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .debug-panel-{{ carousel_id }} .clear-btn {
-    background: #333;
-    border: 1px solid #555;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 10px;
-    cursor: pointer;
-    border-radius: 3px;
-    margin-bottom: 10px;
-  }
-
-  .debug-panel-{{ carousel_id }} .clear-btn:hover {
-    background: #555;
-  }
-
-  .debug-toggle-{{ carousel_id }} {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #00ff00;
-    border: 1px solid #333;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: monospace;
-    font-size: 12px;
-    z-index: 999998;
-  }
-
-  .debug-toggle-{{ carousel_id }}:hover {
-    background: rgba(0, 0, 0, 0.95);
-  }
 {% endstyle %}
 
   <product-metafield-carousel-{{ carousel_id }}
@@ -698,50 +597,36 @@
                   assign item_link = feature_card.url | default: '#'
                   assign item_button_text = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
                   
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
+                  comment 'Enhanced media detection for metaobjects - same logic as After Sales Service'
                   endcomment
                   assign media_item = nil
                   
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
+                  comment 'Try media_files.value first (metaobject list) - same as service section'
                   endcomment
-                  assign media_item = nil
-                  
-                  comment 'Debug: Log available fields'
-                  endcomment
-                  comment 'Available fields: {{ feature_card | json }}'
-                  endcomment
-                  
-                  comment 'Try media_files.value first (metaobject list)'
-                  endcomment
-                  if feature_card.media_files.value
+                  if feature_card.media_files and feature_card.media_files.value
                     assign media_list = feature_card.media_files.value
-                    if media_list.size > 0
-                      assign media_item = media_list.first
+                    if media_list and media_list.size > 0
+                      for media in media_list limit: 1
+                        assign media_item = media
+                      endfor
                     endif
                   endif
                   
-                  comment 'Fallback to media field'
+                  comment 'Fallback to direct media field'
                   endcomment
                   if media_item == nil and feature_card.media
                     assign media_item = feature_card.media
                   endif
                   
-                  comment 'Fallback to any other media field'
+                  comment 'Additional fallbacks for different field names'
                   endcomment
                   if media_item == nil and feature_card.media_file
                     assign media_item = feature_card.media_file
                   endif
                   
-                  comment 'Additional fallback for direct file references'
-                  endcomment
                   if media_item == nil and feature_card.file
                     assign media_item = feature_card.file
                   endif
-                  
-                  comment 'Debug: Log final media_item'
-                  endcomment
-                  comment 'Media item: {{ media_item | json }}'
-                  endcomment
                   
                   comment 'Video detection logic'
                   endcomment
@@ -815,16 +700,35 @@
                       <p class="card-subtext-{{ carousel_id }}">{{ item_description | truncate: 100 }}</p>
                     {% endif %}
 
-                    {% if item_button_text != blank %}
-                      <span class="card-button-{{ carousel_id }}">{{ item_button_text }}</span>
-                    {% endif %}
                   </div>
                 </a>
               {% endfor %}
             </div>
           </div>
 
+          {% if about_card_count > 1 %}
+            <button
+              class="carousel-navigation-{{ carousel_id }} carousel-navigation--prev-{{ carousel_id }}"
+              aria-label="Previous about slide"
+              data-section="about"
+              type="button"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18L9 12L15 6"/>
+              </svg>
+            </button>
 
+            <button
+              class="carousel-navigation-{{ carousel_id }} carousel-navigation--next-{{ carousel_id }}"
+              aria-label="Next about slide"
+              data-section="about"
+              type="button"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18L15 12L9 6"/>
+              </svg>
+            </button>
+          {% endif %}
         </div>
       {% else %}
         <div class="empty-state-{{ carousel_id }}">
@@ -1021,9 +925,6 @@
                       <p class="card-subtext-{{ carousel_id }}">{{ item_description | truncate: 100 }}</p>
                     {% endif %}
 
-                    {% if item_button_text != blank %}
-                      <span class="card-button-{{ carousel_id }}">{{ item_button_text }}</span>
-                    {% endif %}
                   </div>
                 </a>
               {% endfor %}
@@ -1065,136 +966,15 @@
   </div>
 </product-metafield-carousel-{{ carousel_id }}>
 
-<!-- DEBUG PANEL -->
-<div class="debug-panel-{{ carousel_id }}" id="debug-panel-{{ carousel_id }}" style="display: none;">
-  <button class="close-btn" onclick="document.getElementById('debug-panel-{{ carousel_id }}').style.display='none'">×</button>
-  <h3>🐛 Carousel {{ carousel_id }} Debug Console</h3>
-  <button class="clear-btn" onclick="document.getElementById('debug-logs-{{ carousel_id }}').innerHTML=''">Clear Logs</button>
-  <div id="debug-logs-{{ carousel_id }}"></div>
-</div>
 
-<button class="debug-toggle-{{ carousel_id }}" onclick="document.getElementById('debug-panel-{{ carousel_id }}').style.display = document.getElementById('debug-panel-{{ carousel_id }}').style.display === 'none' ? 'block' : 'none'">
-  🐛 DEBUG
-</button>
 
 <script>
-// DEBUG UTILITY - logs to both console and UI with error handling
-const debugLog = {
-  log: function(message, data = null, type = 'log') {
-    try {
-      // Console logging
-      if (data) {
-        console.log(message, data);
-      } else {
-        console.log(message);
-      }
-
-      // UI logging - check if panel exists
-      const debugPanel = document.getElementById('debug-logs-{{ carousel_id }}');
-      if (debugPanel) {
-        const timestamp = new Date().toLocaleTimeString();
-        const logEntry = document.createElement('div');
-        logEntry.className = `log-entry ${type}`;
-        
-        let logContent = `<span class="timestamp">[${timestamp}]</span> ${message}`;
-        if (data) {
-          logContent += `<br><pre style="margin: 4px 0; font-size: 10px; color: #ccc;">${JSON.stringify(data, null, 2)}</pre>`;
-        }
-        
-        logEntry.innerHTML = logContent;
-        debugPanel.appendChild(logEntry);
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-        
-        // Limit log entries to prevent memory issues
-        if (debugPanel.children.length > 50) {
-          debugPanel.removeChild(debugPanel.firstChild);
-        }
-      } else {
-        console.warn('Debug panel not found, creating fallback');
-        // Fallback: try to create debug panel if it doesn't exist
-        this.createDebugPanel();
-      }
-    } catch (e) {
-      console.error('Debug logging error:', e);
-    }
-  },
-  
-  error: function(message, data = null) {
-    this.log(message, data, 'error');
-  },
-  
-  warn: function(message, data = null) {
-    this.log(message, data, 'warning');
-  },
-
-  createDebugPanel: function() {
-    try {
-      const existingPanel = document.getElementById('debug-panel-{{ carousel_id }}');
-      if (existingPanel) return;
-
-      const panel = document.createElement('div');
-      panel.id = 'debug-panel-{{ carousel_id }}';
-      panel.className = 'debug-panel-{{ carousel_id }}';
-      panel.innerHTML = `
-        <button class="close-btn" onclick="document.getElementById('debug-panel-{{ carousel_id }}').style.display='none'">×</button>
-        <h3>Debug Console - Carousel {{ carousel_id }}</h3>
-        <button class="clear-btn" onclick="document.getElementById('debug-logs-{{ carousel_id }}').innerHTML=''">Clear Logs</button>
-        <div id="debug-logs-{{ carousel_id }}"></div>
-      `;
-      document.body.appendChild(panel);
-      console.log('Debug panel created dynamically');
-    } catch (e) {
-      console.error('Failed to create debug panel:', e);
-    }
-  }
-};
-
-// Immediate test log
-debugLog.log('DEBUG SYSTEM ACTIVE - Testing logging functionality');
-debugLog.log('Page loaded at: ' + new Date().toISOString());
-debugLog.log('Window size: ' + window.innerWidth + 'x' + window.innerHeight);
-
-// Log CSS variables being applied
-debugLog.log('Product Carousel CSS Variables:', {
-          'background_color': '{{ block.settings.background_color | default: "#000000" }}',
-        'card_background': '{{ block.settings.card_background | default: "#111111" }}',
-        'media_background': '{{ block.settings.media_background | default: "#1a1a1a" }}',
-        'text_color': '{{ block.settings.text_color | default: "#ffffff" }}',
-        'muted_text_color': '{{ block.settings.muted_text_color | default: "#999999" }}',
-        'border_color': '{{ block.settings.border_color | default: "#ffffff" }}',
-        'border_color_processed': '{{ block.settings.border_color | default: "#ffffff" | color_modify: "alpha", 0.10 }}',
-        'focus_color': '{{ block.settings.focus_color | default: "#ffffff" }}',
-        'border_radius': '{{ block.settings.border_radius | default: 20 }}px',
-        'section_padding_top': '{{ block.settings.section_padding_top | default: 80 }}px',
-        'section_padding_bottom': '{{ block.settings.section_padding_bottom | default: 80 }}px',
-        'section_inner_spacing': '{{ block.settings.section_inner_spacing | default: 40 }}px',
-        'heading_spacing': '{{ block.settings.heading_spacing | default: 60 }}px',
-        'heading_size': '{{ block.settings.heading_size | default: 36 }}px',
-        'video_hover_only': {{ block.settings.video_hover_only | json }},
-        'hero_video_hover_only': {{ block.settings.hero_video_hover_only | json }}
-});
-
-// Check if we're in Theme Editor
-if (window.Shopify && window.Shopify.designMode) {
-  debugLog.log('THEME EDITOR DETECTED - Design mode is active');
-} else {
-  debugLog.log('Not in Theme Editor mode');
-}
-
-// Check if our carousel element exists
-const carouselElement = document.querySelector('product-metafield-carousel-{{ carousel_id }}');
-debugLog.log('Carousel element check:', {
-  found: !!carouselElement,
-  id: '{{ carousel_id }}',
-  sectionId: '{{ section.id }}'
-});
+// Product Metafield Carousel - Clean Implementation
 
 (function() {
-  debugLog.log('Initializing Product Carousel {{ carousel_id }}');
   
   // Guard against re-definition during Theme Editor reloads
   if (!customElements.get('product-metafield-carousel-{{ carousel_id }}')) {
-    debugLog.log('Defining new custom element product-metafield-carousel-{{ carousel_id }}');
     
     customElements.define(
       'product-metafield-carousel-{{ carousel_id }}',
@@ -1230,7 +1010,6 @@ debugLog.log('Carousel element check:', {
       logComputedStyles() {
         const element = this;
         const computedStyles = window.getComputedStyle(element);
-        debugLog.log('Computed CSS properties for {{ carousel_id }}:', {
           '--page-bg': computedStyles.getPropertyValue('--page-bg'),
           '--card-bg': computedStyles.getPropertyValue('--card-bg'),
           '--media-bg': computedStyles.getPropertyValue('--media-bg'),
@@ -1249,17 +1028,14 @@ debugLog.log('Carousel element check:', {
       }
 
       initializeCarousels() {
-        debugLog.log('InitializeCarousels starting for {{ carousel_id }}');
         const carouselSections = ['about', 'service'];
         
         carouselSections.forEach(section => {
-          debugLog.log(`Processing section: ${section}`);
           const track = this.querySelector(`[data-section="${section}"]`);
           const container = track?.parentElement;
           const prevBtn = this.querySelector(`[data-section="${section}"].carousel-navigation--prev-{{ carousel_id }}`);
           const nextBtn = this.querySelector(`[data-section="${section}"].carousel-navigation--next-{{ carousel_id }}`);
 
-          debugLog.log(`Section ${section} elements:`, {
             track: !!track,
             container: !!container,
             prevBtn: !!prevBtn,
@@ -1270,11 +1046,9 @@ debugLog.log('Carousel element check:', {
             const cards = track.children;
             const totalCards = cards.length;
             
-            debugLog.log(`Section ${section} cards count: ${totalCards}`);
             
             // Compute carousel dimensions and visibility
             const dimensions = this.computeCarouselDimensions(track, container);
-            debugLog.log(`Section ${section} dimensions:`, dimensions);
             
             this.carousels[section] = {
               track,
@@ -1290,9 +1064,7 @@ debugLog.log('Carousel element check:', {
             this.updateCarouselPosition(section, 0);
             this.updateNavigationState(section);
             
-            debugLog.log(`Section ${section} carousel initialized:`, this.carousels[section]);
           } else {
-            debugLog.warn(`Section ${section} missing required elements`);
           }
         });
       }
@@ -1319,23 +1091,19 @@ debugLog.log('Carousel element check:', {
       }
 
       setupEventListeners() {
-        debugLog.log('SetupEventListeners starting for {{ carousel_id }}');
         
         // Navigation buttons - only attach once
         const navigationButtons = this.querySelectorAll('.carousel-navigation-{{ carousel_id }}');
-        debugLog.log(`Found ${navigationButtons.length} navigation buttons`);
         
         navigationButtons.forEach((btn, index) => {
           if (!btn.dataset.listenerAttached) {
             btn.dataset.listenerAttached = 'true';
-            debugLog.log(`Attaching click listener to navigation button ${index}`);
             
             btn.addEventListener('click', (e) => {
               e.preventDefault();
               const section = btn.dataset.section;
               const isNext = btn.classList.contains('carousel-navigation--next-{{ carousel_id }}');
               
-              debugLog.log(`Navigation button clicked:`, {
                 section,
                 isNext,
                 buttonIndex: index
@@ -1352,20 +1120,20 @@ debugLog.log('Carousel element check:', {
 
         // Touch support for mobile
         Object.keys(this.carousels).forEach(section => {
-          debugLog.log(`Setting up touch support for section: ${section}`);
           this.setupTouchSupport(section);
         });
+
+        // Keyboard navigation
+        this.setupKeyboardNavigation();
 
         // Resize handler with debouncing
         let resizeTimeout;
         const handleResize = () => {
-          debugLog.log('Window resize detected');
           clearTimeout(resizeTimeout);
           resizeTimeout = setTimeout(() => {
             const wasDesktop = this.isDesktop;
             this.isDesktop = window.innerWidth >= 768;
             
-            debugLog.log(`Resize processed - was desktop: ${wasDesktop}, is desktop: ${this.isDesktop}`);
             
             // Recompute carousel dimensions on resize
             Object.keys(this.carousels).forEach(section => {
@@ -1377,7 +1145,6 @@ debugLog.log('Carousel element check:', {
                 // Clamp current slide to valid range after recomputation
                 carousel.currentSlide = Math.max(0, Math.min(carousel.currentSlide, carousel.totalSlides - 1));
                 
-                debugLog.log(`Section ${section} dimensions after resize:`, newDimensions);
                 this.updateCarouselPosition(section, carousel.currentSlide);
               }
             });
@@ -1392,7 +1159,6 @@ debugLog.log('Carousel element check:', {
       }
 
       setupVideoControls() {
-        debugLog.log('SetupVideoControls starting for {{ carousel_id }}');
         
         // Get current settings from data attributes (updated via Theme Editor)
         const heroVideoHoverOnly = this.dataset.heroVideoHoverOnly === 'true';
@@ -1402,7 +1168,6 @@ debugLog.log('Carousel element check:', {
         const videoCard = this.querySelector('.video-card-{{ carousel_id }}');
         const featuredVideo = videoCard?.querySelector('video');
         
-        debugLog.log('Featured video elements:', {
           videoCard: !!videoCard,
           featuredVideo: !!featuredVideo,
           heroVideoHoverOnly,
@@ -1418,18 +1183,13 @@ debugLog.log('Carousel element check:', {
           
           const isHoverOnly = heroVideoHoverOnly || featuredVideo.hasAttribute('data-hover-only');
           
-          debugLog.log(`Featured video hover-only: ${isHoverOnly}`);
           
           if (isHoverOnly) {
             featuredVideo.pause();
-            debugLog.log('Featured video paused, adding hover listeners');
             
             const enterHandler = () => {
-              debugLog.log('Featured video mouseenter - playing');
-              featuredVideo.play().catch(e => debugLog.error('Featured video play error:', e));
             };
             const leaveHandler = () => {
-              debugLog.log('Featured video mouseleave - pausing and resetting');
               featuredVideo.pause();
               featuredVideo.currentTime = 0;
             };
@@ -1443,7 +1203,6 @@ debugLog.log('Carousel element check:', {
 
         // Handle carousel videos
         const carouselCards = this.querySelectorAll('.carousel-card-{{ carousel_id }}');
-        debugLog.log(`Found ${carouselCards.length} carousel cards`);
         
         carouselCards.forEach((card, index) => {
           const video = card.querySelector('video');
@@ -1456,7 +1215,6 @@ debugLog.log('Carousel element check:', {
             
             const isHoverOnly = carouselVideoHoverOnly || video.hasAttribute('data-hover-only');
             
-            debugLog.log(`Card ${index} has video:`, {
               hasVideo: true,
               isHoverOnly,
               carouselVideoHoverOnly,
@@ -1465,14 +1223,10 @@ debugLog.log('Carousel element check:', {
             
             if (isHoverOnly) {
               video.pause();
-              debugLog.log(`Card ${index} video paused, adding hover listeners`);
               
               const enterHandler = () => {
-                debugLog.log(`Card ${index} video mouseenter - playing`);
-                video.play().catch(e => debugLog.error(`Card ${index} video play error:`, e));
               };
               const leaveHandler = () => {
-                debugLog.log(`Card ${index} video mouseleave - pausing and resetting`);
                 video.pause();
                 video.currentTime = 0;
               };
@@ -1522,10 +1276,31 @@ debugLog.log('Carousel element check:', {
         }, { passive: true });
       }
 
+      setupKeyboardNavigation() {
+        // Add keyboard navigation for carousel sections
+        Object.keys(this.carousels).forEach(section => {
+          const carousel = this.carousels[section];
+          if (carousel.container) {
+            carousel.container.setAttribute('tabindex', '0');
+            carousel.container.setAttribute('role', 'region');
+            carousel.container.setAttribute('aria-label', `${section} carousel`);
+            
+            carousel.container.addEventListener('keydown', (e) => {
+              if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.prevSlide(section);
+              } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                this.nextSlide(section);
+              }
+            });
+          }
+        });
+      }
+
       updateNavigationState(section) {
         const carousel = this.carousels[section];
         if (!carousel) {
-          debugLog.warn(`UpdateNavigationState: No carousel found for section ${section}`);
           return;
         }
 
@@ -1534,30 +1309,19 @@ debugLog.log('Carousel element check:', {
         const prevDisabled = carousel.currentSlide <= 0 || shouldDisable;
         const nextDisabled = carousel.currentSlide >= carousel.totalSlides - 1 || shouldDisable;
         
-        debugLog.log(`UpdateNavigationState for ${section}:`, {
-          totalCards: carousel.totalCards,
-          visibleCount: carousel.visibleCount,
-          currentSlide: carousel.currentSlide,
-          totalSlides: carousel.totalSlides,
-          shouldDisable,
-          prevDisabled,
-          nextDisabled
         });
         
         if (carousel.prevBtn) {
           carousel.prevBtn.disabled = prevDisabled;
-          debugLog.log(`Section ${section} prev button disabled: ${prevDisabled}`);
         }
         if (carousel.nextBtn) {
           carousel.nextBtn.disabled = nextDisabled;
-          debugLog.log(`Section ${section} next button disabled: ${nextDisabled}`);
         }
       }
 
       updateCarouselPosition(section, slideIndex) {
         const carousel = this.carousels[section];
         if (!carousel || carousel.isTransitioning) {
-          debugLog.warn(`UpdateCarouselPosition: Cannot update ${section} - carousel missing or transitioning`);
           return;
         }
 
@@ -1567,424 +1331,3 @@ debugLog.log('Carousel element check:', {
         carousel.currentSlide = newSlide;
         carousel.isTransitioning = true;
 
-        debugLog.log(`UpdateCarouselPosition for ${section}:`, {
-          requestedSlide: slideIndex,
-          actualSlide: newSlide,
-          slideChanged,
-          isDesktop: this.isDesktop,
-          totalCards: carousel.totalCards,
-          visibleCount: carousel.visibleCount,
-          totalSlides: carousel.totalSlides
-        });
-
-        if (this.isDesktop && carousel.totalCards > carousel.visibleCount) {
-          const offset = carousel.currentSlide * (carousel.cardWidth + carousel.gap);
-          
-          debugLog.log(`Setting transform for ${section}:`, {
-            cardWidth: carousel.cardWidth,
-            gap: carousel.gap,
-            offset,
-            transform: `translateX(-${offset}px)`
-          });
-          
-          carousel.track.style.transform = `translateX(-${offset}px)`;
-        } else if (!this.isDesktop) {
-          // On mobile, reset transform since we use scroll-snap
-          carousel.track.style.transform = '';
-        }
-
-        this.updateNavigationState(section);
-
-        setTimeout(() => {
-          carousel.isTransitioning = false;
-          debugLog.log(`Section ${section} transition complete`);
-        }, 600);
-      }
-
-      nextSlide(section) {
-        const carousel = this.carousels[section];
-        debugLog.log(`NextSlide called for ${section}:`, {
-          hasCarousel: !!carousel,
-          currentSlide: carousel?.currentSlide,
-          totalSlides: carousel?.totalSlides,
-          canNext: carousel && carousel.currentSlide < carousel.totalSlides - 1
-        });
-        
-        if (carousel && carousel.currentSlide < carousel.totalSlides - 1) {
-          this.updateCarouselPosition(section, carousel.currentSlide + 1);
-        }
-      }
-
-      prevSlide(section) {
-        const carousel = this.carousels[section];
-        debugLog.log(`PrevSlide called for ${section}:`, {
-          hasCarousel: !!carousel,
-          currentSlide: carousel?.currentSlide,
-          canPrev: carousel && carousel.currentSlide > 0
-        });
-        
-        if (carousel && carousel.currentSlide > 0) {
-          this.updateCarouselPosition(section, carousel.currentSlide - 1);
-        }
-      }
-      // keep the rest of the methods exactly as they exist in the file:
-      // initializeCarousels, computeCarouselDimensions, setupEventListeners,
-      // setupVideoControls, setupTouchSupport, updateNavigationState, updateCarouselPosition,
-      // nextSlide, prevSlide, logComputedStyles
-    }
-  );
-  }
-
-  // Theme Editor changes re-initialize the section
-  if (window.Shopify && window.Shopify.designMode) {
-    document.addEventListener('shopify:section:load', (e) => {
-      if (e.detail.sectionId === '{{ section.id }}') {
-        // New DOM for this section has just been injected; the custom element
-        // class is already registered, so its connectedCallback will run.
-        debugLog.log('shopify:section:load -> reinit {{ carousel_id }}');
-      }
-    });
-
-    document.addEventListener('shopify:section:unload', (e) => {
-      if (e.detail.sectionId === '{{ section.id }}') {
-        const el = document.querySelector('product-metafield-carousel-{{ carousel_id }}');
-        // call cleanup if present
-        el?.disconnectedCallback?.();
-        debugLog.log('shopify:section:unload -> cleanup {{ carousel_id }}');
-      }
-    });
-
-    // Optional: when selecting/deselecting the section in the editor, re-run video bindings
-    document.addEventListener('shopify:section:select', (e) => {
-      if (e.detail.sectionId === '{{ section.id }}') {
-        document.querySelector('product-metafield-carousel-{{ carousel_id }}')?.setupVideoControls?.();
-      }
-    });
-  }
-})();
-</script>
-
-{% schema %}
-{
-  "name": "Product Carousel",
-  "settings": [
-    {
-      "type": "header",
-      "content": "⚠️ Important Setup Notes"
-    },
-    {
-      "type": "paragraph",
-      "content": "This component now uses metaobjects for About and After Sales sections:"
-    },
-    {
-      "type": "paragraph",
-      "content": "• About the Product: Uses 'about_the_product' metafield → 'feature_card' references"
-    },
-    {
-      "type": "paragraph",
-      "content": "• After Sales Service: Uses 'after_sales_service' metafield → 'service_cards' references"
-    },
-    {
-      "type": "paragraph",
-      "content": "• How It Works: Still uses direct metafields ('hero_video' + 'manual')"
-    },
-    {
-      "type": "header",
-      "content": "Section Headings"
-    },
-    {
-      "type": "text",
-      "id": "about_heading",
-      "label": "About the Product heading",
-      "default": "About the Product",
-      "info": "Content from 'about_the_product' metaobject"
-    },
-    {
-      "type": "text",
-      "id": "how_it_works_heading",
-      "label": "How It Works heading",
-      "default": "How It Works"
-    },
-    {
-      "type": "text",
-      "id": "after_sales_heading",
-      "label": "After Sales Service heading",
-      "default": "After Sales Service",
-      "info": "Content from 'after_sales_service' metaobject"
-    },
-    {
-      "type": "header",
-      "content": "Media Type Controls"
-    },
-    {
-      "type": "select",
-      "id": "about_media_type",
-      "label": "About section media type",
-      "options": [
-        {
-          "value": "auto",
-          "label": "Auto detect (recommended)"
-        },
-        {
-          "value": "image",
-          "label": "Force as images"
-        },
-        {
-          "value": "video",
-          "label": "Force as videos"
-        }
-      ],
-      "default": "auto",
-      "info": "Auto detect will use the actual file type from metaobjects"
-    },
-    {
-      "type": "select",
-      "id": "service_media_type",
-      "label": "Service section media type",
-      "options": [
-        {
-          "value": "auto",
-          "label": "Auto detect (recommended)"
-        },
-        {
-          "value": "image",
-          "label": "Force as images"
-        },
-        {
-          "value": "video",
-          "label": "Force as videos"
-        }
-      ],
-      "default": "auto",
-      "info": "Auto detect will use the actual file type from metaobjects"
-    },
-    {
-      "type": "header",
-      "content": "Video Section"
-    },
-    {
-      "type": "text",
-      "id": "video_title",
-      "label": "Video card title",
-      "default": "How It Works"
-    },
-    {
-      "type": "textarea",
-      "id": "video_description",
-      "label": "Video card description",
-      "default": "Watch our step-by-step process in action"
-    },
-    {
-      "type": "checkbox",
-      "id": "hero_video_hover_only",
-      "label": "Hero video - play on hover only",
-      "default": true,
-      "info": "When enabled, video pauses and only plays when hovered"
-    },
-    {
-      "type": "checkbox",
-      "id": "video_hover_only",
-      "label": "Carousel videos - play on hover only",
-      "default": true,
-      "info": "When enabled, carousel videos pause and only play when hovered"
-    },
-    {
-      "type": "header",
-      "content": "Layout & Spacing"
-    },
-    {
-      "type": "range",
-      "id": "section_padding_top",
-      "min": 40,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Section top padding",
-      "default": 80
-    },
-    {
-      "type": "range",
-      "id": "section_padding_bottom",
-      "min": 40,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Section bottom padding",
-      "default": 80
-    },
-    {
-      "type": "range",
-      "id": "section_inner_spacing",
-      "min": 20,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Between sections spacing",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "heading_spacing",
-      "min": 20,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Heading bottom spacing",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "heading_size",
-      "min": 24,
-      "max": 48,
-      "step": 2,
-      "unit": "px",
-      "label": "Heading size",
-      "default": 36
-    },
-    {
-      "type": "header",
-      "content": "Colors & Design"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Section background",
-      "default": "#000000"
-    },
-    {
-      "type": "color",
-      "id": "card_background",
-      "label": "Card background",
-      "default": "#111111"
-    },
-    {
-      "type": "color",
-      "id": "media_background",
-      "label": "Media background",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Primary text",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "muted_text_color",
-      "label": "Muted text",
-      "default": "#999999"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "Border color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "focus_color",
-      "label": "Focus outline",
-      "default": "#ffffff"
-    },
-    {
-      "type": "range",
-      "id": "border_radius",
-      "min": 8,
-      "max": 32,
-      "step": 2,
-      "unit": "px",
-      "label": "Border radius",
-      "default": 20
-    },
-    {
-      "type": "header",
-      "content": "Card Content Controls"
-    },
-    {
-      "type": "text",
-      "id": "default_button_text",
-      "label": "Default button text",
-      "default": "Learn More"
-    },
-    {
-      "type": "text",
-      "id": "default_feature_text",
-      "label": "Default feature text",
-      "default": "Feature"
-    },
-    {
-      "type": "range",
-      "id": "card_width",
-      "min": 280,
-      "max": 400,
-      "step": 8,
-      "unit": "px",
-      "label": "Card width",
-      "default": 320
-    },
-    {
-      "type": "range",
-      "id": "card_height",
-      "min": 400,
-      "max": 600,
-      "step": 20,
-      "unit": "px",
-      "label": "Card height",
-      "default": 480
-    },
-    {
-      "type": "range",
-      "id": "center_card_scale",
-      "min": 1.0,
-      "max": 1.2,
-      "step": 0.1,
-      "label": "Center card scale factor",
-      "default": 1.1
-    },
-    {
-      "type": "header",
-      "content": "Required Metafields & Metaobjects"
-    },
-    {
-      "type": "paragraph",
-      "content": "This component automatically pulls content from your product's metafields and metaobjects:"
-    },
-    {
-      "type": "paragraph",
-      "content": "Metafields with Metaobject Lists:"
-    },
-    {
-      "type": "paragraph",
-      "content": "• 'about_the_product' → list of 'feature_card' metaobjects"
-    },
-    {
-      "type": "paragraph",
-      "content": "• 'after_sales_service' → list of 'service_cards' metaobjects"
-    },
-    {
-      "type": "paragraph",
-      "content": "Direct Metafields:"
-    },
-    {
-      "type": "paragraph",
-      "content": "• 'hero_video' (video file) + 'manual' (PDF file)"
-    },
-    {
-      "type": "paragraph",
-      "content": "Media files can contain JPG, PNG, or MP4 files. Video detection is automatic."
-    },
-    {
-      "type": "paragraph",
-      "content": "Card and video card designs are now locked for consistency."
-    }
-  ],
-  "presets": [
-    { 
-      "name": "Product Carousel",
-      "category": "Product"
-    }
-  ]
-}
-{% endschema %}

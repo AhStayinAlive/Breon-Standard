@@ -23,6 +23,13 @@
     --cta-bg: {% if block.settings.cta_background != blank %}{{ block.settings.cta_background }}{% else %}#ffffff{% endif %};
     --cta-text: {% if block.settings.cta_text_color != blank %}{{ block.settings.cta_text_color }}{% else %}#000000{% endif %};
     --cta-hover: {% if block.settings.cta_hover_background != blank %}{{ block.settings.cta_hover_background }}{% else %}#f0f0f0{% endif %};
+    --buy-now-bg: {% if block.settings.buy_now_background != blank %}{{ block.settings.buy_now_background }}{% else %}#007AFF{% endif %};
+    --buy-now-text: {% if block.settings.buy_now_text_color != blank %}{{ block.settings.buy_now_text_color }}{% else %}#ffffff{% endif %};
+    --buy-now-hover: {% if block.settings.buy_now_hover_background != blank %}{{ block.settings.buy_now_hover_background }}{% else %}#0056CC{% endif %};
+    --mortise-bg: {% if block.settings.mortise_background != blank %}{{ block.settings.mortise_background }}{% else %}#222222{% endif %};
+    --mortise-text: {% if block.settings.mortise_text_color != blank %}{{ block.settings.mortise_text_color }}{% else %}#ffffff{% endif %};
+    --mortise-selected-bg: {% if block.settings.mortise_selected_background != blank %}{{ block.settings.mortise_selected_background }}{% else %}#ffffff{% endif %};
+    --mortise-selected-text: {% if block.settings.mortise_selected_text_color != blank %}{{ block.settings.mortise_selected_text_color }}{% else %}#000000{% endif %};
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.16);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.24);
@@ -299,7 +306,7 @@
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
-    background: var(--chip-bg);
+    background: var(--mortise-bg);
     box-shadow: var(--shadow-sm);
     role: radio;
     flex-shrink: 0; /* Prevent squashing */
@@ -349,8 +356,8 @@
   }
 
   .broen-hero__mortise-{{ section_id }} {
-    background: var(--chip-bg);
-    color: var(--chip-text);
+    background: var(--mortise-bg);
+    color: var(--mortise-text);
     border: 1px solid var(--border);
     border-radius: 100px;
     padding: 12px 20px;
@@ -387,7 +394,7 @@
   }
 
   .broen-hero__mortise-{{ section_id }}.has-image.selected {
-    background: var(--chip-bg);
+    background: var(--mortise-bg);
     color: var(--text);
     border-color: var(--text);
     border-width: 2px;
@@ -467,7 +474,7 @@
     letter-spacing: -0.01em;
     font-size: 16px;
     line-height: 1;
-    color: #ffffff;
+    color: var(--buy-now-text);
 
     display: inline-flex;
     align-items: center;
@@ -480,14 +487,14 @@
     border-radius: 100px;
     border: none;
 
-    background: var(--messages-blue);
+    background: var(--buy-now-bg);
     box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
 
     transition: all 0.2s ease;
   }
 
   .broen-hero__buy-now-{{ section_id }}:hover:not(:disabled) {
-    background: #0056CC;
+    background: var(--buy-now-hover);
     transform: translateY(-1px);
     box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
   }
@@ -503,7 +510,7 @@
   }
 
   .broen-hero__buy-now-{{ section_id }}:disabled {
-    background: var(--chip-bg);
+    background: var(--mortise-bg);
     color: var(--muted);
     cursor: not-allowed;
     transform: none;
@@ -1546,6 +1553,56 @@
       "id": "cta_hover_background",
       "label": "Add to cart hover",
       "default": "#f0f0f0"
+    },
+    {
+      "type": "header",
+      "content": "Buy Now Button"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_background",
+      "label": "Buy Now background",
+      "default": "#007AFF"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_text_color",
+      "label": "Buy Now text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "buy_now_hover_background",
+      "label": "Buy Now hover",
+      "default": "#0056CC"
+    },
+    {
+      "type": "header",
+      "content": "Mortise Type Buttons"
+    },
+    {
+      "type": "color",
+      "id": "mortise_background",
+      "label": "Mortise button background",
+      "default": "#222222"
+    },
+    {
+      "type": "color",
+      "id": "mortise_text_color",
+      "label": "Mortise button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "mortise_selected_background",
+      "label": "Mortise selected background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "mortise_selected_text_color",
+      "label": "Mortise selected text",
+      "default": "#000000"
     },
     {
       "type": "header",
