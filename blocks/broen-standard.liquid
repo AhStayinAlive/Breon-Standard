@@ -88,14 +88,14 @@
 
   .ai-broen-carousel__wrapper-{{ ai_gen_id }} {
     position: relative;
-    overflow: hidden; /* FIXED: prevent content from extending beyond boundaries */
+    overflow: visible;
     margin: 0;
     padding: 20px 0 56px; /* room for lifted shadows */
   }
 
   .ai-broen-carousel__track-container-{{ ai_gen_id }} {
     position: relative;
-    overflow: hidden;  /* FIXED: prevent content from extending beyond boundaries */
+    overflow: visible;  /* was hidden; allow bleed */
     margin: 0 80px;
     border-radius: 20px;
   }

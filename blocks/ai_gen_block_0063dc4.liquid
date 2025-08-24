@@ -10,18 +10,18 @@
   FIXED: All Theme Editor controls now reflect properly in live preview
 {% endcomment %}
 
-{% assign carousel_id = block.id | replace: '_', '' | downcase %}
+{% assign carousel_id = section.id | replace: '_', '' | downcase %}
 
 {% style %}
   .product-metafield-carousel-{{ carousel_id }} {
-    --page-bg: {{ block.settings.background_color | default: '#000000' }};
-    --card-bg: {{ block.settings.card_background | default: '#111111' }};
-    --media-bg: {{ block.settings.media_background | default: '#1a1a1a' }};
-    --text: {{ block.settings.text_color | default: '#ffffff' }};
-    --muted: {{ block.settings.muted_text_color | default: '#999999' }};
-    --border: {{ block.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }};
-    --focus: {{ block.settings.focus_color | default: '#ffffff' }};
-    --radius: {{ block.settings.border_radius | default: 20 }}px;
+    --page-bg: {{ section.settings.background_color | default: '#000000' }};
+    --card-bg: {{ section.settings.card_background | default: '#111111' }};
+    --media-bg: {{ section.settings.media_background | default: '#1a1a1a' }};
+    --text: {{ section.settings.text_color | default: '#ffffff' }};
+    --muted: {{ section.settings.muted_text_color | default: '#999999' }};
+    --border: {{ section.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }};
+    --focus: {{ section.settings.focus_color | default: '#ffffff' }};
+    --radius: {{ section.settings.border_radius | default: 20 }}px;
     
     /* Liquid-glass design tokens */
     --lg-blur: 18px;
@@ -30,13 +30,13 @@
     --lg-shadow: rgba(0,0,0,.25);
 
     /* Theme editor controlled paddings */
-    --pt: {{ block.settings.section_padding_top | default: 80 }}px;
-    --pb: {{ block.settings.section_padding_bottom | default: 80 }}px;
+    --pt: {{ section.settings.section_padding_top | default: 80 }}px;
+    --pb: {{ section.settings.section_padding_bottom | default: 80 }}px;
 
     display: block;
     width: 100%;
     background: var(--page-bg);
-    background: linear-gradient(180deg, var(--page-bg) 0%, {{ block.settings.background_color | default: '#000000' | color_darken: 5 }} 100%);
+    background: linear-gradient(180deg, var(--page-bg) 0%, {{ section.settings.background_color | default: '#000000' | color_darken: 5 }} 100%);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
     letter-spacing: -0.01em;
@@ -48,11 +48,6 @@
     padding-top: var(--pt);
     padding-bottom: var(--pb);
   }
-  
-  /* Ensure parent sections allow overflow for hover expansion */
-  .shopify-section:has(.product-metafield-carousel-{{ carousel_id }}) {
-    overflow: visible;
-  }
 
   .product-metafield-carousel-{{ carousel_id }}::before {
     content: '';
@@ -61,8 +56,8 @@
     background: linear-gradient(
       135deg,
       var(--page-bg) 0%,
-      {{ block.settings.background_color | default: '#000000' | color_darken: 8 | color_modify: 'alpha', 0.98 }} 50%,
-      {{ block.settings.background_color | default: '#000000' | color_darken: 3 | color_modify: 'alpha', 0.95 }} 100%
+      {{ section.settings.background_color | default: '#000000' | color_darken: 8 | color_modify: 'alpha', 0.98 }} 50%,
+      {{ section.settings.background_color | default: '#000000' | color_darken: 3 | color_modify: 'alpha', 0.95 }} 100%
     );
     z-index: 1;
     pointer-events: none;
@@ -77,7 +72,7 @@
   }
 
   .carousel-section-{{ carousel_id }} {
-    padding: {{ block.settings.section_inner_spacing | default: 40 }}px 0;
+    padding: {{ section.settings.section_inner_spacing | default: 40 }}px 0;
     border-bottom: 1px solid var(--border);
   }
 
@@ -87,10 +82,10 @@
 
   .section-title-{{ carousel_id }} {
     color: var(--text);
-    font-size: clamp({{ block.settings.heading_size | default: 36 | minus: 8 }}px, 4vw, {{ block.settings.heading_size | default: 36 }}px);
+    font-size: clamp({{ section.settings.heading_size | default: 36 | minus: 8 }}px, 4vw, {{ section.settings.heading_size | default: 36 }}px);
     font-weight: 700;
     text-align: center;
-    margin: 0 0 {{ block.settings.heading_spacing | default: 60 }}px;
+    margin: 0 0 {{ section.settings.heading_spacing | default: 60 }}px;
     letter-spacing: -0.02em;
     line-height: 1.1;
     position: relative;
@@ -118,7 +113,7 @@
 
   .carousel-track-container-{{ carousel_id }} {
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     margin: 0 80px;
     border-radius: var(--radius);
   }
@@ -134,9 +129,9 @@
   /* LOCKED CARD DESIGN */
   .carousel-card-{{ carousel_id }} {
     flex: 0 0 auto;
-    width: {{ block.settings.card_width | default: 320 }}px;
-    min-width: {{ block.settings.card_width | default: 320 }}px;
-    height: {{ block.settings.card_height | default: 480 }}px;
+    width: 320px;
+    min-width: 320px;
+    height: 480px;
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -158,19 +153,19 @@
     transform: translateY(-8px) scale(1.02);
     border-color: rgba(255, 255, 255, 0.3);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    background: {{ block.settings.card_background | default: '#111111' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
+    background: {{ section.settings.card_background | default: '#111111' | color_lighten: 5 | color_modify: 'alpha', 0.98 }};
   }
 
   /* Center card (Card 3) - larger size */
   .carousel-card-{{ carousel_id }}.center-card {
-    width: calc({{ block.settings.card_width | default: 320 }}px * 1.2);
-    height: calc({{ block.settings.card_height | default: 480 }}px * 1.1);
-    transform: scale({{ block.settings.center_card_scale | default: 1.05 }});
+    width: 384px;
+    height: 528px;
+    transform: scale(1.05);
     z-index: 10;
   }
 
   .carousel-card-{{ carousel_id }}.center-card:hover {
-    transform: translateY(-8px) scale(calc({{ block.settings.center_card_scale | default: 1.05 }} + 0.02));
+    transform: translateY(-8px) scale(1.07);
   }
 
   .card-media-{{ carousel_id }} {
@@ -465,13 +460,13 @@
 
   @media (max-width: 768px) {
     .product-metafield-carousel-{{ carousel_id }} {
-          --pt: {{ block.settings.section_padding_top | default: 80 | times: 0.6 | round }}px;
-    --pb: {{ block.settings.section_padding_bottom | default: 80 | times: 0.6 | round }}px;
-  }
+      --pt: {{ section.settings.section_padding_top | default: 80 | times: 0.6 | round }}px;
+      --pb: {{ section.settings.section_padding_bottom | default: 80 | times: 0.6 | round }}px;
+    }
 
-  .carousel-container-{{ carousel_id }} { padding: 0 12px; }
-  .carousel-section-{{ carousel_id }} { padding: {{ block.settings.section_inner_spacing | default: 40 | times: 0.6 | round }}px 0; }
-  .section-title-{{ carousel_id }} { margin-bottom: {{ block.settings.heading_spacing | default: 60 | times: 0.67 | round }}px; }
+    .carousel-container-{{ carousel_id }} { padding: 0 12px; }
+    .carousel-section-{{ carousel_id }} { padding: {{ section.settings.section_inner_spacing | default: 40 | times: 0.6 | round }}px 0; }
+    .section-title-{{ carousel_id }} { margin-bottom: {{ section.settings.heading_spacing | default: 60 | times: 0.67 | round }}px; }
 
     .carousel-track-container-{{ carousel_id }} {
       margin: 0;
@@ -656,13 +651,13 @@
   }
 {% endstyle %}
 
-  <product-metafield-carousel-{{ carousel_id }}
-    class="product-metafield-carousel-{{ carousel_id }}"
-    style="--page-bg: {{ block.settings.background_color | default: '#000000' }}; --card-bg: {{ block.settings.card_background | default: '#111111' }}; --media-bg: {{ block.settings.media_background | default: '#1a1a1a' }}; --text: {{ block.settings.text_color | default: '#ffffff' }}; --muted: {{ block.settings.muted_text_color | default: '#999999' }}; --border: {{ block.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }}; --focus: {{ block.settings.focus_color | default: '#ffffff' }}; --radius: {{ block.settings.border_radius | default: 20 }}px; --pt: {{ block.settings.section_padding_top | default: 80 }}px; --pb: {{ block.settings.section_padding_bottom | default: 80 }}px;"
-    data-video-hover-only="{{ block.settings.video_hover_only }}"
-    data-hero-video-hover-only="{{ block.settings.hero_video_hover_only }}"
-    {{ block.shopify_attributes }}
-  >
+<product-metafield-carousel-{{ carousel_id }}
+  class="product-metafield-carousel-{{ carousel_id }}"
+  style="--page-bg: {{ section.settings.background_color | default: '#000000' }}; --card-bg: {{ section.settings.card_background | default: '#111111' }}; --media-bg: {{ section.settings.media_background | default: '#1a1a1a' }}; --text: {{ section.settings.text_color | default: '#ffffff' }}; --muted: {{ section.settings.muted_text_color | default: '#999999' }}; --border: {{ section.settings.border_color | default: '#ffffff' | color_modify: 'alpha', 0.10 }}; --focus: {{ section.settings.focus_color | default: '#ffffff' }}; --radius: {{ section.settings.border_radius | default: 20 }}px; --pt: {{ section.settings.section_padding_top | default: 80 }}px; --pb: {{ section.settings.section_padding_bottom | default: 80 }}px;"
+  data-video-hover-only="{{ section.settings.video_hover_only }}"
+  data-hero-video-hover-only="{{ section.settings.hero_video_hover_only }}"
+  {{ section.shopify_attributes }}
+>
   <div class="carousel-container-{{ carousel_id }}">
     
     <!-- ABOUT THE PRODUCT SECTION -->
@@ -685,77 +680,39 @@
     %}
 
     <section class="carousel-section-{{ carousel_id }}">
-      <h2 class="section-title-{{ carousel_id }}">{{ block.settings.about_heading | default: 'About the Product' }}</h2>
+      <h2 class="section-title-{{ carousel_id }}">{{ section.settings.about_heading | default: 'About the Product' }}</h2>
       
       {% if about_card_count > 0 %}
-        <!-- DEBUG: About items count: {{ about_card_count }} -->
         <div class="horizontal-carousel-{{ carousel_id }}">
           <div class="carousel-track-container-{{ carousel_id }}">
             <div class="carousel-track-{{ carousel_id }}" data-section="about">
               {% for feature_card in about_items %}
-                <!-- DEBUG: Feature card {{ forloop.index }}: {{ feature_card | json | truncate: 100 }} -->
                 {% liquid
-                  assign item_title = feature_card.feature | default: block.settings.default_feature_text | default: 'Feature'
+                  assign item_title = feature_card.feature | default: 'Feature'
                   assign item_description = feature_card.description | default: ''
                   assign item_link = feature_card.url | default: '#'
-                  assign item_button_text = feature_card.button_text | default: block.settings.default_button_text | default: 'Learn More'
+                  assign item_button_text = feature_card.button_text | default: 'Learn More'
                   
-                  comment 'Get media from metaobject - try multiple field names and prioritize media_files.value'
+                  comment 'Get media from metaobject - could be single file or array'
                   endcomment
-                  assign media_item = nil
-                  
-                  comment 'Debug: Log available fields'
-                  endcomment
-                  comment 'Available fields: {{ feature_card | json }}'
-                  endcomment
-                  
-                  comment 'Try media_files.value first (metaobject list)'
-                  endcomment
-                  if feature_card.media_files.value
-                    assign media_list = feature_card.media_files.value
-                    if media_list.size > 0
-                      assign media_item = media_list.first
-                    endif
+                  assign media_item = feature_card.media
+                  if media_item == blank
+                    assign media_item = feature_card.media_files.value
                   endif
                   
-                  comment 'Fallback to media field'
+                  comment 'If its an array, get first item'
                   endcomment
-                  if media_item == nil and feature_card.media
-                    assign media_item = feature_card.media
+                  if media_item.first
+                    assign media_item = media_item.first
                   endif
                   
-                  comment 'Fallback to any other media field'
-                  endcomment
-                  if media_item == nil and feature_card.media_file
-                    assign media_item = feature_card.media_file
-                  endif
-                  
-                  comment 'Additional fallback for direct file references'
-                  endcomment
-                  if media_item == nil and feature_card.file
-                    assign media_item = feature_card.file
-                  endif
-                  
-                  comment 'Debug: Log final media_item'
-                  endcomment
-                  comment 'Media item: {{ media_item | json }}'
-                  endcomment
-                  
-                  <!-- DEBUG: Media resolution result: {{ media_item | json | truncate: 100 }} -->
-                  
-                  comment 'Video detection logic'
-                  endcomment
                   assign is_video = false
-                  if block.settings.about_media_type == 'video'
+                  if media_item and media_item.media_type == 'video'
                     assign is_video = true
-                  elsif block.settings.about_media_type == 'auto' and media_item
-                    if media_item.media_type == 'video'
-                      assign is_video = true
-                    elsif media_item.url and media_item.url contains '.mp4'
-                      assign is_video = true
-                    elsif media_item contains '.mp4'
-                      assign is_video = true
-                    endif
+                  elsif media_item and media_item contains '.mp4'
+                    assign is_video = true
+                  elsif section.settings.about_media_type == 'video'
+                    assign is_video = true
                   endif
                 %}
 
@@ -824,7 +781,29 @@
             </div>
           </div>
 
+          {% if about_card_count > 1 %}
+            <button
+              class="carousel-navigation-{{ carousel_id }} carousel-navigation--prev-{{ carousel_id }}"
+              aria-label="Previous about slide"
+              data-section="about"
+              type="button"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18L9 12L15 6"/>
+              </svg>
+            </button>
 
+            <button
+              class="carousel-navigation-{{ carousel_id }} carousel-navigation--next-{{ carousel_id }}"
+              aria-label="Next about slide"
+              data-section="about"
+              type="button"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18L15 12L9 6"/>
+              </svg>
+            </button>
+          {% endif %}
         </div>
       {% else %}
         <div class="empty-state-{{ carousel_id }}">
@@ -850,7 +829,7 @@
     %}
 
     <section class="carousel-section-{{ carousel_id }}">
-      <h2 class="section-title-{{ carousel_id }}">{{ block.settings.how_it_works_heading | default: 'How It Works' }}</h2 %}
+      <h2 class="section-title-{{ carousel_id }}">{{ section.settings.how_it_works_heading | default: 'How It Works' }}</h2>
       
       <div class="featured-video-{{ carousel_id }}">
         <div class="video-card-{{ carousel_id }}">
@@ -873,7 +852,7 @@
                 loading="lazy"
                 width="800"
                 height="450"
-                                          {% if block.settings.hero_video_hover_only %}data-hover-only="true"{% endif %}
+                {% if section.settings.hero_video_hover_only %}data-hover-only="true"{% endif %}
               ></video>
             {% else %}
               <div class="video-placeholder-{{ carousel_id }}">
@@ -884,8 +863,8 @@
           </div>
 
           <div class="video-content-{{ carousel_id }}">
-                      <h3 class="video-title-{{ carousel_id }}">{{ block.settings.video_title | default: 'How It Works' }}</h3>
-          <p class="video-subtext-{{ carousel_id }}">{{ block.settings.video_description | default: 'Watch our step-by-step process in action' }}</p>
+            <h3 class="video-title-{{ carousel_id }}">{{ section.settings.video_title | default: 'How It Works' }}</h3>
+            <p class="video-subtext-{{ carousel_id }}">{{ section.settings.video_description | default: 'Watch our step-by-step process in action' }}</p>
             
             {% if manual_file %}
               <a 
@@ -927,7 +906,7 @@
     %}
 
     <section class="carousel-section-{{ carousel_id }}">
-      <h2 class="section-title-{{ carousel_id }}">{{ block.settings.after_sales_heading | default: 'After Sales Service' }}</h2 %}
+      <h2 class="section-title-{{ carousel_id }}">{{ section.settings.after_sales_heading | default: 'After Sales Service' }}</h2>
       
       {% if service_card_count > 0 %}
         <div class="horizontal-carousel-{{ carousel_id }}">
@@ -956,11 +935,11 @@
                   endif
                   
                   assign is_video = false
-                  if block.settings.service_media_type == 'video'
+                  if section.settings.service_media_type == 'video'
                     assign is_video = true
-                  elsif block.settings.service_media_type == 'auto' and media_item and media_item.media_type == 'video'
+                  elsif section.settings.service_media_type == 'auto' and media_item and media_item.media_type == 'video'
                     assign is_video = true
-                  elsif block.settings.service_media_type == 'auto' and media_item and media_item contains '.mp4'
+                  elsif section.settings.service_media_type == 'auto' and media_item and media_item contains '.mp4'
                     assign is_video = true
                   endif
                 %}
@@ -1156,22 +1135,22 @@ debugLog.log('Window size: ' + window.innerWidth + 'x' + window.innerHeight);
 
 // Log CSS variables being applied
 debugLog.log('Product Carousel CSS Variables:', {
-          'background_color': '{{ block.settings.background_color | default: "#000000" }}',
-        'card_background': '{{ block.settings.card_background | default: "#111111" }}',
-        'media_background': '{{ block.settings.media_background | default: "#1a1a1a" }}',
-        'text_color': '{{ block.settings.text_color | default: "#ffffff" }}',
-        'muted_text_color': '{{ block.settings.muted_text_color | default: "#999999" }}',
-        'border_color': '{{ block.settings.border_color | default: "#ffffff" }}',
-        'border_color_processed': '{{ block.settings.border_color | default: "#ffffff" | color_modify: "alpha", 0.10 }}',
-        'focus_color': '{{ block.settings.focus_color | default: "#ffffff" }}',
-        'border_radius': '{{ block.settings.border_radius | default: 20 }}px',
-        'section_padding_top': '{{ block.settings.section_padding_top | default: 80 }}px',
-        'section_padding_bottom': '{{ block.settings.section_padding_bottom | default: 80 }}px',
-        'section_inner_spacing': '{{ block.settings.section_inner_spacing | default: 40 }}px',
-        'heading_spacing': '{{ block.settings.heading_spacing | default: 60 }}px',
-        'heading_size': '{{ block.settings.heading_size | default: 36 }}px',
-        'video_hover_only': {{ block.settings.video_hover_only | json }},
-        'hero_video_hover_only': {{ block.settings.hero_video_hover_only | json }}
+  'background_color': '{{ section.settings.background_color | default: "#000000" }}',
+  'card_background': '{{ section.settings.card_background | default: "#111111" }}',
+  'media_background': '{{ section.settings.media_background | default: "#1a1a1a" }}',
+  'text_color': '{{ section.settings.text_color | default: "#ffffff" }}',
+  'muted_text_color': '{{ section.settings.muted_text_color | default: "#999999" }}',
+  'border_color': '{{ section.settings.border_color | default: "#ffffff" }}',
+  'border_color_processed': '{{ section.settings.border_color | default: "#ffffff" | color_modify: "alpha", 0.10 }}',
+  'focus_color': '{{ section.settings.focus_color | default: "#ffffff" }}',
+  'border_radius': '{{ section.settings.border_radius | default: 20 }}px',
+  'section_padding_top': '{{ section.settings.section_padding_top | default: 80 }}px',
+  'section_padding_bottom': '{{ section.settings.section_padding_bottom | default: 80 }}px',
+  'section_inner_spacing': '{{ section.settings.section_inner_spacing | default: 40 }}px',
+  'heading_spacing': '{{ section.settings.heading_spacing | default: 60 }}px',
+  'heading_size': '{{ section.settings.heading_size | default: 36 }}px',
+  'video_hover_only': {{ section.settings.video_hover_only | json }},
+  'hero_video_hover_only': {{ section.settings.hero_video_hover_only | json }}
 });
 
 // Check if we're in Theme Editor
@@ -1897,51 +1876,6 @@ debugLog.log('Carousel element check:', {
       "unit": "px",
       "label": "Border radius",
       "default": 20
-    },
-    {
-      "type": "header",
-      "content": "Card Content Controls"
-    },
-    {
-      "type": "text",
-      "id": "default_button_text",
-      "label": "Default button text",
-      "default": "Learn More"
-    },
-    {
-      "type": "text",
-      "id": "default_feature_text",
-      "label": "Default feature text",
-      "default": "Feature"
-    },
-    {
-      "type": "range",
-      "id": "card_width",
-      "min": 280,
-      "max": 400,
-      "step": 8,
-      "unit": "px",
-      "label": "Card width",
-      "default": 320
-    },
-    {
-      "type": "range",
-      "id": "card_height",
-      "min": 400,
-      "max": 600,
-      "step": 16,
-      "unit": "px",
-      "label": "Card height",
-      "default": 480
-    },
-    {
-      "type": "range",
-      "id": "center_card_scale",
-      "min": 1.0,
-      "max": 1.2,
-      "step": 0.05,
-      "label": "Center card scale factor",
-      "default": 1.05
     },
     {
       "type": "header",
