@@ -404,10 +404,10 @@
     transform: translateY(-50%);
     width: 56px;
     height: 56px;
-    background: rgba(17, 17, 17, 0.9);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 50%;
-    color: var(--text);
+    color: #ffffff;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex;
@@ -416,17 +416,22 @@
     z-index: 200;
     backdrop-filter: blur(var(--lg-blur));
     -webkit-backdrop-filter: blur(var(--lg-blur));
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
   }
 
   .carousel-navigation-{{ carousel_id }}:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.28);
     transform: translateY(-50%) scale(1.1);
   }
 
   .carousel-navigation-{{ carousel_id }}:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+  }
+
+  .carousel-navigation-{{ carousel_id }}:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
   }
 
   .carousel-navigation--prev-{{ carousel_id }} { left: 20px; }
@@ -787,17 +792,39 @@
                           {% if section.settings.video_hover_only %}data-hover-only="true"{% endif %}
                         ></video>
                       {% else %}
-                        <img
-                          {% if media_item.url %}
-                            src="{{ media_item.url | image_url: width: 400 }}"
-                          {% else %}
+                        {% if media_item.media_type == 'image' %}
+                          <img
                             src="{{ media_item | image_url: width: 400 }}"
-                          {% endif %}
-                          alt="{{ media_item.alt | default: item_title | escape }}"
-                          loading="lazy"
-                          width="400"
-                          height="240"
-                        >
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% elsif media_item.preview_image %}
+                          <img
+                            src="{{ media_item.preview_image | image_url: width: 400 }}"
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% elsif media_item.url %}
+                          <img
+                            src="{{ media_item.url }}"
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% else %}
+                          <img
+                            src="{{ media_item | image_url: width: 400 }}"
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% endif %}
                       {% endif %}
                     {% else %}
                       <div class="card-placeholder-{{ carousel_id }}">
@@ -993,17 +1020,39 @@
                           {% if section.settings.video_hover_only %}data-hover-only="true"{% endif %}
                         ></video>
                       {% else %}
-                        <img
-                          {% if media_item.url %}
-                            src="{{ media_item.url | image_url: width: 400 }}"
-                          {% else %}
+                        {% if media_item.media_type == 'image' %}
+                          <img
                             src="{{ media_item | image_url: width: 400 }}"
-                          {% endif %}
-                          alt="{{ media_item.alt | default: item_title | escape }}"
-                          loading="lazy"
-                          width="400"
-                          height="240"
-                        >
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% elsif media_item.preview_image %}
+                          <img
+                            src="{{ media_item.preview_image | image_url: width: 400 }}"
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% elsif media_item.url %}
+                          <img
+                            src="{{ media_item.url }}"
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% else %}
+                          <img
+                            src="{{ media_item | image_url: width: 400 }}"
+                            alt="{{ media_item.alt | default: item_title | escape }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                          >
+                        {% endif %}
                       {% endif %}
                     {% else %}
                       <div class="card-placeholder-{{ carousel_id }}">
